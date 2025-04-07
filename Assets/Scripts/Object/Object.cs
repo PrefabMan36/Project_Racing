@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Object : MonoBehaviour
 {
-    [SerializeField] protected GameObject obj;
+    [SerializeField] protected GameObject body;
 
 }

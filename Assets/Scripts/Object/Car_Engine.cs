@@ -16,45 +16,78 @@ public partial class Car
         eGEAR_SIXTH
     }
     //Engine엔진
+    //엔진 토크(Engine Torque) 계산법
+    //엔진 토크(Nm) = (엔진 출력(kW) × 9549) / 엔진 회전수(RPM)
+    //엔진 토크(Nm) = (엔진 출력(hp) x 7121) / 엔진 회전수(RPM)
+    //바퀴 토크(Wheel Torque) 계산법
+    //바퀴 토크 = 엔진 토크(Engine Torque) × 변속기 기어비(Gear ratio) × 차동기어비(Differential ratio)
     protected bool ignition;
-    protected float throttleInput;
-    [SerializeField] protected AnimationCurve torqueCurve;
-    protected float maxEngineTorque;
-    [SerializeField] protected float maxEngineRPM;
-    [SerializeField]protected float minEngineRPM;
-    [SerializeField]protected float curEngineRPM;
-    [SerializeField]protected float targetEngineRPM;
-    protected float normalizedRPM;
-    [SerializeField] protected float curPower;
+    protected float throttle;
+    [SerializeField] protected AnimationCurve horsePowerCurve;
+    protected float horsePower;
+    protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
+    protected float curEngineTorque, curWheelTorque;
+    protected float dragAmount;
     protected AudioSource engineSound;
-    
+
     //Engine stat setting 엔진 스텟 설정
-    public void SetEngineTorque(float _torque) { maxEngineTorque = _torque; }
+    public void SetHorsePower(float _horsePower) { horsePower = _horsePower; }
     public void SetMaxEngineRPM(float _maxRPM) { maxEngineRPM = _maxRPM; }
     public void SetEngineSound(AudioSource _engineSound) { engineSound = _engineSound; }
+
     //Gear기어
     [SerializeField] protected eGEAR curGear;
     [SerializeField] protected eGEAR nextGear;
     protected Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
+    [SerializeField] protected float differentialRatio;
+    [SerializeField] protected float clutch;
     protected int maxGear;
-    protected bool menualGear;
-    [SerializeField] protected float wheelPower;
+    //protected bool menualGear;
     protected float shiftTimer;
     protected float shiftTiming;
     public void SetGearRatio(eGEAR _gearName, float _gearRatio) { gearRatio.Add(_gearName, _gearRatio); }
-    protected float GetPower()
+
+    //Engine Operation 엔진 동작
+    protected void CalculateTorque()
     {
-        normalizedRPM = Mathf.Clamp01(curEngineRPM / maxEngineRPM);
-        curPower = torqueCurve.Evaluate(normalizedRPM) * maxEngineTorque;
-        wheelPower = curPower * gearRatio[curGear];
-        return wheelPower;
+        if (ignition)
+        {
+            if (clutch < 0.1f)
+            {
+                curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle) + Random.Range(-50, 50), Time.deltaTime);
+            }
+            else
+            {
+                curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM - 100, curWheelRPM / gearRatio[curGear] * clutch), Time.deltaTime);
+                curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * ((horsePower * 7121) / curEngineRPM)) * gearRatio[curGear] * differentialRatio * clutch;
+            }
+        }
+        else
+        {
+            curWheelTorque = 0f;
+        }
     }
-    protected void InputThrottle()
+    protected void Moving()
     {
-        float throttleInput = Mathf.Abs(Input.GetAxis("Vertical"));
-        targetEngineRPM = Mathf.Lerp(minEngineRPM, maxEngineRPM, throttleInput);
-        curEngineRPM = Mathf.Lerp(curEngineRPM, targetEngineRPM, Time.deltaTime);
-        curEngineRPM = Mathf.Clamp(curEngineRPM, minEngineRPM, maxEngineRPM);
+        CalculateWheelRPM();
+        CalculateTorque();
+        for (int i = 0; i < driveWheelsNum; i++)
+        {
+            driveWheels[i].motorTorque = throttle * (curWheelTorque / driveWheelsNum);
+        }
+        carRB.drag = dragAmount + (speed / 40000);
+        //for (int i = 0; i < driveWheelsNum; i++)
+        //    driveWheels[i].motorTorque = throttle * curWheelTorque;
+    }
+    protected void CalculateWheelRPM()
+    {
+        tempWheelRPM = 0f;
+        for (int i = 0; i < driveWheelsNum; i++)
+        {
+            tempWheelRPM += driveWheels[i].rpm;
+        }
+        tempWheelRPM = Mathf.Abs(tempWheelRPM / driveWheelsNum);
+        curWheelRPM = tempWheelRPM;
     }
     protected void ChangeGear(bool _up)
     {
@@ -114,6 +147,7 @@ public partial class Car
         if (shiftTimer < shiftTiming)
         {
             curGear = eGEAR.eGEAR_NEUTURAL;
+            clutch = 0f;
             shiftTimer += Time.deltaTime;
         }
         else

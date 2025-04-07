@@ -2,6 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//void setUpController()
+//{
+//    carController c = car.GetComponent<carController>();
+//    c.gears = new float[7];
+
+//    c.maxRPM = 8000;
+//    c.minRPM = 4000;
+
+//    c.DownForceValue = 5;
+//    c.dragAmount = 0.015f;
+//    c.EngineSmoothTime = 0.5f;
+//    c.finalDrive = 3.71f;
+
+//    if (car.tag != "Player") car.tag = "Player";
+
+//}
 public class Player_Car : Car
 {
     [SerializeField] private Camera MainCamera;
@@ -15,76 +31,80 @@ public class Player_Car : Car
     private int curCamPosition;
     private void Start()
     {
+        body = gameObject;
         carRB = gameObject.GetComponent<Rigidbody>();
+        ignition = true;
         braking = false;
+        minEngineRPM = 800f;
+        maxEngineRPM = 9400f;
         curEngineRPM = 1000;
-        maxEngineRPM = 9000;
-        maxEngineTorque = 465;
+        horsePower = 465;
+        dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
-        SetGearRatio(eGEAR.eGEAR_REVERSE, -1.28f);
+        SetGearRatio(eGEAR.eGEAR_REVERSE, -3.154f);
         SetGearRatio(eGEAR.eGEAR_FIRST, 3.154f);
         SetGearRatio(eGEAR.eGEAR_SECOND, 2.294f);
         SetGearRatio(eGEAR.eGEAR_THIRD, 1.85f);
         SetGearRatio(eGEAR.eGEAR_FOURTH, 1.522f);
         SetGearRatio(eGEAR.eGEAR_FIFTH, 1.273f);
         SetGearRatio(eGEAR.eGEAR_SIXTH, 1.097f);
+        brakePower = 50000f;
         curGear = eGEAR.eGEAR_FIRST;
         nextGear = eGEAR.eGEAR_FIRST;
         shiftTimer = 0;
-        shiftTiming = 1.0f;
+        shiftTiming = 0.6f;
         curCamPosition = 0;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
 
-        StartCoroutine(Moving());
+        StartCoroutine(Operate());
     }
 
     private void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.V))
             changeCameraPosition();
+        SetSpeed();
+        //SetCenterMass();
+        ShowCenterMass();
+        SetSlpingAngle();
+        UpdatingWheels();
     }
 
-    IEnumerator Moving()
+    IEnumerator Operate()
     {
-        WaitForSeconds wfs = new WaitForSeconds(0.001f);
+        WaitForSeconds wfs = new WaitForSeconds(0.02f);
         while (true)
         {
             yield return wfs;
-            InputThrottle();
+
+            clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
             GearShift();
-            switch(Input.GetAxisRaw("Vertical"))
+            
+            if (ignition)
             {
-                case 0:
-                    MoveStop();
-                    BrakingUp();
-                    up = false;
-                    down = false;
-                    break;
-                case 1:
-                    MoveForward();
-                    up = true;
-                    break;
-                case -1:
-                    MoveBackward();
-                    down = true;
-                    break;
+                throttle = Input.GetAxis("Vertical");
+                //throttle = 1f;
+                if (slipingAngle < 120f)
+                {
+                    if (throttle < 0)
+                    {
+                        brakeInput = Mathf.Abs(throttle);
+                        down = true;
+                        clutch = 0f;
+                    }
+                    else
+                    {
+                        down = false;
+                        brakeInput = 0;
+                    }
+                }
+                else
+                    brakeInput = 0;
+                Braking();
+                Moving();
             }
-            switch(Input.GetAxisRaw("Horizontal"))
-            {
-                case 0:
-                    SteerNone();
-                    right = false;
-                    left = false;
-                    break;
-                case 1:
-                    SteerRight();
-                    right = true;
-                    break;
-                case -1:
-                    SteerLeft();
-                    left = true;
-                    break;
-            }
+            Steering(Input.GetAxis("Horizontal"));
             if (Input.GetKey(KeyCode.Space))
             {
                 SideBrakingDown();
@@ -106,16 +126,18 @@ public class Player_Car : Car
         curCamPosition++;
         if(curCamPosition >= personCamPosition.Length)
             curCamPosition = 0;
-        switch(curCamPosition)
-        {
-            case 0:
-                MainCamera.transform.position = personCamPosition[0].position;
-                MainCamera.transform.rotation = personCamPosition[0].rotation;
-                break;
-            case 1:
-                MainCamera.transform.position = personCamPosition[1].position;
-                MainCamera.transform.rotation = personCamPosition[1].rotation;
-                break;
-        }
+        MainCamera.transform.position = personCamPosition[curCamPosition].position;
+        MainCamera.transform.rotation = personCamPosition[curCamPosition].rotation;
+        //switch (curCamPosition)
+        //{
+        //    case 0:
+        //        MainCamera.transform.position = personCamPosition[0].position;
+        //        MainCamera.transform.rotation = personCamPosition[0].rotation;
+        //        break;
+        //    case 1:
+        //        MainCamera.transform.position = personCamPosition[1].position;
+        //        MainCamera.transform.rotation = personCamPosition[1].rotation;
+        //        break;
+        //}
     }
 }
