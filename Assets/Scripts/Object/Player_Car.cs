@@ -22,12 +22,7 @@ public class Player_Car : Car
 {
     [SerializeField] private Camera MainCamera;
     [SerializeField] private Transform[] personCamPosition;
-    public bool braking;
-    public bool sideBraking;
-    public bool up;
-    public bool down;
-    public bool left;
-    public bool right;
+    public bool braking, sideBraking, up, down, left, right;
     private int curCamPosition;
     private void Start()
     {
@@ -35,10 +30,13 @@ public class Player_Car : Car
         carRB = gameObject.GetComponent<Rigidbody>();
         ignition = true;
         braking = false;
+        engineAcceleration = 0.5f;
         minEngineRPM = 800f;
         maxEngineRPM = 9400f;
         curEngineRPM = 1000;
         horsePower = 465;
+        autoGear = true;
+        //horsePower = 200;
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
         SetGearRatio(eGEAR.eGEAR_REVERSE, -3.154f);
@@ -48,15 +46,17 @@ public class Player_Car : Car
         SetGearRatio(eGEAR.eGEAR_FOURTH, 1.522f);
         SetGearRatio(eGEAR.eGEAR_FIFTH, 1.273f);
         SetGearRatio(eGEAR.eGEAR_SIXTH, 1.097f);
+        lastGear = eGEAR.eGEAR_SIXTH;
+        finalDriveRatio = 4.188f;
         brakePower = 50000f;
         curGear = eGEAR.eGEAR_FIRST;
         nextGear = eGEAR.eGEAR_FIRST;
         shiftTimer = 0;
-        shiftTiming = 0.6f;
+        shiftTiming = 0.1f;
         curCamPosition = 0;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
 
-        StartCoroutine(Operate());
+        StartCoroutine(Controlling());
     }
 
     private void Update()
@@ -65,13 +65,14 @@ public class Player_Car : Car
         if (Input.GetKeyDown(KeyCode.V))
             changeCameraPosition();
         SetSpeed();
-        //SetCenterMass();
-        ShowCenterMass();
+        GearShift();
+        SetCenterMass();
+        //ShowCenterMass();
         SetSlpingAngle();
         UpdatingWheels();
     }
 
-    IEnumerator Operate()
+    IEnumerator Controlling()
     {
         WaitForSeconds wfs = new WaitForSeconds(0.02f);
         while (true)
@@ -79,8 +80,7 @@ public class Player_Car : Car
             yield return wfs;
 
             clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
-            GearShift();
-            
+            Engine();
             if (ignition)
             {
                 throttle = Input.GetAxis("Vertical");
@@ -102,7 +102,6 @@ public class Player_Car : Car
                 else
                     brakeInput = 0;
                 Braking();
-                Moving();
             }
             Steering(Input.GetAxis("Horizontal"));
             if (Input.GetKey(KeyCode.Space))

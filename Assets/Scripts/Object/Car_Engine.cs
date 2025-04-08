@@ -23,10 +23,17 @@ public partial class Car
     //바퀴 토크 = 엔진 토크(Engine Torque) × 변속기 기어비(Gear ratio) × 차동기어비(Differential ratio)
     protected bool ignition;
     protected float throttle;
+    private float acceleration;
+    protected float engineAcceleration;
     [SerializeField] protected AnimationCurve horsePowerCurve;
     protected float horsePower;
-    protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
-    protected float curEngineTorque, curWheelTorque;
+    [SerializeField] protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
+    [SerializeField] protected float curEngineTorque, curWheelTorque;
+
+    //forceRPMChange
+    [SerializeField] private bool redLine = false;
+    private float engineLerpValue;
+    //others
     protected float dragAmount;
     protected AudioSource engineSound;
 
@@ -40,59 +47,84 @@ public partial class Car
     [SerializeField] protected eGEAR nextGear;
     protected Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
     [SerializeField] protected float differentialRatio;
+    [SerializeField] protected float finalDriveRatio;
     [SerializeField] protected float clutch;
-    protected int maxGear;
-    //protected bool menualGear;
+    private bool reverse;
+    protected eGEAR lastGear;
+    protected bool autoGear;
     protected float shiftTimer;
     protected float shiftTiming;
     public void SetGearRatio(eGEAR _gearName, float _gearRatio) { gearRatio.Add(_gearName, _gearRatio); }
 
     //Engine Operation 엔진 동작
-    protected void CalculateTorque()
+    protected void Engine()
     {
         if (ignition)
         {
-            if (clutch < 0.1f)
-            {
-                curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle) + Random.Range(-50, 50), Time.deltaTime);
-            }
-            else
-            {
-                curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM - 100, curWheelRPM / gearRatio[curGear] * clutch), Time.deltaTime);
-                curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * ((horsePower * 7121) / curEngineRPM)) * gearRatio[curGear] * differentialRatio * clutch;
-            }
+            forceEngineLerp();
+            CalculateWheelRPM();
+            CalculateTorque();
+            TorqueToWheel();
+            if(autoGear) AutoGear();
         }
         else
         {
+            curEngineRPM = 0f;
             curWheelTorque = 0f;
+            if(throttle > 0f)
+                ignition = true;
         }
     }
-    protected void Moving()
+    private void TorqueToWheel()
     {
-        CalculateWheelRPM();
-        CalculateTorque();
         for (int i = 0; i < driveWheelsNum; i++)
         {
             driveWheels[i].motorTorque = throttle * (curWheelTorque / driveWheelsNum);
         }
         carRB.drag = dragAmount + (speed / 40000);
-        //for (int i = 0; i < driveWheelsNum; i++)
-        //    driveWheels[i].motorTorque = throttle * curWheelTorque;
     }
-    protected void CalculateWheelRPM()
+    private void CalculateWheelRPM()
     {
         tempWheelRPM = 0f;
         for (int i = 0; i < driveWheelsNum; i++)
         {
             tempWheelRPM += driveWheels[i].rpm;
         }
-        tempWheelRPM = Mathf.Abs(tempWheelRPM / driveWheelsNum);
-        curWheelRPM = tempWheelRPM;
+        tempWheelRPM = tempWheelRPM / driveWheelsNum;
+        if (tempWheelRPM > 0f)
+            reverse = false;
+        else
+            reverse = true;
+            curWheelRPM = tempWheelRPM;
+    }
+    private void CalculateTorque()
+    {
+        if (curEngineRPM >= maxEngineRPM) SetEngineLerp(maxEngineRPM - 1000f);
+        if(!redLine)
+        {
+            curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM, 1000f + Mathf.Abs(curWheelRPM) * finalDriveRatio * gearRatio[curGear]), (engineAcceleration * 10) * Time.deltaTime);
+            curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
+        }
+    }
+    protected void SetEngineLerp(float _num)
+    {
+        redLine = true;
+        engineLerpValue = _num;
+    }
+    private void forceEngineLerp()
+    {
+        if(redLine)
+        {
+            curEngineTorque = 0f;
+            curEngineRPM = Mathf.Lerp(curEngineRPM,engineLerpValue,20 * Time.deltaTime);
+            redLine = curEngineRPM <= engineLerpValue + 100 ? false : true;
+        }
     }
     protected void ChangeGear(bool _up)
     {
         if (_up)
         {
+            if(curGear == lastGear) { return; }
             switch(curGear)
             {
                 case eGEAR.eGEAR_REVERSE:
@@ -140,8 +172,11 @@ public partial class Car
             }
         }
     }
+    protected void SetGear(eGEAR _gear) { nextGear = _gear; }
     protected void GearShift()
     {
+        if (autoGear)
+            return;
         if (curGear == nextGear)
             return;
         if (shiftTimer < shiftTiming)
@@ -156,5 +191,14 @@ public partial class Car
             curEngineRPM = minEngineRPM;
             shiftTimer = 0;
         }
+    }
+    private void AutoGear()
+    {
+        if(IsGrounded()) return;
+
+        if (curEngineRPM > maxEngineRPM - 100f && curGear != lastGear && !reverse && speed > 40f)
+            ChangeGear(true);
+        if (curEngineRPM < minEngineRPM + 100f && curGear != eGEAR.eGEAR_FIRST)
+            ChangeGear(false);
     }
 }

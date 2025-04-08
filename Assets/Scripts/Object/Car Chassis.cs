@@ -128,4 +128,14 @@ public partial class Car
             driveWheels[i].brakeTorque = 0;
         }
     }
+
+    private bool IsGrounded()
+    {
+        for(int i = 0;i < wheelCount;i++)
+        {
+            if (wheels[i].wheelCollider.isGrounded)
+                return true;
+        }
+        return false;
+    }
 }
