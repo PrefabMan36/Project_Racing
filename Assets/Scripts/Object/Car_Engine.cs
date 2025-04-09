@@ -47,12 +47,12 @@ public partial class Car
     [SerializeField] protected eGEAR nextGear;
     protected Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
     protected Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
-    [SerializeField] protected float differentialRatio;
-    [SerializeField] protected float finalDriveRatio;
-    [SerializeField] protected float clutch;
+    protected float differentialRatio;
+    protected float finalDriveRatio;
+    protected float clutch;
     private bool reverse;
     protected eGEAR lastGear;
-    protected bool autoGear;
+    [SerializeField] protected bool autoGear;
     protected float shiftTimer;
     protected float shiftTiming;
     public void SetGearRatio(eGEAR _gearName, float _gearRatio)
@@ -117,11 +117,19 @@ public partial class Car
         if(!redLine)
         {
             if(clutch < 0.1f)
-                curEngineRPM = Mathf.Lerp(curEngineRPM, minEngineRPM, (engineAcceleration * 10) * Time.deltaTime);
+                curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle), (engineAcceleration) * Time.deltaTime * 3f);
             else
             {
-                curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM, 1000f + Mathf.Abs(curWheelRPM) * finalDriveRatio * gearRatio[curGear]), (engineAcceleration * Time.deltaTime) * gearRatio[curGear]);
-                curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
+                curEngineRPM = Mathf.Lerp
+                    (
+                        curEngineRPM,
+                        Mathf.Max(minEngineRPM, curWheelRPM * finalDriveRatio * gearRatio[curGear]),
+                        Time.deltaTime * 0.5f
+                    );
+                if (speed < gearSpeedLimit[curGear])
+                    curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /*7121*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
+                else
+                    curWheelTorque = 0f;
             }
         }
     }
@@ -205,7 +213,7 @@ public partial class Car
         else
         {
             curGear = nextGear;
-            curEngineRPM = minEngineRPM;
+            curEngineRPM = maxEngineRPM / 2 + 1000f;
             shiftTimer = 0;
         }
     }

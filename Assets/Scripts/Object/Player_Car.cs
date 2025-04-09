@@ -30,29 +30,37 @@ public class Player_Car : Car
         carRB = gameObject.GetComponent<Rigidbody>();
         ignition = true;
         braking = false;
-        engineAcceleration = 0.05f;
+        engineAcceleration = 0.5f;
         minEngineRPM = 800f;
         maxEngineRPM = 9400f;
         curEngineRPM = 1000;
         horsePower = 465;
-        autoGear = true;
+        autoGear = false;
         //horsePower = 200;
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
+        SetGearSpeedLimit(eGEAR.eGEAR_NEUTURAL, 0f);
         SetGearRatio(eGEAR.eGEAR_REVERSE, -3.154f);
+        SetGearSpeedLimit(eGEAR.eGEAR_REVERSE, -38f);
         SetGearRatio(eGEAR.eGEAR_FIRST, 3.154f);
+        SetGearSpeedLimit(eGEAR.eGEAR_FIRST, 76f);
         SetGearRatio(eGEAR.eGEAR_SECOND, 2.294f);
+        SetGearSpeedLimit(eGEAR.eGEAR_SECOND, 114f);
         SetGearRatio(eGEAR.eGEAR_THIRD, 1.85f);
+        SetGearSpeedLimit(eGEAR.eGEAR_THIRD, 148f);
         SetGearRatio(eGEAR.eGEAR_FOURTH, 1.522f);
+        SetGearSpeedLimit(eGEAR.eGEAR_FOURTH, 169);
         SetGearRatio(eGEAR.eGEAR_FIFTH, 1.273f);
+        SetGearSpeedLimit(eGEAR.eGEAR_FIFTH, 191);
         SetGearRatio(eGEAR.eGEAR_SIXTH, 1.097f);
+        SetGearSpeedLimit(eGEAR.eGEAR_SIXTH, 203f);
         lastGear = eGEAR.eGEAR_SIXTH;
         finalDriveRatio = 4.188f;
         brakePower = 50000f;
         curGear = eGEAR.eGEAR_FIRST;
         nextGear = eGEAR.eGEAR_FIRST;
         shiftTimer = 0;
-        shiftTiming = 0.1f;
+        shiftTiming = 0.5f;
         curCamPosition = 0;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
 
@@ -62,14 +70,18 @@ public class Player_Car : Car
     private void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.V))
-            changeCameraPosition();
+        //if (Input.GetKeyDown(KeyCode.V))
+        //    changeCameraPosition();
         SetSpeed();
         GearShift();
         SetCenterMass();
         //ShowCenterMass();
         SetSlpingAngle();
         UpdatingWheels();
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            ChangeGear(true);
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+            ChangeGear(false);
     }
 
     IEnumerator Controlling()
@@ -114,10 +126,6 @@ public class Player_Car : Car
                 SideBrakingUp();
                 sideBraking = false;
             }
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-                ChangeGear(true);
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-                ChangeGear(false);
         }
     }
     private void changeCameraPosition()
