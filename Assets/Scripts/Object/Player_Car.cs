@@ -30,7 +30,7 @@ public class Player_Car : Car
         carRB = gameObject.GetComponent<Rigidbody>();
         ignition = true;
         braking = false;
-        engineAcceleration = 0.5f;
+        engineAcceleration = 0.05f;
         minEngineRPM = 800f;
         maxEngineRPM = 9400f;
         curEngineRPM = 1000;
