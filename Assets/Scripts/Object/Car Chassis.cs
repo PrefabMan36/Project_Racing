@@ -21,7 +21,7 @@ public partial class Car
     protected Quaternion tempWheelRotation;
     protected Vector3 tempWheelPosition;
 
-    //chassisº®Ω√
+    //wheels
     [SerializeField] protected List<Wheel> wheels;
     protected int wheelCount;
     protected List<WheelCollider> driveWheels = new List<WheelCollider>();
@@ -29,6 +29,17 @@ public partial class Car
     protected int driveWheelsNum;
     protected int steerWheelsNum;
     protected eCAR_DRIVEAXEL driveAxel;
+
+    //tire
+    private WheelHit WheelHit; //»Ÿ¡§∫∏
+    [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
+    [Range(1f, 2f)] private float forwardValue = 1f;
+    [Range(1f, 2f)] private float sideValue = 2f;
+    private WheelFrictionCurve forwardFriction, sidewaysFriction;
+    [SerializeField] private float[] forwardSlip;
+    [SerializeField] private float[] sidewaysSlip;
+    [SerializeField] private float[] overallSlip;
+
     [SerializeField] protected AnimationCurve steeringCurve;
     protected float steeringInput;
     [SerializeField] protected float curSteerAngle;
@@ -72,6 +83,30 @@ public partial class Car
                     driveWheels.Add(wheels[i].wheelCollider);
                     break;
             }
+        }
+    }
+    protected void SetFriction()
+    {
+        forwardSlip = new float[wheelCount];
+        sidewaysSlip = new float[wheelCount];
+        overallSlip = new float[wheelCount];
+        for (int i = 0; i < wheelCount; i++)
+        {
+            forwardFriction = wheels[i].wheelCollider.forwardFriction;
+
+            forwardFriction.asymptoteValue = 1f;
+            forwardFriction.extremumSlip = 0.065f;
+            forwardFriction.asymptoteSlip = 0.8f;
+
+            wheels[i].wheelCollider.forwardFriction = forwardFriction;
+
+            sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
+
+            sidewaysFriction.asymptoteValue = 1f;
+            sidewaysFriction.extremumSlip = 0.065f;
+            sidewaysFriction.stiffness = 0.8f;
+
+            wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
     }
     public void SetDriveAxel(eCAR_DRIVEAXEL _driveAxel)
@@ -131,11 +166,35 @@ public partial class Car
 
     private bool IsGrounded()
     {
-        for(int i = 0;i < wheelCount;i++)
+        for (int i = 0; i < wheelCount; i++)
         {
             if (wheels[i].wheelCollider.isGrounded)
                 return true;
         }
         return false;
+    }
+
+    protected void UpdatingFriction()
+    {
+        for (int i = 0; i < wheelCount; i++)
+        {
+            if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
+            {
+                overallSlip[i] = Mathf.Abs(WheelHit.forwardSlip + WheelHit.sidewaysSlip);
+
+                forwardFriction = wheels[i].wheelCollider.forwardFriction;
+                forwardFriction.stiffness =tireGrip - (overallSlip[i] / 2) / forwardValue;
+                //forwardFriction.stiffness = 3f;
+                wheels[i].wheelCollider.forwardFriction = forwardFriction;
+
+                sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
+                sidewaysFriction.stiffness = tireGrip - (overallSlip[i] / 2) / sideValue;
+                //sidewaysFriction.stiffness = 3f;
+                wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
+
+                forwardSlip[i] = WheelHit.forwardSlip;
+                sidewaysSlip[i] = WheelHit.sidewaysSlip;
+            }
+        }
     }
 }

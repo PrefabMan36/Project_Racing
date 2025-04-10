@@ -31,7 +31,7 @@ public partial class Car
     protected float curEngineTorque, curWheelTorque;
 
     //forceRPMChange
-    [SerializeField] private bool redLine = false;
+    private bool redLine = false;
     private float engineLerpValue;
     //others
     protected float dragAmount;
@@ -75,6 +75,8 @@ public partial class Car
     {
         if (ignition)
         {
+            if(engineSound.isPlaying == false)
+                engineSound.Play();
             forceEngineLerp();
             CalculateWheelRPM();
             CalculateTorque();
@@ -84,6 +86,7 @@ public partial class Car
         }
         else
         {
+            engineSound.Stop();
             curEngineRPM = 0f;
             curWheelTorque = 0f;
             if(throttle > 0f)
@@ -105,12 +108,11 @@ public partial class Car
         {
             tempWheelRPM += driveWheels[i].rpm;
         }
-        tempWheelRPM = tempWheelRPM / driveWheelsNum;
+        curWheelRPM = tempWheelRPM / driveWheelsNum;
         if (tempWheelRPM > 0f)
             reverse = false;
         else
             reverse = true;
-            curWheelRPM = tempWheelRPM;
     }
     private void CalculateTorque()
     {
@@ -127,10 +129,11 @@ public partial class Car
                         Mathf.Max(minEngineRPM, curWheelRPM * finalDriveRatio * gearRatio[curGear]),
                         Time.deltaTime * 0.5f
                     );
-                if (speed < gearSpeedLimit[curGear])
-                    curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121f*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
-                else
-                    curWheelTorque = 0f;
+                curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121f*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
+                //if (speed < gearSpeedLimit[curGear])
+                //    curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121f*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
+                //else
+                //    curWheelTorque = 0f;
             }
         }
     }
@@ -232,6 +235,6 @@ public partial class Car
     {
         if(engineSound == null)
             return;
-        engineSound.pitch = Mathf.Lerp(-2, 2, curEngineRPM / maxEngineRPM);
+        engineSound.pitch = Mathf.Lerp(0.1f, 2, curEngineRPM / maxEngineRPM);
     }
 }

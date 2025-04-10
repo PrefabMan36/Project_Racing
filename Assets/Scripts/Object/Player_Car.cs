@@ -71,6 +71,7 @@ public class Player_Car : Car
         shiftTimer = 0;
         shiftTiming = 0.5f;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
+        SetFriction();
 
         StartCoroutine(Controlling());
     }
@@ -87,6 +88,7 @@ public class Player_Car : Car
         SetSlpingAngle();
         CameraUpdate();
         UpdatingWheels();
+        UpdatingFriction();
         if (Input.GetKeyDown(KeyCode.LeftShift))
             ChangeGear(true);
         if (Input.GetKeyDown(KeyCode.LeftControl))

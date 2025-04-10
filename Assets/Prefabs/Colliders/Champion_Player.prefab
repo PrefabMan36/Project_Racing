@@ -727,7 +727,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: a3691b0c8eb804744a953a9d6dff4804, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: -3
   Loop: 1
   Mute: 0
@@ -1267,6 +1267,9 @@ MonoBehaviour:
   - wheelModel: {fileID: 731422798687104664}
     wheelCollider: {fileID: 6721235449119894616}
     axel: 1
+  forwardSlip: []
+  sidewaysSlip: []
+  overallSlip: []
   steeringCurve:
     serializedVersion: 2
     m_Curve:
@@ -1320,6 +1323,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  maxEngineRPM: 0
+  minEngineRPM: 0
+  curEngineRPM: 0
+  tempWheelRPM: 0
+  curWheelRPM: 0
+  curEngineTorque: 0
+  curWheelTorque: 0
   redLine: 0
   engineSound: {fileID: 3941037406069742838}
   curGear: 0
