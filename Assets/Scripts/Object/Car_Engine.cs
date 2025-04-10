@@ -27,15 +27,15 @@ public partial class Car
     protected float engineAcceleration;
     [SerializeField] protected AnimationCurve horsePowerCurve;
     protected float horsePower;
-    [SerializeField] protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
-    [SerializeField] protected float curEngineTorque, curWheelTorque;
+    protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
+    protected float curEngineTorque, curWheelTorque;
 
     //forceRPMChange
     [SerializeField] private bool redLine = false;
     private float engineLerpValue;
     //others
     protected float dragAmount;
-    protected AudioSource engineSound;
+    [SerializeField] protected AudioSource engineSound;
 
     //Engine stat setting 엔진 스텟 설정
     public void SetHorsePower(float _horsePower) { horsePower = _horsePower; }
@@ -80,6 +80,7 @@ public partial class Car
             CalculateTorque();
             TorqueToWheel();
             if(autoGear) AutoGear();
+            EngineSoundUpdate();
         }
         else
         {
@@ -127,7 +128,7 @@ public partial class Car
                         Time.deltaTime * 0.5f
                     );
                 if (speed < gearSpeedLimit[curGear])
-                    curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /*7121*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
+                    curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121f*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
                 else
                     curWheelTorque = 0f;
             }
@@ -225,5 +226,12 @@ public partial class Car
             ChangeGear(true);
         if (curEngineRPM < maxEngineRPM / 2 && curGear != eGEAR.eGEAR_FIRST)
             ChangeGear(false);
+    }
+
+    private void EngineSoundUpdate()
+    {
+        if(engineSound == null)
+            return;
+        engineSound.pitch = Mathf.Lerp(-2, 2, curEngineRPM / maxEngineRPM);
     }
 }

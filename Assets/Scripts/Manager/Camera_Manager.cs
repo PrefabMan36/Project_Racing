@@ -52,8 +52,12 @@ public class Camera_Manager : MonoBehaviour
         mainCamera = gameObject.GetComponent<Camera>();
         cameraCurrentTransform = gameObject.transform;
         ObjectRB = atachedObject.GetComponent<Rigidbody>();
-        focusPoint = atachedObject;
+        focusPoint = atachedObject.transform.Find("FocusPoint").gameObject;
         targetTransform = focusPoint.transform;
+
+        mainCamera.usePhysicalProperties = true;
+        mainCamera.fieldOfView = fieldOfViewThirdPerson;
+
         SetHighCamPosition(2f);
         SetLowCamPosition(1f);
         SetFarCamPosition(-5f);

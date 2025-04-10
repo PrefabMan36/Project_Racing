@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //void setUpController()
@@ -20,14 +22,21 @@ using UnityEngine;
 //}
 public class Player_Car : Car
 {
+    [SerializeField] private CinemachineFreeLook defaultCamera;
+    [SerializeField] private CinemachineFreeLook sideCamera;
     [SerializeField] private Camera MainCamera;
-    [SerializeField] private Transform[] personCamPosition;
+    [SerializeField] private Transform camPosition;
+    private bool freeLook;
+    private float freeLookWaitTime;
     public bool braking, sideBraking, up, down, left, right;
-    private int curCamPosition;
     private void Start()
     {
+        defaultCamera.m_XAxis.Value = 0f;
+        freeLookWaitTime = 1.0f;
+        MainCamera = FindAnyObjectByType<Camera>();
         body = gameObject;
         carRB = gameObject.GetComponent<Rigidbody>();
+        defaultCamera.enabled = true;
         ignition = true;
         braking = false;
         engineAcceleration = 0.5f;
@@ -61,7 +70,6 @@ public class Player_Car : Car
         nextGear = eGEAR.eGEAR_FIRST;
         shiftTimer = 0;
         shiftTiming = 0.5f;
-        curCamPosition = 0;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
 
         StartCoroutine(Controlling());
@@ -77,6 +85,7 @@ public class Player_Car : Car
         SetCenterMass();
         //ShowCenterMass();
         SetSlpingAngle();
+        CameraUpdate();
         UpdatingWheels();
         if (Input.GetKeyDown(KeyCode.LeftShift))
             ChangeGear(true);
@@ -128,23 +137,52 @@ public class Player_Car : Car
             }
         }
     }
-    private void changeCameraPosition()
+    private void CameraUpdate()
     {
-        curCamPosition++;
-        if(curCamPosition >= personCamPosition.Length)
-            curCamPosition = 0;
-        MainCamera.transform.position = personCamPosition[curCamPosition].position;
-        MainCamera.transform.rotation = personCamPosition[curCamPosition].rotation;
-        //switch (curCamPosition)
-        //{
-        //    case 0:
-        //        MainCamera.transform.position = personCamPosition[0].position;
-        //        MainCamera.transform.rotation = personCamPosition[0].rotation;
-        //        break;
-        //    case 1:
-        //        MainCamera.transform.position = personCamPosition[1].position;
-        //        MainCamera.transform.rotation = personCamPosition[1].rotation;
-        //        break;
-        //}
+        FreeLookCheck();
+        if(freeLook)
+            defaultCamera.m_BindingMode = CinemachineTransposer.BindingMode.LockToTargetNoRoll;
+        else
+            defaultCamera.m_BindingMode = CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp;
+        if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
+        {
+            defaultCamera.enabled = true;
+            sideCamera.enabled = false;
+            up = false;
+            down = false;
+            left = false;
+            right = false;
+        }
+        else if(Input.GetAxis("Horizontal2") != 0)
+        {
+            defaultCamera.enabled = false;
+            sideCamera.enabled = true;
+            if (Input.GetAxis("Horizontal2") > 0)
+                right = true;
+            else
+                left = true;
+        }
+        else if (Input.GetAxis("Vertical2") < 0)
+        {
+            defaultCamera.enabled = false;
+            sideCamera.enabled = false;
+            MainCamera.transform.position = camPosition.position;
+            MainCamera.transform.rotation = camPosition.rotation;
+        }
+    }
+    private void FreeLookCheck()
+    {
+        if (Input.GetAxis("Mouse X") + Input.GetAxis("Mouse Y") != 0)
+        {
+            freeLookWaitTime = 1.0f;
+            freeLook = true;
+        }
+        if(freeLook)
+        {
+            if (freeLookWaitTime > 0f)
+                freeLookWaitTime -= Time.deltaTime;
+            else
+                freeLook = false;
+        }
     }
 }
