@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 //void setUpController()
 //{
@@ -31,6 +32,9 @@ public class Player_Car : Car
     public bool braking, sideBraking, up, down, left, right;
     private void Start()
     {
+        rpmGauge = FindAnyObjectByType<RPMGauge>();
+        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
+        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
         defaultCamera.m_XAxis.Value = 0f;
         freeLookWaitTime = 1.0f;
         MainCamera = FindAnyObjectByType<Camera>();
@@ -45,6 +49,7 @@ public class Player_Car : Car
         curEngineRPM = 1000;
         horsePower = 465;
         autoGear = false;
+        SetTireGrip(1.3f);
         //horsePower = 200;
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
@@ -82,7 +87,7 @@ public class Player_Car : Car
         //if (Input.GetKeyDown(KeyCode.V))
         //    changeCameraPosition();
         SetSpeed();
-        GearShift();
+        SetUI();
         SetCenterMass();
         //ShowCenterMass();
         SetSlpingAngle();
@@ -93,6 +98,14 @@ public class Player_Car : Car
             ChangeGear(true);
         if (Input.GetKeyDown(KeyCode.LeftControl))
             ChangeGear(false);
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            SetGear(eGEAR.eGEAR_FIRST);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            SetGear(eGEAR.eGEAR_SECOND);
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            SetGear(eGEAR.eGEAR_THIRD);
+        if(Input.GetKeyDown(KeyCode.Alpha4))
+            SetGear(eGEAR.eGEAR_FOURTH);
     }
 
     IEnumerator Controlling()
@@ -102,11 +115,13 @@ public class Player_Car : Car
         {
             yield return wfs;
 
-            clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
+            if(curGear != eGEAR.eGEAR_NEUTURAL)
+                clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
             Engine();
             if (ignition)
             {
-                throttle = Input.GetAxis("Vertical");
+                if (curGear != eGEAR.eGEAR_NEUTURAL)
+                    throttle = Input.GetAxis("Vertical");
                 //throttle = 1f;
                 if (slipingAngle < 120f)
                 {
@@ -171,6 +186,7 @@ public class Player_Car : Car
             MainCamera.transform.position = camPosition.position;
             MainCamera.transform.rotation = camPosition.rotation;
         }
+        defaultCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
     }
     private void FreeLookCheck()
     {

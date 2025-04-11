@@ -33,6 +33,7 @@ public partial class Car
     //tire
     private WheelHit WheelHit; //»Ÿ¡§∫∏
     [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
+    [Range(0.8f, 1.3f)] private float coreTireGrip = 1.3f;
     [Range(1f, 2f)] private float forwardValue = 1f;
     [Range(1f, 2f)] private float sideValue = 2f;
     private WheelFrictionCurve forwardFriction, sidewaysFriction;
@@ -50,6 +51,7 @@ public partial class Car
     protected float brakePower;
     protected float sideBrakePower;
 
+    public void SetTireGrip(float _grip) { tireGrip = _grip; }
     protected void SetSteerWheelsCount(int _steerWheelsCount) { steerWheelsNum = _steerWheelsCount; }
     protected void SetDriveWheels()
     {
