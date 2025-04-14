@@ -67,7 +67,7 @@ MonoBehaviour:
   - {r: 0.78431374, g: 0.39215687, b: 0, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   IsUsingMaxColor: 1
-  MaxColor: {r: 1, g: 0, b: 0, a: 0}
+  MaxColor: {r: 1, g: 0, b: 0, a: 1}
   TxtValue: {fileID: 0}
   MultifyText: 100
   TailText: '%'

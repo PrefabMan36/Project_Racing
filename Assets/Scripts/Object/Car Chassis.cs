@@ -22,6 +22,7 @@ public partial class Car
     protected Vector3 tempWheelPosition;
 
     //wheels
+    private WheelHit WheelHit; //»Ÿ¡§∫∏
     [SerializeField] protected List<Wheel> wheels;
     protected int wheelCount;
     protected List<WheelCollider> driveWheels = new List<WheelCollider>();
@@ -29,11 +30,11 @@ public partial class Car
     protected int driveWheelsNum;
     protected int steerWheelsNum;
     protected eCAR_DRIVEAXEL driveAxel;
+    [SerializeField] private float[] differentialPower;
 
     //tire
-    private WheelHit WheelHit; //»Ÿ¡§∫∏
-    [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
-    [Range(0.8f, 1.3f)] private float coreTireGrip = 1.3f;
+    [Range(0.8f, 1.3f)] private float tireGrip = 1.0f;
+    [Range(0.8f, 1.3f)] private float coreTireGrip = 1.0f;
     [Range(1f, 2f)] private float forwardValue = 1f;
     [Range(1f, 2f)] private float sideValue = 2f;
     private WheelFrictionCurve forwardFriction, sidewaysFriction;
@@ -43,7 +44,7 @@ public partial class Car
 
     [SerializeField] protected AnimationCurve steeringCurve;
     protected float steeringInput;
-    [SerializeField] protected float curSteerAngle;
+    [SerializeField] protected float curSteerAngle = 0f;
     protected float steerSpeed;
     protected float slipingAngle;
     protected float brakeInput;
@@ -51,7 +52,15 @@ public partial class Car
     protected float brakePower;
     protected float sideBrakePower;
 
-    public void SetTireGrip(float _grip) { tireGrip = _grip; }
+    //Anti Roll Bar
+    protected float antiRoll;
+    private float antiRollForce;
+    private float travelL;
+    private float travelR;
+    private bool groundedL;
+    private bool groundedR;
+
+    public void SetTireGrip(float _grip) { coreTireGrip = _grip; }
     protected void SetSteerWheelsCount(int _steerWheelsCount) { steerWheelsNum = _steerWheelsCount; }
     protected void SetDriveWheels()
     {
@@ -86,6 +95,7 @@ public partial class Car
                     break;
             }
         }
+        differentialPower = new float[driveWheelsNum];
     }
     protected void SetFriction()
     {
@@ -96,17 +106,19 @@ public partial class Car
         {
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
 
-            forwardFriction.asymptoteValue = 1f;
-            forwardFriction.extremumSlip = 0.065f;
-            forwardFriction.asymptoteSlip = 0.8f;
+            forwardFriction.extremumSlip = 0.7f;
+            forwardFriction.extremumValue = 1.8f;
+            forwardFriction.asymptoteSlip = 1.2f;
+            forwardFriction.asymptoteValue = 0.5f;
 
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
 
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
 
-            sidewaysFriction.asymptoteValue = 1f;
-            sidewaysFriction.extremumSlip = 0.065f;
-            sidewaysFriction.stiffness = 0.8f;
+            sidewaysFriction.extremumSlip = 1.0f;
+            sidewaysFriction.extremumValue = 2.2f;
+            sidewaysFriction.asymptoteSlip = 1.5f;
+            sidewaysFriction.asymptoteValue = 0.6f;
 
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
@@ -145,17 +157,14 @@ public partial class Car
     {
         for (int i = 0; i < wheelCount; i++)
         {
-            if (wheels[i].axel == eAXEL.eAXEL_BACK)
-                wheels[i].wheelCollider.brakeTorque = brakeInput * brakePower * 2;
-            else
-                wheels[i].wheelCollider.brakeTorque = brakeInput * brakePower;
+            wheels[i].wheelCollider.brakeTorque = brakeInput * brakePower;
         }
     }
     protected void SideBrakingDown()
     {
         for (int i = 0; i < driveWheelsNum; i++)
         {
-            driveWheels[i].brakeTorque += sideBrakePower;
+            driveWheels[i].brakeTorque = Mathf.Infinity;
         }
     }
     protected void SideBrakingUp()
@@ -185,18 +194,44 @@ public partial class Car
                 overallSlip[i] = Mathf.Abs(WheelHit.forwardSlip + WheelHit.sidewaysSlip);
 
                 forwardFriction = wheels[i].wheelCollider.forwardFriction;
-                forwardFriction.stiffness =tireGrip - (overallSlip[i] / 2) / forwardValue;
-                //forwardFriction.stiffness = 3f;
+                forwardFriction.stiffness = tireGrip - (overallSlip[i] / 2) / forwardValue;
                 wheels[i].wheelCollider.forwardFriction = forwardFriction;
 
                 sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
-                sidewaysFriction.stiffness = tireGrip - (overallSlip[i] / 2) / sideValue;
-                //sidewaysFriction.stiffness = 3f;
+                sidewaysFriction.stiffness = tireGrip - overallSlip[i] / sideValue;
                 wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
 
                 forwardSlip[i] = WheelHit.forwardSlip;
                 sidewaysSlip[i] = WheelHit.sidewaysSlip;
             }
         }
+        for (int i = 0; i < driveWheelsNum; i++)
+        {
+            if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
+            {
+                differentialPower[i] = WheelHit.force;
+            }
+        }
+    }
+
+    protected void AntiRollBar()
+    {
+        travelL = 1.0f;
+        travelR = 1.0f;
+        groundedL = steerWheels[0].GetGroundHit(out WheelHit);
+        groundedR = steerWheels[1].GetGroundHit(out WheelHit);
+        if (groundedL)
+        {
+            travelL = (-steerWheels[0].transform.InverseTransformPoint(WheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;
+        }
+        if (groundedR)
+        {
+            travelR = (-steerWheels[1].transform.InverseTransformPoint(WheelHit.point).y - steerWheels[1].radius) / steerWheels[1].suspensionDistance;
+        }
+        antiRollForce = (travelL - travelR) * antiRoll;
+        if (groundedL)
+            carRB.AddForceAtPosition(steerWheels[0].transform.up * -antiRollForce, steerWheels[0].transform.position);
+        if (groundedR)
+            carRB.AddForceAtPosition(steerWheels[1].transform.up * antiRollForce, steerWheels[1].transform.position);
     }
 }

@@ -8,7 +8,7 @@ public partial class Car
     [SerializeField] GameObject centerMass;
     [SerializeField] protected Rigidbody carRB;
     public float curDownforce;
-    private float downForce = 50f;
+    private float downForce = 50;
     public void SetCenterMass() { carRB.centerOfMass = centerMass.transform.localPosition; }
     public void ShowCenterMass() { centerMass.transform.position = carRB.centerOfMass; }
     public void SetCarRB(Rigidbody _carRB) { carRB = _carRB; }
@@ -20,9 +20,9 @@ public partial class Car
     protected void SetSpeed()
     {
         speed = carRB.velocity.magnitude * 3.6f;//m/s to km/h
-        carRB.drag = dragAmount + (speed / 4000);
-        curDownforce = -Mathf.Lerp(0, 1, speed / 300f) * downForce;
-        carRB.AddForce(Vector3.up * curDownforce);
-        tireGrip = coreTireGrip + Mathf.Lerp(0, 1, speed / 300f);
+        //carRB.drag = dragAmount + (speed / 6000);
+        //curDownforce = -(Mathf.Lerp(0, 1, speed / gearSpeedLimit[lastGear]) * downForce);
+        //carRB.AddForce(Vector3.up * curDownforce);
+        tireGrip = coreTireGrip; //Mathf.Lerp(0f, 1f, speed / gearSpeedLimit[lastGear]);
     }
 }

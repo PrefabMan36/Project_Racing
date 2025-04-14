@@ -23,24 +23,38 @@ using UnityEngine.UI;
 //}
 public class Player_Car : Car
 {
-    [SerializeField] private CinemachineFreeLook defaultCamera;
-    [SerializeField] private CinemachineFreeLook sideCamera;
-    [SerializeField] private Camera MainCamera;
+    private CinemachineFreeLook freeLookCamera;
+    private CinemachineFreeLook sideCamera;
+    private Camera MainCamera;
     [SerializeField] private Transform camPosition;
     private bool freeLook;
     private float freeLookWaitTime;
     public bool braking, sideBraking, up, down, left, right;
+
+    private void Awake()
+    {
+        
+    }
     private void Start()
     {
         rpmGauge = FindAnyObjectByType<RPMGauge>();
+
+        freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
+        sideCamera = gameObject.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
+        freeLookCamera.Follow = gameObject.transform;
+        freeLookCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
+        sideCamera.Follow = gameObject.transform;
+        sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
+        MainCamera = FindAnyObjectByType<Camera>();
+
         speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
         gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
-        defaultCamera.m_XAxis.Value = 0f;
+        freeLookCamera.m_XAxis.Value = 0f;
         freeLookWaitTime = 1.0f;
         MainCamera = FindAnyObjectByType<Camera>();
         body = gameObject;
         carRB = gameObject.GetComponent<Rigidbody>();
-        defaultCamera.enabled = true;
+        freeLookCamera.enabled = true;
         ignition = true;
         braking = false;
         engineAcceleration = 0.5f;
@@ -48,28 +62,29 @@ public class Player_Car : Car
         maxEngineRPM = 9400f;
         curEngineRPM = 1000;
         horsePower = 465;
-        autoGear = false;
-        SetTireGrip(1.3f);
-        //horsePower = 200;
+        autoGear = true;
+        antiRoll = 5000f;
+        SetTireGrip(1.0f);
+        horsePower = 200;
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
         SetGearSpeedLimit(eGEAR.eGEAR_NEUTURAL, 0f);
-        SetGearRatio(eGEAR.eGEAR_REVERSE, -3.154f);
-        SetGearSpeedLimit(eGEAR.eGEAR_REVERSE, -38f);
-        SetGearRatio(eGEAR.eGEAR_FIRST, 3.154f);
-        SetGearSpeedLimit(eGEAR.eGEAR_FIRST, 76f);
-        SetGearRatio(eGEAR.eGEAR_SECOND, 2.294f);
-        SetGearSpeedLimit(eGEAR.eGEAR_SECOND, 114f);
-        SetGearRatio(eGEAR.eGEAR_THIRD, 1.85f);
-        SetGearSpeedLimit(eGEAR.eGEAR_THIRD, 148f);
-        SetGearRatio(eGEAR.eGEAR_FOURTH, 1.522f);
-        SetGearSpeedLimit(eGEAR.eGEAR_FOURTH, 169);
-        SetGearRatio(eGEAR.eGEAR_FIFTH, 1.273f);
-        SetGearSpeedLimit(eGEAR.eGEAR_FIFTH, 191);
-        SetGearRatio(eGEAR.eGEAR_SIXTH, 1.097f);
-        SetGearSpeedLimit(eGEAR.eGEAR_SIXTH, 203f);
+        SetGearRatio(eGEAR.eGEAR_REVERSE, -3.44f);
+        SetGearSpeedLimit(eGEAR.eGEAR_REVERSE, 99f);
+        SetGearRatio(eGEAR.eGEAR_FIRST, 3.75f);
+        SetGearSpeedLimit(eGEAR.eGEAR_FIRST, 82f);
+        SetGearRatio(eGEAR.eGEAR_SECOND, 2.38f);
+        SetGearSpeedLimit(eGEAR.eGEAR_SECOND, 130f);
+        SetGearRatio(eGEAR.eGEAR_THIRD, 1.72f);
+        SetGearSpeedLimit(eGEAR.eGEAR_THIRD, 179f);
+        SetGearRatio(eGEAR.eGEAR_FOURTH, 1.34f);
+        SetGearSpeedLimit(eGEAR.eGEAR_FOURTH, 230);
+        SetGearRatio(eGEAR.eGEAR_FIFTH, 1.08f);
+        SetGearSpeedLimit(eGEAR.eGEAR_FIFTH, 286);
+        SetGearRatio(eGEAR.eGEAR_SIXTH, 0.88f);
+        SetGearSpeedLimit(eGEAR.eGEAR_SIXTH, 351f);
         lastGear = eGEAR.eGEAR_SIXTH;
-        finalDriveRatio = 4.188f;
+        finalDriveRatio = 3.97f;
         brakePower = 50000f;
         curGear = eGEAR.eGEAR_FIRST;
         nextGear = eGEAR.eGEAR_FIRST;
@@ -77,7 +92,6 @@ public class Player_Car : Car
         shiftTiming = 0.5f;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
         SetFriction();
-
         StartCoroutine(Controlling());
     }
 
@@ -88,12 +102,11 @@ public class Player_Car : Car
         //    changeCameraPosition();
         SetSpeed();
         SetUI();
-        SetCenterMass();
-        //ShowCenterMass();
+        //SetCenterMass();
+        ShowCenterMass();
         SetSlpingAngle();
         CameraUpdate();
         UpdatingWheels();
-        UpdatingFriction();
         if (Input.GetKeyDown(KeyCode.LeftShift))
             ChangeGear(true);
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -108,6 +121,12 @@ public class Player_Car : Car
             SetGear(eGEAR.eGEAR_FOURTH);
     }
 
+    private void FixedUpdate()
+    {
+        UpdatingFriction();
+        AntiRollBar();
+    }
+
     IEnumerator Controlling()
     {
         WaitForSeconds wfs = new WaitForSeconds(0.02f);
@@ -117,28 +136,37 @@ public class Player_Car : Car
 
             if(curGear != eGEAR.eGEAR_NEUTURAL)
                 clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
+            if(Input.GetKey(KeyCode.C))
+                clutch = 0f;
             Engine();
             if (ignition)
             {
                 if (curGear != eGEAR.eGEAR_NEUTURAL)
                     throttle = Input.GetAxis("Vertical");
-                //throttle = 1f;
-                if (slipingAngle < 120f)
+                if(throttle < 0)
                 {
-                    if (throttle < 0)
-                    {
-                        brakeInput = Mathf.Abs(throttle);
-                        down = true;
-                        clutch = 0f;
-                    }
-                    else
-                    {
-                        down = false;
-                        brakeInput = 0;
-                    }
+                    clutch = 0f;
+                    brakeInput = Mathf.Abs(throttle);
                 }
                 else
-                    brakeInput = 0;
+                    brakeInput = 0f;
+                //throttle = 1f;
+                //if (slipingAngle < 120f)
+                //{
+                //    if (throttle < 0)
+                //    {
+                //        brakeInput = Mathf.Abs(throttle);
+                //        down = true;
+                //        clutch = 0f;
+                //    }
+                //    else
+                //    {
+                //        down = false;
+                //        brakeInput = 0;
+                //    }
+                //}
+                //else
+                //    brakeInput = 0;
                 Braking();
             }
             Steering(Input.GetAxis("Horizontal"));
@@ -156,14 +184,9 @@ public class Player_Car : Car
     }
     private void CameraUpdate()
     {
-        FreeLookCheck();
-        if(freeLook)
-            defaultCamera.m_BindingMode = CinemachineTransposer.BindingMode.LockToTargetNoRoll;
-        else
-            defaultCamera.m_BindingMode = CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp;
         if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
         {
-            defaultCamera.enabled = true;
+            freeLookCamera.enabled = true;
             sideCamera.enabled = false;
             up = false;
             down = false;
@@ -172,7 +195,7 @@ public class Player_Car : Car
         }
         else if(Input.GetAxis("Horizontal2") != 0)
         {
-            defaultCamera.enabled = false;
+            freeLookCamera.enabled = false;
             sideCamera.enabled = true;
             if (Input.GetAxis("Horizontal2") > 0)
                 right = true;
@@ -181,12 +204,12 @@ public class Player_Car : Car
         }
         else if (Input.GetAxis("Vertical2") < 0)
         {
-            defaultCamera.enabled = false;
+            freeLookCamera.enabled = false;
             sideCamera.enabled = false;
             MainCamera.transform.position = camPosition.position;
             MainCamera.transform.rotation = camPosition.rotation;
         }
-        defaultCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
+        freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
     }
     private void FreeLookCheck()
     {

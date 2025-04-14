@@ -6,6 +6,7 @@ using UnityEngine;
 public class CineMachine_Car_Manager : MonoBehaviour
 {
     private CinemachineFreeLook carCamera;
+    private CinemachineVirtualCamera virCamera;
 
     private void Awake()
     {

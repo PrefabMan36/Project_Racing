@@ -1,0 +1,29 @@
+1. Forward Friction (전방 마찰 - 가속 및 제동 관련):
+
+Extremum Slip: 0.2 ~ 0.4 (낮게 설정하여 빠르게 최대 가속/제동력에 도달)
+Extremum Value: 1.5 ~ 2.5 (높게 설정하여 강력한 가속 및 제동 성능)
+Asymptote Slip: 0.5 ~ 0.8 (Extremum Slip보다 높게 설정)
+Asymptote Value: 1.0 ~ 2.0 (Extremum Value보다 약간 낮거나 비슷하게 설정. 휠 스핀이나 락업 시에도 어느 정도 제어력을 유지하도록 함)
+Stiffness: 1.0 (시작 값, 나중에 전체 그립 조절용으로 사용)
+2. Sideways Friction (측면 마찰 - 코너링 및 드리프트 관련):
+
+Extremum Slip: 0.5 ~ 0.8 (코너링 시 최대 그립이 발생하는 지점)
+Extremum Value: 1.8 ~ 3.0 (높게 설정하여 날카로운 코너링 가능)
+Asymptote Slip: 0.7 ~ 1.2 (Extremum Slip보다 높게 설정. 이 값을 넘어서면 본격적인 슬라이드/드리프트 시작)
+Asymptote Value: 1.2 ~ 2.5 (아케이드 드리프트의 핵심! 이 값을 상대적으로 높게 유지하여 미끄러지면서도 차량 제어가 가능하고 속도 손실이 적도록 함. Extremum Value와 비슷하거나 약간 낮게 설정하는 것이 일반적. 너무 낮으면 드리프트 제어가 어렵거나 스핀하기 쉬움)
+Stiffness: 1.0 (시작 값, 나중에 전체 그립 조절용으로 사용)
+
+1. Forward Friction (전방 마찰 - 가속 및 제동):
+
+Extremum Slip: 0.4 ~ 0.7 (아케이드보다 약간 높게 설정하여, 최대 마찰력을 위해 약간의 슬립이 필요함을 반영)
+Extremum Value: 1.0 ~ 1.8 (현실적인 타이어의 최대 마찰 계수를 고려한 값. 아케이드보다는 약간 낮거나 비슷할 수 있으나, Asymptote와의 차이가 중요)
+Asymptote Slip: 0.8 ~ 1.2 (Extremum Slip보다 충분히 높게 설정)
+Asymptote Value: 0.5 ~ 1.0 (핵심: Extremum Value보다 상당히 낮게 설정합니다. 이는 휠 스핀이 발생하거나 바퀴가 잠길 때(lock-up) 마찰력이 크게 감소하는 현실적인 현상을 반영합니다. 이 차이가 클수록 한계를 넘었을 때 제어가 더 어려워집니다.)
+Stiffness: 1.0 (시작 값. 나중에 타이어 컴파운드(소프트/하드)나 마모도를 시뮬레이션하는 데 사용될 수 있음)
+2. Sideways Friction (측면 마찰 - 코너링):
+
+Extremum Slip: 0.7 ~ 1.0 (최대 코너링 포스가 발생하는 슬립 각(slip angle)을 나타냅니다. 실제 타이어 데이터와 유사하게 설정)
+Extremum Value: 1.2 ~ 2.2 (타이어가 발휘할 수 있는 최대 횡 G(lateral G)와 관련된 값. 차량 종류나 타이어 성능에 따라 조절)
+Asymptote Slip: 1.0 ~ 1.5 (Extremum Slip보다 높게 설정. 이 값을 넘어서면 타이어가 옆으로 미끄러지기 시작)
+Asymptote Value: 0.6 ~ 1.2 (핵심: Forward Friction과 마찬가지로, Extremum Value보다 상당히 낮게 설정합니다. 코너링 한계를 넘어서 타이어가 미끄러지기 시작하면 횡 방향 그립이 크게 줄어들어 차량이 스핀하거나 언더스티어가 발생하기 쉽게 만듭니다. 드리프트가 아케이드처럼 쉽지 않고 더 정교한 컨트롤을 요구하게 됩니다.)
+Stiffness: 1.0 (시작 값)

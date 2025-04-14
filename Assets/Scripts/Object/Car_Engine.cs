@@ -24,8 +24,10 @@ public partial class Car
     protected bool ignition;
     protected float throttle;
     private float acceleration;
+    private float overSpeed;
     protected float engineAcceleration;
     [SerializeField] protected AnimationCurve horsePowerCurve;
+    [SerializeField] protected AnimationCurve engineTorqueCurve;
     protected float horsePower;
     protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
     protected float curEngineTorque, curWheelTorque;
@@ -45,10 +47,11 @@ public partial class Car
     public void SetEngineSound(AudioSource _engineSound) { engineSound = _engineSound; }
 
     //Gear±â¾î
-    [SerializeField] protected eGEAR curGear;
-    [SerializeField] protected eGEAR nextGear;
-    protected Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
-    protected Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
+    [SerializeField] protected eGEAR curGear = eGEAR.eGEAR_NEUTURAL;
+    [SerializeField] protected eGEAR nextGear = eGEAR.eGEAR_NEUTURAL;
+    private Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
+    private Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
+    private float perviousMaxSpeed = 0;
     protected float differentialRatio;
     protected float finalDriveRatio;
     protected float clutch;
@@ -79,12 +82,12 @@ public partial class Car
         {
             if(engineSound.isPlaying == false)
                 engineSound.Play();
+            GearShift();
             forceEngineLerp();
             CalculateWheelRPM();
             CalculateTorque();
             TorqueToWheel();
             if (autoGear) AutoGear();
-            GearShift();
             EngineSoundUpdate();
             UpdateRPMGauge();
         }
@@ -122,7 +125,11 @@ public partial class Car
         if (curEngineRPM >= maxEngineRPM) SetEngineLerp(maxEngineRPM - 1000f);
         if(!redLine)
         {
-            if(clutch < 0.1f)
+            if (speed > gearSpeedLimit[curGear])
+                overSpeed = 4f;
+            else
+                overSpeed = 1f;
+            if (clutch < 0.1f)
                 curEngineRPM = Mathf.Lerp(curEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle), Time.deltaTime * 3f);
             else
             {
@@ -130,13 +137,12 @@ public partial class Car
                     (
                         curEngineRPM,
                         Mathf.Max(minEngineRPM, curWheelRPM * finalDriveRatio * gearRatio[curGear]),
-                        (engineAcceleration * Time.deltaTime) * gearRatio[curGear]
+                        (overSpeed * engineAcceleration * Time.deltaTime) * gearRatio[curGear]
                     );
-                curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121f*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
-                //if (speed < gearSpeedLimit[curGear])
-                //    curWheelTorque = (horsePowerCurve.Evaluate(curEngineRPM / maxEngineRPM) * (horsePower /* 7121f*/)) * (gearRatio[curGear] * finalDriveRatio) * clutch;
-                //else
-                //    curWheelTorque = 0f;
+                if (speed < gearSpeedLimit[curGear])
+                    curWheelTorque = (engineTorqueCurve.Evaluate(curEngineRPM) /* (horsePowerCurve.Evaluate(curEngineRPM)))*/ * (gearRatio[curGear] * finalDriveRatio) * clutch);
+                else
+                    curWheelTorque = 0f;
             }
         }
     }
@@ -149,7 +155,7 @@ public partial class Car
     {
         if(redLine)
         {
-            curEngineTorque = 0f;
+            //curEngineTorque = 0f;
             curEngineRPM = Mathf.Lerp(curEngineRPM,engineLerpValue,20 * Time.deltaTime);
             redLine = curEngineRPM <= engineLerpValue + 100 ? false : true;
         }
@@ -211,34 +217,60 @@ public partial class Car
     {
         if (curGear == nextGear)
             return;
+        if (autoGear)
+            shiftTiming = 0.25f;
         if (shiftTimer < shiftTiming)
         {
             curGear = eGEAR.eGEAR_NEUTURAL;
             throttle = 0f;
             clutch = 0f;
             shiftTimer += Time.deltaTime;
+            //curEngineRPM = Mathf.Lerp(curEngineRPM, maxEngineRPM / 3 + minEngineRPM, Time.deltaTime * 5f);
         }
         else
         {
             curGear = nextGear;
-            curEngineRPM = maxEngineRPM / 2;
+            curEngineRPM = maxEngineRPM / 2 + minEngineRPM;
             shiftTimer = 0;
+            switch (curGear)
+            {
+                case eGEAR.eGEAR_NEUTURAL:
+                case eGEAR.eGEAR_REVERSE:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_NEUTURAL];
+                    break;
+                case eGEAR.eGEAR_FIRST:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_NEUTURAL];
+                    break;
+                case eGEAR.eGEAR_SECOND:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_FIRST];
+                    break;
+                case eGEAR.eGEAR_THIRD:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_SECOND];
+                    break;
+                case eGEAR.eGEAR_FOURTH:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_THIRD];
+                    break;
+                case eGEAR.eGEAR_FIFTH:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_FOURTH];
+                    break;
+                case eGEAR.eGEAR_SIXTH:
+                    perviousMaxSpeed = gearSpeedLimit[eGEAR.eGEAR_FIFTH];
+                    break;
+            }
         }
     }
     private void AutoGear()
     {
         if(!IsGrounded()) return;
-
-        if (curEngineRPM > maxEngineRPM - 100f && curGear != lastGear && !reverse && speed > 40f)
-            ChangeGear(true);
-        if (curEngineRPM < maxEngineRPM / 2 && curGear != eGEAR.eGEAR_FIRST)
-            ChangeGear(false);
+        if(speed > gearSpeedLimit[curGear] -10f && curEngineRPM >= maxEngineRPM - minEngineRPM - 500f) { ChangeGear(true); }
+        if(speed < perviousMaxSpeed + 10f && curGear != eGEAR.eGEAR_FIRST && curEngineRPM < maxEngineRPM / 3 + minEngineRPM) { ChangeGear(false); }
     }
 
     private void EngineSoundUpdate()
     {
         if(engineSound == null)
             return;
+        engineSound.volume = Mathf.Lerp(0.3f, 0.5f, clutch);
         engineSound.pitch = Mathf.Lerp(0.1f, 2, curEngineRPM / maxEngineRPM);
     }
 
