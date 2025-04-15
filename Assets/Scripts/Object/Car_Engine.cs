@@ -104,7 +104,7 @@ public partial class Car
     {
         for (int i = 0; i < driveWheelsNum; i++)
         {
-            driveWheels[i].motorTorque = throttle * (curWheelTorque / driveWheelsNum);
+            driveWheels[i].motorTorque = throttle * (curWheelTorque / driveWheelsNum) * differentialPower[i];
         }
     }
     private void CalculateWheelRPM()
@@ -146,6 +146,7 @@ public partial class Car
             }
         }
     }
+    protected float LastGearLimit() { return gearSpeedLimit[lastGear]; }
     protected void SetEngineLerp(float _num)
     {
         redLine = true;
@@ -270,8 +271,8 @@ public partial class Car
     {
         if(engineSound == null)
             return;
-        engineSound.volume = Mathf.Lerp(0.3f, 0.5f, clutch);
-        engineSound.pitch = Mathf.Lerp(0.1f, 2, curEngineRPM / maxEngineRPM);
+        engineSound.volume = Mathf.Lerp(0.3f, 0.4f, clutch);
+        engineSound.pitch = Mathf.Lerp(0.1f, 1.4f, curEngineRPM / maxEngineRPM);
     }
 
     private void UpdateRPMGauge()

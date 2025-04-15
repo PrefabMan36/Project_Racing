@@ -23,6 +23,5 @@ public partial class Car
         //carRB.drag = dragAmount + (speed / 6000);
         //curDownforce = -(Mathf.Lerp(0, 1, speed / gearSpeedLimit[lastGear]) * downForce);
         //carRB.AddForce(Vector3.up * curDownforce);
-        tireGrip = coreTireGrip; //Mathf.Lerp(0f, 1f, speed / gearSpeedLimit[lastGear]);
     }
 }

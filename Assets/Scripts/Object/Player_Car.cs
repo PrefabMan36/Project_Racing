@@ -25,10 +25,15 @@ public class Player_Car : Car
 {
     private CinemachineFreeLook freeLookCamera;
     private CinemachineFreeLook sideCamera;
+    private Transform firstPersonCamera;
+    private Transform lookBack;
     private Camera MainCamera;
-    [SerializeField] private Transform camPosition;
+    [SerializeField] private RadialBlur radialBlur;
+
+    private bool firstPersonCameraCheck = false;
     private bool freeLook;
     private float freeLookWaitTime;
+
     public bool braking, sideBraking, up, down, left, right;
 
     private void Awake()
@@ -41,11 +46,17 @@ public class Player_Car : Car
 
         freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
         sideCamera = gameObject.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
+        firstPersonCamera = gameObject.transform.Find("FirstPersonCamera");
+        lookBack = gameObject.transform.Find("LookBackCamera");
         freeLookCamera.Follow = gameObject.transform;
         freeLookCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
         sideCamera.Follow = gameObject.transform;
         sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
         MainCamera = FindAnyObjectByType<Camera>();
+
+        radialBlur = MainCamera.GetComponent<RadialBlur>();
+
+        SetCenterMass();
 
         speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
         gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
@@ -64,7 +75,6 @@ public class Player_Car : Car
         horsePower = 465;
         autoGear = true;
         antiRoll = 5000f;
-        SetTireGrip(1.0f);
         horsePower = 200;
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
@@ -102,11 +112,12 @@ public class Player_Car : Car
         //    changeCameraPosition();
         SetSpeed();
         SetUI();
-        //SetCenterMass();
-        ShowCenterMass();
+        Steering(Input.GetAxis("Horizontal"));
         SetSlpingAngle();
         CameraUpdate();
         UpdatingWheels();
+        if (Input.GetKeyDown(KeyCode.V))
+            firstPerson();
         if (Input.GetKeyDown(KeyCode.LeftShift))
             ChangeGear(true);
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -169,7 +180,6 @@ public class Player_Car : Car
                 //    brakeInput = 0;
                 Braking();
             }
-            Steering(Input.GetAxis("Horizontal"));
             if (Input.GetKey(KeyCode.Space))
             {
                 SideBrakingDown();
@@ -180,11 +190,26 @@ public class Player_Car : Car
                 SideBrakingUp();
                 sideBraking = false;
             }
+            SetRadialBlur();
         }
     }
     private void CameraUpdate()
     {
-        if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
+        if (Input.GetAxis("Vertical2") < 0)
+        {
+            freeLookCamera.enabled = false;
+            sideCamera.enabled = false;
+            MainCamera.transform.position = lookBack.position;
+            MainCamera.transform.rotation = lookBack.rotation;
+        }
+        else if (firstPersonCameraCheck)
+        {
+            freeLookCamera.enabled = false;
+            sideCamera.enabled = false;
+            MainCamera.transform.position = firstPersonCamera.position;
+            MainCamera.transform.rotation = firstPersonCamera.rotation;
+        }
+        else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
         {
             freeLookCamera.enabled = true;
             sideCamera.enabled = false;
@@ -202,15 +227,9 @@ public class Player_Car : Car
             else
                 left = true;
         }
-        else if (Input.GetAxis("Vertical2") < 0)
-        {
-            freeLookCamera.enabled = false;
-            sideCamera.enabled = false;
-            MainCamera.transform.position = camPosition.position;
-            MainCamera.transform.rotation = camPosition.rotation;
-        }
         freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
     }
+    private void firstPerson() { firstPersonCameraCheck = !firstPersonCameraCheck; }
     private void FreeLookCheck()
     {
         if (Input.GetAxis("Mouse X") + Input.GetAxis("Mouse Y") != 0)
@@ -224,6 +243,15 @@ public class Player_Car : Car
                 freeLookWaitTime -= Time.deltaTime;
             else
                 freeLook = false;
+        }
+    }
+
+    private void SetRadialBlur()
+    {
+        if (radialBlur != null)
+        {
+            radialBlur.blurStrength = Mathf.Lerp(0f, 2.2f, GetSpeed() / LastGearLimit());
+            radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / LastGearLimit());
         }
     }
 }

@@ -30,11 +30,11 @@ public partial class Car
     protected int driveWheelsNum;
     protected int steerWheelsNum;
     protected eCAR_DRIVEAXEL driveAxel;
-    [SerializeField] private float[] differentialPower;
+    private float[] differentialPower;
+    [SerializeField] private float differentialPowerValue = 0f;
 
     //tire
-    [Range(0.8f, 1.3f)] private float tireGrip = 1.0f;
-    [Range(0.8f, 1.3f)] private float coreTireGrip = 1.0f;
+    [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
     [Range(1f, 2f)] private float forwardValue = 1f;
     [Range(1f, 2f)] private float sideValue = 2f;
     private WheelFrictionCurve forwardFriction, sidewaysFriction;
@@ -43,7 +43,8 @@ public partial class Car
     [SerializeField] private float[] overallSlip;
 
     [SerializeField] protected AnimationCurve steeringCurve;
-    protected float steeringInput;
+    [SerializeField] private float steeringInput = 0f;
+    [SerializeField] private float maxSteerAngle = 30f;
     [SerializeField] protected float curSteerAngle = 0f;
     protected float steerSpeed;
     protected float slipingAngle;
@@ -60,7 +61,6 @@ public partial class Car
     private bool groundedL;
     private bool groundedR;
 
-    public void SetTireGrip(float _grip) { coreTireGrip = _grip; }
     protected void SetSteerWheelsCount(int _steerWheelsCount) { steerWheelsNum = _steerWheelsCount; }
     protected void SetDriveWheels()
     {
@@ -106,19 +106,19 @@ public partial class Car
         {
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
 
-            forwardFriction.extremumSlip = 0.7f;
+            forwardFriction.extremumSlip = 0.4f;
             forwardFriction.extremumValue = 1.8f;
             forwardFriction.asymptoteSlip = 1.2f;
-            forwardFriction.asymptoteValue = 0.5f;
+            forwardFriction.asymptoteValue = 1.0f;
 
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
 
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
 
-            sidewaysFriction.extremumSlip = 1.0f;
-            sidewaysFriction.extremumValue = 2.2f;
+            sidewaysFriction.extremumSlip = 0.7f;
+            sidewaysFriction.extremumValue = 1.2f;
             sidewaysFriction.asymptoteSlip = 1.5f;
-            sidewaysFriction.asymptoteValue = 0.6f;
+            sidewaysFriction.asymptoteValue = 1.2f;
 
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
@@ -148,8 +148,8 @@ public partial class Car
     }
     protected void Steering(float _input)
     {
-        steeringInput = _input;
-        curSteerAngle = steeringInput * steeringCurve.Evaluate(speed);
+        float input = _input;
+        curSteerAngle = Mathf.Lerp(curSteerAngle, maxSteerAngle * input, Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
     }
@@ -205,11 +205,35 @@ public partial class Car
                 sidewaysSlip[i] = WheelHit.sidewaysSlip;
             }
         }
+        differentialPowerValue = 0f;
         for (int i = 0; i < driveWheelsNum; i++)
         {
             if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
             {
-                differentialPower[i] = WheelHit.force;
+                if(i % 2 == 0)
+                    differentialPowerValue += WheelHit.forwardSlip;
+                else
+                    differentialPowerValue -= WheelHit.forwardSlip;
+            }
+        }
+        if(differentialPowerValue > 0)
+        {
+            for (int i = 0; i < driveWheelsNum; i++)
+            {
+                if (i % 2 == 0)
+                    differentialPower[i] = 1f + differentialPowerValue;
+                else
+                    differentialPower[i] = 1f - differentialPowerValue;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < driveWheelsNum; i++)
+            {
+                if (i % 2 == 0)
+                    differentialPower[i] = 1f - differentialPowerValue;
+                else
+                    differentialPower[i] = 1f + differentialPowerValue;
             }
         }
     }
