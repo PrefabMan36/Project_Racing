@@ -23,6 +23,7 @@ using UnityEngine.UI;
 //}
 public class Player_Car : Car
 {
+    private Curve_data _data;
     private CinemachineFreeLook freeLookCamera;
     private CinemachineFreeLook sideCamera;
     private Transform firstPersonCamera;
@@ -31,8 +32,11 @@ public class Player_Car : Car
     [SerializeField] private RadialBlur radialBlur;
 
     private bool firstPersonCameraCheck = false;
+    private GameObject windowF, windowL, windowR;
+
     private bool freeLook;
     private float freeLookWaitTime;
+    private float fov = 30f;
 
     public bool braking, sideBraking, up, down, left, right;
 
@@ -42,6 +46,10 @@ public class Player_Car : Car
     }
     private void Start()
     {
+        _data = gameObject.transform.Find("Champion_curve").GetComponent<Curve_data>();
+        horsePowerCurve = _data.horsePower;
+        engineTorqueCurve = _data.torque;
+
         rpmGauge = FindAnyObjectByType<RPMGauge>();
 
         freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
@@ -54,9 +62,12 @@ public class Player_Car : Car
         sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
         MainCamera = FindAnyObjectByType<Camera>();
 
-        radialBlur = MainCamera.GetComponent<RadialBlur>();
+        windowF = gameObject.transform.Find("WindowFront").gameObject;
+        windowL = gameObject.transform.Find("WindowLeft").gameObject;
+        windowR = gameObject.transform.Find("WindowRight").gameObject;
 
-        SetCenterMass();
+        radialBlur = MainCamera.GetComponent<RadialBlur>();
+        //SetCenterMass();
 
         speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
         gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
@@ -199,11 +210,15 @@ public class Player_Car : Car
         {
             freeLookCamera.enabled = false;
             sideCamera.enabled = false;
+            MainCamera.fieldOfView = fov * 2f;
             MainCamera.transform.position = lookBack.position;
             MainCamera.transform.rotation = lookBack.rotation;
         }
         else if (firstPersonCameraCheck)
         {
+            windowF.SetActive(true);
+            windowL.SetActive(true);
+            windowR.SetActive(true);
             freeLookCamera.enabled = false;
             sideCamera.enabled = false;
             MainCamera.transform.position = firstPersonCamera.position;
@@ -211,6 +226,9 @@ public class Player_Car : Car
         }
         else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
         {
+            windowF.SetActive(false);
+            windowL.SetActive(false);
+            windowR.SetActive(false);
             freeLookCamera.enabled = true;
             sideCamera.enabled = false;
             up = false;
@@ -227,7 +245,11 @@ public class Player_Car : Car
             else
                 left = true;
         }
-        freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
+            //freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
+        if(firstPersonCameraCheck)
+            freeLookCamera.m_Lens.FieldOfView = fov * 2f;
+        else
+            freeLookCamera.m_Lens.FieldOfView = fov * 2f;
     }
     private void firstPerson() { firstPersonCameraCheck = !firstPersonCameraCheck; }
     private void FreeLookCheck()

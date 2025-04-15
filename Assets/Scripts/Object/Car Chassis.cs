@@ -21,6 +21,8 @@ public partial class Car
     protected Quaternion tempWheelRotation;
     protected Vector3 tempWheelPosition;
 
+    [SerializeField] private Transform steeringWheel;
+
     //wheels
     private WheelHit WheelHit; //»Ÿ¡§∫∏
     [SerializeField] protected List<Wheel> wheels;
@@ -34,7 +36,7 @@ public partial class Car
     [SerializeField] private float differentialPowerValue = 0f;
 
     //tire
-    [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
+    [Range(0.8f, 1.3f)] private float tireGrip = 1.6f;
     [Range(1f, 2f)] private float forwardValue = 1f;
     [Range(1f, 2f)] private float sideValue = 2f;
     private WheelFrictionCurve forwardFriction, sidewaysFriction;
@@ -152,6 +154,8 @@ public partial class Car
         curSteerAngle = Mathf.Lerp(curSteerAngle, maxSteerAngle * input, Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
+        if (steeringWheel != null)
+            steeringWheel.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
     }
     protected void Braking()
     {
