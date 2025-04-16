@@ -15,11 +15,14 @@ public partial class Car
     {
         public GameObject wheelModel;
         public WheelCollider wheelCollider;
+        public TrailRenderer skidMarks;
+        public ParticleSystem tireSmoke;
         public eAXEL axel;
     }
     protected List<MeshRenderer> wheelTransform;
     protected Quaternion tempWheelRotation;
     protected Vector3 tempWheelPosition;
+    private float wheelRadius;
 
     [SerializeField] private Transform steeringWheel;
 
@@ -36,7 +39,7 @@ public partial class Car
     [SerializeField] private float differentialPowerValue = 0f;
 
     //tire
-    [Range(0.8f, 1.3f)] private float tireGrip = 1.6f;
+    [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
     [Range(1f, 2f)] private float forwardValue = 1f;
     [Range(1f, 2f)] private float sideValue = 2f;
     private WheelFrictionCurve forwardFriction, sidewaysFriction;
@@ -97,6 +100,7 @@ public partial class Car
                     break;
             }
         }
+        wheelRadius = wheels[0].wheelCollider.radius;
         differentialPower = new float[driveWheelsNum];
     }
     protected void SetFriction()
@@ -107,21 +111,29 @@ public partial class Car
         for (int i = 0; i < wheelCount; i++)
         {
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
-
-            forwardFriction.extremumSlip = 0.4f;
-            forwardFriction.extremumValue = 1.8f;
-            forwardFriction.asymptoteSlip = 1.2f;
-            forwardFriction.asymptoteValue = 1.0f;
-
-            wheels[i].wheelCollider.forwardFriction = forwardFriction;
-
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
 
-            sidewaysFriction.extremumSlip = 0.7f;
-            sidewaysFriction.extremumValue = 1.2f;
-            sidewaysFriction.asymptoteSlip = 1.5f;
-            sidewaysFriction.asymptoteValue = 1.2f;
+            //forwardFriction.extremumSlip = 0.4f;
+            //forwardFriction.extremumValue = 1.8f;
+            //forwardFriction.asymptoteSlip = 1.2f;
+            //forwardFriction.asymptoteValue = 1.0f;
 
+            //sidewaysFriction.extremumSlip = 0.7f;
+            //sidewaysFriction.extremumValue = 1.2f;
+            //sidewaysFriction.asymptoteSlip = 1.5f;
+            //sidewaysFriction.asymptoteValue = 1.2f;
+
+            forwardFriction.extremumSlip = 0.065f;
+            forwardFriction.extremumValue = 1.8f;
+            forwardFriction.asymptoteSlip = 1.2f;
+            forwardFriction.asymptoteValue = 1.8f;
+
+            sidewaysFriction.extremumSlip = 0.065f;
+            sidewaysFriction.extremumValue = 2.2f;
+            sidewaysFriction.asymptoteSlip = 1.6f;
+            sidewaysFriction.asymptoteValue = 2.0f;
+
+            wheels[i].wheelCollider.forwardFriction = forwardFriction;
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
     }
@@ -146,12 +158,13 @@ public partial class Car
             wheels[i].wheelCollider.GetWorldPose(out tempWheelPosition, out tempWheelRotation);
             wheels[i].wheelModel.transform.position = tempWheelPosition;
             wheels[i].wheelModel.transform.rotation = tempWheelRotation;
+            wheels[i].skidMarks.transform.position = tempWheelPosition - (Vector3.up * wheelRadius);
         }
     }
     protected void Steering(float _input)
     {
         float input = _input;
-        curSteerAngle = Mathf.Lerp(curSteerAngle, maxSteerAngle * input, Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
+        curSteerAngle = Mathf.Lerp(curSteerAngle, steeringCurve.Evaluate(speed) * input, maxSteerAngle > curSteerAngle ? Time.deltaTime * 2f : Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
         if (steeringWheel != null)
@@ -166,16 +179,18 @@ public partial class Car
     }
     protected void SideBrakingDown()
     {
-        for (int i = 0; i < driveWheelsNum; i++)
+        for (int i = 0; i < wheelCount; i++)
         {
-            driveWheels[i].brakeTorque = Mathf.Infinity;
+            if (wheels[i].axel == eAXEL.eAXEL_BACK)
+                wheels[i].wheelCollider.brakeTorque = Mathf.Infinity;
         }
     }
     protected void SideBrakingUp()
     {
         for (int i = 0; i < driveWheelsNum; i++)
         {
-            driveWheels[i].brakeTorque = 0;
+            if (wheels[i].axel == eAXEL.eAXEL_BACK)
+                wheels[i].wheelCollider.brakeTorque = 0f;
         }
     }
 
@@ -207,6 +222,17 @@ public partial class Car
 
                 forwardSlip[i] = WheelHit.forwardSlip;
                 sidewaysSlip[i] = WheelHit.sidewaysSlip;
+
+                if (sidewaysSlip[i] > 0.15f || forwardSlip[i] > 0.3f)
+                {
+                    wheels[i].skidMarks.emitting = true;
+                    wheels[i].tireSmoke.Play();
+                }
+                else
+                {
+                    wheels[i].skidMarks.emitting = false;
+                    wheels[i].tireSmoke.Stop();
+                }
             }
         }
         differentialPowerValue = 0f;
@@ -246,8 +272,8 @@ public partial class Car
     {
         travelL = 1.0f;
         travelR = 1.0f;
-        groundedL = steerWheels[0].GetGroundHit(out WheelHit);
-        groundedR = steerWheels[1].GetGroundHit(out WheelHit);
+        groundedL = steerWheels[0].GetGroundHit(out WheelHit) ? true : false;
+        groundedR = steerWheels[1].GetGroundHit(out WheelHit) ? true : false;
         if (groundedL)
         {
             travelL = (-steerWheels[0].transform.InverseTransformPoint(WheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;

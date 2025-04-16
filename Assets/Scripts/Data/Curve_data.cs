@@ -6,4 +6,5 @@ public class Curve_data : MonoBehaviour
 {
     public AnimationCurve horsePower;
     public AnimationCurve torque;
+    public AnimationCurve steer;
 }

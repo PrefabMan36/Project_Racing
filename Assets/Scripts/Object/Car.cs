@@ -10,7 +10,6 @@ public partial class Car : Object_Movable
     private int speedInt;
     protected Text speedTextForUI;
     protected Text gearTextForUI;
-    [SerializeField] protected ParticleSystem wheelParticle;
     protected void SetSlpingAngle(){ slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
     public int GetSpeedNum(){ return (int)speed; }
     public float GetSpeed() { return speed; }

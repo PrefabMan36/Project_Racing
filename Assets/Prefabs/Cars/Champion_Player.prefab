@@ -1295,6 +1295,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6389886358469353266}
   - {fileID: 7286562637360699342}
   - {fileID: 768182153003508207}
   - {fileID: 152937365029693020}
@@ -1348,6 +1349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 0}
+  steeringWheel: {fileID: 0}
   wheels:
   - wheelModel: {fileID: 6920363780595138528}
     wheelCollider: {fileID: 643436772051291040}
@@ -1370,7 +1372,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 45
+      value: 30
       inSlope: -0.018936792
       outSlope: -0.018936792
       tangentMode: 0
@@ -2604,7 +2606,7 @@ GameObject:
   - component: {fileID: 768182153003508207}
   - component: {fileID: 6800492251280782517}
   m_Layer: 0
-  m_Name: forceSideCamera
+  m_Name: ForceSideCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3116,3 +3118,65 @@ MonoBehaviour:
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
+--- !u!1001 &55499765909197071
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2048616764513898630}
+    m_Modifications:
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6739589315937577917, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+      propertyPath: m_Name
+      value: Champion_curve
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+--- !u!4 &6389886358469353266 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6370415853704089149, guid: ed529b9dc45fc0848a6659fd5f110a05, type: 3}
+  m_PrefabInstance: {fileID: 55499765909197071}
+  m_PrefabAsset: {fileID: 0}

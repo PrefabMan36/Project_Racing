@@ -49,6 +49,7 @@ public class Player_Car : Car
         _data = gameObject.transform.Find("Champion_curve").GetComponent<Curve_data>();
         horsePowerCurve = _data.horsePower;
         engineTorqueCurve = _data.torque;
+        steeringCurve = _data.steer;
 
         rpmGauge = FindAnyObjectByType<RPMGauge>();
 
@@ -62,9 +63,12 @@ public class Player_Car : Car
         sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
         MainCamera = FindAnyObjectByType<Camera>();
 
-        windowF = gameObject.transform.Find("WindowFront").gameObject;
-        windowL = gameObject.transform.Find("WindowLeft").gameObject;
-        windowR = gameObject.transform.Find("WindowRight").gameObject;
+        //if(gameObject.transform.Find("WindowFront").gameObject != null)
+        //    windowF = gameObject.transform.Find("WindowFront").gameObject;
+        //if(gameObject.transform.Find("WindowLeft").gameObject != null)
+        //    windowL = gameObject.transform.Find("WindowLeft").gameObject;
+        //if(gameObject.transform.Find("WindowRight").gameObject != null)
+        //    windowR = gameObject.transform.Find("WindowRight").gameObject;
 
         radialBlur = MainCamera.GetComponent<RadialBlur>();
         //SetCenterMass();
@@ -121,6 +125,7 @@ public class Player_Car : Car
 
         //if (Input.GetKeyDown(KeyCode.V))
         //    changeCameraPosition();
+        Engine();
         SetSpeed();
         SetUI();
         Steering(Input.GetAxis("Horizontal"));
@@ -145,6 +150,7 @@ public class Player_Car : Car
 
     private void FixedUpdate()
     {
+        ApplyAerodynamicDrag();
         UpdatingFriction();
         AntiRollBar();
     }
@@ -160,7 +166,6 @@ public class Player_Car : Car
                 clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
             if(Input.GetKey(KeyCode.C))
                 clutch = 0f;
-            Engine();
             if (ignition)
             {
                 if (curGear != eGEAR.eGEAR_NEUTURAL)
@@ -216,9 +221,12 @@ public class Player_Car : Car
         }
         else if (firstPersonCameraCheck)
         {
-            windowF.SetActive(true);
-            windowL.SetActive(true);
-            windowR.SetActive(true);
+            if (windowF != null)
+            {
+                windowF.SetActive(true);
+                windowL.SetActive(true);
+                windowR.SetActive(true);
+            }
             freeLookCamera.enabled = false;
             sideCamera.enabled = false;
             MainCamera.transform.position = firstPersonCamera.position;
@@ -226,9 +234,12 @@ public class Player_Car : Car
         }
         else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
         {
-            windowF.SetActive(false);
-            windowL.SetActive(false);
-            windowR.SetActive(false);
+            if(windowF != null)
+            {
+                windowL.SetActive(false);
+                windowF.SetActive(false);
+                windowR.SetActive(false);
+            }
             freeLookCamera.enabled = true;
             sideCamera.enabled = false;
             up = false;
