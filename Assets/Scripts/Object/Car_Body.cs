@@ -16,6 +16,11 @@ public partial class Car
     private float dragMagnitude;
     private Vector3 dragForce;
 
+    [SerializeField] private Light[] headLight_Object;
+    [SerializeField] private Light[] headLight_SpotLight;
+    [SerializeField] private Light[] tailLamp;
+    private bool headLightSwitch = false;
+
     public void SetCenterMass() { carRB.centerOfMass = centerMass.transform.localPosition; }
     public void ShowCenterMass() { centerMass.transform.position = carRB.centerOfMass; }
     public void SetCarRB(Rigidbody _carRB) { carRB = _carRB; }
@@ -42,5 +47,20 @@ public partial class Car
         dragMagnitude = 0.5f * airDensity * sqrSpeed * dragCoefficient * frontalArea;
         dragForce = dragDirection * dragMagnitude;
         carRB.AddForce(dragForce * Time.deltaTime, ForceMode.Force);
+    }
+
+    protected void HeadLightSwitch()
+    {
+        headLightSwitch = !headLightSwitch;
+        foreach(Light light in headLight_Object)
+            light.enabled = headLightSwitch;
+        foreach (Light light in headLight_SpotLight)
+            light.enabled = headLightSwitch;
+    }
+
+    private void TailLampSwitch(bool _switch)
+    {
+        foreach(Light light in tailLamp)
+            light.enabled = _switch;
     }
 }

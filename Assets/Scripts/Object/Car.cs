@@ -10,14 +10,52 @@ public partial class Car : Object_Movable
     private int speedInt;
     protected Text speedTextForUI;
     protected Text gearTextForUI;
+    protected RPMGauge rpmGauge;
+
     protected void SetSlpingAngle(){ slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
     public int GetSpeedNum(){ return (int)speed; }
     public float GetSpeed() { return speed; }
+    protected IEnumerator Engine()
+    {
+        WaitForSeconds waitForSecond = new WaitForSeconds(0.01f);
+        while (true)
+        {
+            yield return waitForSecond;
+            if (ignition)
+            {
+                GearShifting();
+                CalculateWheelRPM();
+                CalculateTorque();
+                forceEngineLerp();
+                TorqueToWheel();
+                if (autoGear) AutoGear();
+                EngineSoundUpdate();
+            }
+            else
+            {
+                engineSound.Stop();
+                currentEngineRPM = 0f;
+                currentWheelTorque = 0f;
+                if (!engineStartUP)
+                    StartCoroutine(IgnitionEngine());
+            }
+        }
+    }
+    protected IEnumerator UIUpdating()
+    {
+        WaitForSeconds waitForSecond = new WaitForSeconds(0.04f);
+        while(true)
+        {
+            yield return waitForSecond;
+            SetUI();
+        }
+    }
     public void SetUI()
     {
         speedInt = (int)speed;
         speedTextForUI.text = speedInt.ToString();
-        switch(curGear)
+        rpmGauge.SetValue(Mathf.Lerp(0f, 0.375f, currentEngineRPM / maxEngineRPM));
+        switch (currentGear)
         {
             case eGEAR.eGEAR_NEUTURAL:
                 gearTextForUI.text = "N";

@@ -41,18 +41,12 @@ public class Player_Car : Car
     private float fov = 30f;
 
     public bool braking, sideBraking, up, down, left, right;
-
-    private void Awake()
-    {
-        
-    }
     private void Start()
     {
         _data = gameObject.transform.Find("Champion_curve").GetComponent<Curve_data>();
-        horsePowerCurve = _data.horsePower;
-        engineTorqueCurve = _data.torque;
+        SetCurves(_data.horsePower, _data.torque);
         steeringCurve = _data.steer;
-        //Destroy(_data.gameObject);
+        Destroy(_data.gameObject);
 
         rpmGauge = FindAnyObjectByType<RPMGauge>();
 
@@ -86,14 +80,10 @@ public class Player_Car : Car
         freeLookCamera.enabled = true;
         ignition = true;
         braking = false;
-        engineAcceleration = 0.5f;
-        minEngineRPM = 800f;
-        maxEngineRPM = 9400f;
-        curEngineRPM = 1000;
-        horsePower = 465;
-        autoGear = true;
+        SetEngineAcceleration(0.5f);
+        SetEngineRPMLimit(9400f, 800f);
+        SetAutoGear(true);
         antiRoll = 5000f;
-        horsePower = 200;
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
         SetGearSpeedLimit(eGEAR.eGEAR_NEUTURAL, 0f);
@@ -111,17 +101,16 @@ public class Player_Car : Car
         SetGearSpeedLimit(eGEAR.eGEAR_FIFTH, 286);
         SetGearRatio(eGEAR.eGEAR_SIXTH, 0.88f);
         SetGearSpeedLimit(eGEAR.eGEAR_SIXTH, 351f);
-        lastGear = eGEAR.eGEAR_SIXTH;
-        finalDriveRatio = 3.97f;
+        SetLastGear(eGEAR.eGEAR_SIXTH);
+        SetFinalDriveRatio(3.97f);
+        SetShiftTiming(0.5f);
         brakePower = 50000f;
-        curGear = eGEAR.eGEAR_FIRST;
-        nextGear = eGEAR.eGEAR_FIRST;
-        shiftTimer = 0;
-        shiftTiming = 0.5f;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
         SetFriction();
         SpawnSmoke();
         StartCoroutine(Controlling());
+        StartCoroutine(Engine());
+        StartCoroutine(UIUpdating());
     }
 
     private void Update()
@@ -129,18 +118,18 @@ public class Player_Car : Car
 
         //if (Input.GetKeyDown(KeyCode.V))
         //    changeCameraPosition();
-        Engine();
+        //Engine();
         SetSpeed();
-        SetUI();
         Steering(Input.GetAxis("Horizontal"));
         SetSlpingAngle();
         CameraUpdate();
 
-        if(Input.GetKeyDown(KeyCode.F))
+        if(Input.GetKeyDown(KeyCode.G))
         {
-            ChangeFriction(drifting);
             drifting = !drifting;
+            ChangeFriction(drifting);
         }
+        if(Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
         UpdatingWheels();
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
@@ -149,13 +138,13 @@ public class Player_Car : Car
         if (Input.GetKeyDown(KeyCode.LeftControl))
             ChangeGear(false);
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            SetGear(eGEAR.eGEAR_FIRST);
+            ForceChangeGear(eGEAR.eGEAR_FIRST);
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            SetGear(eGEAR.eGEAR_SECOND);
+            ForceChangeGear(eGEAR.eGEAR_SECOND);
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            SetGear(eGEAR.eGEAR_THIRD);
+            ForceChangeGear(eGEAR.eGEAR_THIRD);
         if(Input.GetKeyDown(KeyCode.Alpha4))
-            SetGear(eGEAR.eGEAR_FOURTH);
+            ForceChangeGear(eGEAR.eGEAR_FOURTH);
     }
 
     private void FixedUpdate()
@@ -172,38 +161,36 @@ public class Player_Car : Car
         {
             yield return wfs;
 
-            if(curGear != eGEAR.eGEAR_NEUTURAL)
-                clutch = Input.GetAxis("Vertical") <= 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
+            if(GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
+                clutch = Input.GetAxis("Vertical") == 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
             if(Input.GetKey(KeyCode.C))
                 clutch = 0f;
             if (ignition)
             {
-                if (curGear != eGEAR.eGEAR_NEUTURAL)
+                if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
                     throttle = Input.GetAxis("Vertical");
-                if(throttle < 0)
+                if (throttle > 0)
                 {
-                    clutch = 0f;
-                    brakeInput = Mathf.Abs(throttle);
+                    if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
+                    {
+                        clutch *= throttle;
+                        brakeInput = Mathf.Abs(throttle);
+                    }
+                    else
+                        brakeInput = 0f;
+                }
+                else if (throttle < 0)
+                {
+                    if (GetCurrentGear() != eGEAR.eGEAR_REVERSE)
+                    {
+                        clutch *= throttle;
+                        brakeInput = Mathf.Abs(throttle);
+                    }
+                    else
+                        brakeInput = 0f;
                 }
                 else
                     brakeInput = 0f;
-                //throttle = 1f;
-                //if (slipingAngle < 120f)
-                //{
-                //    if (throttle < 0)
-                //    {
-                //        brakeInput = Mathf.Abs(throttle);
-                //        down = true;
-                //        clutch = 0f;
-                //    }
-                //    else
-                //    {
-                //        down = false;
-                //        brakeInput = 0;
-                //    }
-                //}
-                //else
-                //    brakeInput = 0;
                 Braking();
             }
             if (Input.GetKey(KeyCode.Space))
@@ -294,8 +281,8 @@ public class Player_Car : Car
     {
         if (radialBlur != null)
         {
-            radialBlur.blurStrength = Mathf.Lerp(0f, 2.2f, GetSpeed() / LastGearLimit());
-            radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / LastGearLimit());
+            radialBlur.blurStrength = Mathf.Lerp(0f, 2.2f, GetSpeed() / 200f);
+            radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / 200f);
         }
     }
 }

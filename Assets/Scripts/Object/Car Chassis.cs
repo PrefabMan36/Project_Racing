@@ -53,7 +53,6 @@ public partial class Car
     [SerializeField] private float[] overallSlip;
 
     [SerializeField] protected AnimationCurve steeringCurve;
-    [SerializeField] private float steeringInput = 0f;
     [SerializeField] private float maxSteerAngle = 30f;
     [SerializeField] protected float curSteerAngle = 0f;
     protected float steerSpeed;
@@ -142,7 +141,7 @@ public partial class Car
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
 
-            if(_mode)
+            if(_mode)//Drift mode
             {
                 forwardFriction.extremumSlip = 0.7f;
                 forwardFriction.extremumValue = 1.8f;
@@ -156,13 +155,13 @@ public partial class Car
             else
             {
                 forwardFriction.extremumSlip = 0.065f;
-                forwardFriction.extremumValue = 1.8f;
+                forwardFriction.extremumValue = 2.0f;
                 forwardFriction.asymptoteSlip = 1.2f;
-                forwardFriction.asymptoteValue = 1.8f;
+                forwardFriction.asymptoteValue = 2.0f;
                 sidewaysFriction.extremumSlip = 0.065f;
                 sidewaysFriction.extremumValue = 2.2f;
                 sidewaysFriction.asymptoteSlip = 1.6f;
-                sidewaysFriction.asymptoteValue = 2.0f;
+                sidewaysFriction.asymptoteValue = 2.4f;
             }
 
 
@@ -211,6 +210,7 @@ public partial class Car
         {
             wheels[i].wheelCollider.brakeTorque = brakeInput * brakePower;
         }
+        TailLampSwitch(brakeInput > 0 ? true : false);
     }
     protected void SideBrakingDown()
     {
@@ -267,11 +267,13 @@ public partial class Car
         {
             if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
             {
-                if (Mathf.Abs(WheelHit.sidewaysSlip) >= 0.15f || Mathf.Abs(WheelHit.forwardSlip) >= 0.3f)
+                if (Mathf.Abs(WheelHit.sidewaysSlip) >= 0.15f || Mathf.Abs(WheelHit.forwardSlip) >= 0.3f && IsGrounded())
                 {
                     wheels[i].skidMarks.emitting = true;
                     if (!smokeParticles[i].isPlaying)
                         smokeParticles[i].Play();
+                    //Debug.Log(WheelHit.sidewaysSlip);
+                    //Debug.Log(WheelHit.forwardSlip);
                 }
                 else
                 {
