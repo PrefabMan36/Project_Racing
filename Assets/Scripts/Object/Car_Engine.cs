@@ -22,15 +22,15 @@ public partial class Car
     //바퀴 토크(Wheel Torque) 계산법
     //바퀴 토크 = 엔진 토크(Engine Torque) × 변속기 기어비(Gear ratio) × 차동기어비(Differential ratio)
     protected bool ignition;
-    protected float throttle;
+    [SerializeField]protected float throttle;
     private float acceleration;
     private float overSpeed;
     protected float engineAcceleration;
     [SerializeField] protected AnimationCurve horsePowerCurve;
     [SerializeField] protected AnimationCurve engineTorqueCurve;
     protected float horsePower;
-    protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
-    protected float curEngineTorque, curWheelTorque;
+    [SerializeField]protected float maxEngineRPM, minEngineRPM, curEngineRPM, tempWheelRPM, curWheelRPM;
+    [SerializeField]protected float curEngineTorque, curWheelTorque;
 
     protected RPMGauge rpmGauge;
 
@@ -54,7 +54,7 @@ public partial class Car
     private float perviousMaxSpeed = 0;
     protected float differentialRatio;
     protected float finalDriveRatio;
-    protected float clutch;
+    [SerializeField] protected float clutch;
     private bool reverse;
     protected eGEAR lastGear;
     [SerializeField] protected bool autoGear;
@@ -104,7 +104,7 @@ public partial class Car
     {
         for (int i = 0; i < driveWheelsNum; i++)
         {
-            driveWheels[i].motorTorque = throttle * (curWheelTorque / driveWheelsNum) * differentialPower[i];
+            driveWheels[i].motorTorque = throttle * (curWheelTorque / driveWheelsNum);
         }
     }
     private void CalculateWheelRPM()

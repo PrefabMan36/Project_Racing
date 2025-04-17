@@ -34,6 +34,8 @@ public class Player_Car : Car
     private bool firstPersonCameraCheck = false;
     private GameObject windowF, windowL, windowR;
 
+    private bool drifting = false;
+
     private bool freeLook;
     private float freeLookWaitTime;
     private float fov = 30f;
@@ -50,6 +52,7 @@ public class Player_Car : Car
         horsePowerCurve = _data.horsePower;
         engineTorqueCurve = _data.torque;
         steeringCurve = _data.steer;
+        //Destroy(_data.gameObject);
 
         rpmGauge = FindAnyObjectByType<RPMGauge>();
 
@@ -117,6 +120,7 @@ public class Player_Car : Car
         shiftTiming = 0.5f;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
         SetFriction();
+        SpawnSmoke();
         StartCoroutine(Controlling());
     }
 
@@ -131,6 +135,12 @@ public class Player_Car : Car
         Steering(Input.GetAxis("Horizontal"));
         SetSlpingAngle();
         CameraUpdate();
+
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            ChangeFriction(drifting);
+            drifting = !drifting;
+        }
         UpdatingWheels();
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
@@ -151,7 +161,7 @@ public class Player_Car : Car
     private void FixedUpdate()
     {
         ApplyAerodynamicDrag();
-        UpdatingFriction();
+        //UpdatingFriction();
         AntiRollBar();
     }
 
@@ -206,6 +216,7 @@ public class Player_Car : Car
                 SideBrakingUp();
                 sideBraking = false;
             }
+            EffectDrift();
             SetRadialBlur();
         }
     }

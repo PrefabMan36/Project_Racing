@@ -16,9 +16,14 @@ public partial class Car
         public GameObject wheelModel;
         public WheelCollider wheelCollider;
         public TrailRenderer skidMarks;
-        public ParticleSystem tireSmoke;
         public eAXEL axel;
     }
+
+    [Range(0.0f, 0.5f), SerializeField] private float slipLimit = 0.3f;
+    [SerializeField]private GameObject smokePrefab;
+    private GameObject[] smokes;
+    private ParticleSystem[] smokeParticles;
+
     protected List<MeshRenderer> wheelTransform;
     protected Quaternion tempWheelRotation;
     protected Vector3 tempWheelPosition;
@@ -29,7 +34,7 @@ public partial class Car
     //wheels
     private WheelHit WheelHit; //»Ÿ¡§∫∏
     [SerializeField] protected List<Wheel> wheels;
-    protected int wheelCount;
+    protected int wheelNum;
     protected List<WheelCollider> driveWheels = new List<WheelCollider>();
     protected List<WheelCollider> steerWheels = new List<WheelCollider>();
     protected int driveWheelsNum;
@@ -69,7 +74,7 @@ public partial class Car
     protected void SetSteerWheelsCount(int _steerWheelsCount) { steerWheelsNum = _steerWheelsCount; }
     protected void SetDriveWheels()
     {
-        wheelCount = wheels.Count;
+        wheelNum = wheels.Count;
         SetSteerWheelsCount(2);
         switch (driveAxel)
         {
@@ -81,7 +86,7 @@ public partial class Car
                 driveWheelsNum = 4;
                 break;
         }
-        for (int i = 0; i < wheelCount; i++)
+        for (int i = 0; i < wheelNum; i++)
         {
             if (wheels[i].axel == eAXEL.eAXEL_FRONT)
                 steerWheels.Add(wheels[i].wheelCollider);
@@ -100,28 +105,20 @@ public partial class Car
                     break;
             }
         }
+        smokes = new GameObject[wheelNum];
+        smokeParticles = new ParticleSystem[wheelNum];
         wheelRadius = wheels[0].wheelCollider.radius;
         differentialPower = new float[driveWheelsNum];
     }
     protected void SetFriction()
     {
-        forwardSlip = new float[wheelCount];
-        sidewaysSlip = new float[wheelCount];
-        overallSlip = new float[wheelCount];
-        for (int i = 0; i < wheelCount; i++)
+        forwardSlip = new float[wheelNum];
+        sidewaysSlip = new float[wheelNum];
+        overallSlip = new float[wheelNum];
+        for (int i = 0; i < wheelNum; i++)
         {
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
-
-            //forwardFriction.extremumSlip = 0.4f;
-            //forwardFriction.extremumValue = 1.8f;
-            //forwardFriction.asymptoteSlip = 1.2f;
-            //forwardFriction.asymptoteValue = 1.0f;
-
-            //sidewaysFriction.extremumSlip = 0.7f;
-            //sidewaysFriction.extremumValue = 1.2f;
-            //sidewaysFriction.asymptoteSlip = 1.5f;
-            //sidewaysFriction.asymptoteValue = 1.2f;
 
             forwardFriction.extremumSlip = 0.065f;
             forwardFriction.extremumValue = 1.8f;
@@ -137,6 +134,44 @@ public partial class Car
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
     }
+
+    protected void ChangeFriction(bool _mode)
+    {
+        for (int i = 0; i < wheelNum; i++)
+        {
+            forwardFriction = wheels[i].wheelCollider.forwardFriction;
+            sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
+
+            if(_mode)
+            {
+                forwardFriction.extremumSlip = 0.7f;
+                forwardFriction.extremumValue = 1.8f;
+                forwardFriction.asymptoteSlip = 1.2f;
+                forwardFriction.asymptoteValue = 1.0f;
+                sidewaysFriction.extremumSlip = 1.0f;
+                sidewaysFriction.extremumValue = 2.2f;
+                sidewaysFriction.asymptoteSlip = 1.5f;
+                sidewaysFriction.asymptoteValue = 1.2f;
+            }
+            else
+            {
+                forwardFriction.extremumSlip = 0.065f;
+                forwardFriction.extremumValue = 1.8f;
+                forwardFriction.asymptoteSlip = 1.2f;
+                forwardFriction.asymptoteValue = 1.8f;
+                sidewaysFriction.extremumSlip = 0.065f;
+                sidewaysFriction.extremumValue = 2.2f;
+                sidewaysFriction.asymptoteSlip = 1.6f;
+                sidewaysFriction.asymptoteValue = 2.0f;
+            }
+
+
+
+            wheels[i].wheelCollider.forwardFriction = forwardFriction;
+            wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
+        }
+    }
+
     public void SetDriveAxel(eCAR_DRIVEAXEL _driveAxel)
     {
         driveAxel = _driveAxel;
@@ -172,14 +207,14 @@ public partial class Car
     }
     protected void Braking()
     {
-        for (int i = 0; i < wheelCount; i++)
+        for (int i = 0; i < wheelNum; i++)
         {
             wheels[i].wheelCollider.brakeTorque = brakeInput * brakePower;
         }
     }
     protected void SideBrakingDown()
     {
-        for (int i = 0; i < wheelCount; i++)
+        for (int i = 0; i < wheelNum; i++)
         {
             if (wheels[i].axel == eAXEL.eAXEL_BACK)
                 wheels[i].wheelCollider.brakeTorque = Mathf.Infinity;
@@ -196,7 +231,7 @@ public partial class Car
 
     private bool IsGrounded()
     {
-        for (int i = 0; i < wheelCount; i++)
+        for (int i = 0; i < wheelNum; i++)
         {
             if (wheels[i].wheelCollider.isGrounded)
                 return true;
@@ -206,7 +241,7 @@ public partial class Car
 
     protected void UpdatingFriction()
     {
-        for (int i = 0; i < wheelCount; i++)
+        for (int i = 0; i < wheelNum; i++)
         {
             if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
             {
@@ -222,52 +257,46 @@ public partial class Car
 
                 forwardSlip[i] = WheelHit.forwardSlip;
                 sidewaysSlip[i] = WheelHit.sidewaysSlip;
-
-                if (sidewaysSlip[i] > 0.15f || forwardSlip[i] > 0.3f)
-                {
-                    wheels[i].skidMarks.emitting = true;
-                    wheels[i].tireSmoke.Play();
-                }
-                else
-                {
-                    wheels[i].skidMarks.emitting = false;
-                    wheels[i].tireSmoke.Stop();
-                }
-            }
-        }
-        differentialPowerValue = 0f;
-        for (int i = 0; i < driveWheelsNum; i++)
-        {
-            if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
-            {
-                if(i % 2 == 0)
-                    differentialPowerValue += WheelHit.forwardSlip;
-                else
-                    differentialPowerValue -= WheelHit.forwardSlip;
-            }
-        }
-        if(differentialPowerValue > 0)
-        {
-            for (int i = 0; i < driveWheelsNum; i++)
-            {
-                if (i % 2 == 0)
-                    differentialPower[i] = 1f + differentialPowerValue;
-                else
-                    differentialPower[i] = 1f - differentialPowerValue;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < driveWheelsNum; i++)
-            {
-                if (i % 2 == 0)
-                    differentialPower[i] = 1f - differentialPowerValue;
-                else
-                    differentialPower[i] = 1f + differentialPowerValue;
             }
         }
     }
 
+    protected void EffectDrift()
+    {
+        for(int i = 0; i < wheelNum; i++)
+        {
+            if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
+            {
+                if (Mathf.Abs(WheelHit.sidewaysSlip) >= 0.15f || Mathf.Abs(WheelHit.forwardSlip) >= 0.3f)
+                {
+                    wheels[i].skidMarks.emitting = true;
+                    if (!smokeParticles[i].isPlaying)
+                        smokeParticles[i].Play();
+                }
+                else
+                {
+                    wheels[i].skidMarks.emitting = false;
+                    if (!smokeParticles[i].isStopped)
+                        smokeParticles[i].Stop();
+                }
+            }
+        }
+    }
+    protected void SpawnSmoke()
+    {
+        for (int i = 0; i < wheelNum; i++)
+        {
+            if (smokes != null)
+            {
+                smokes[i] = Instantiate(smokePrefab);
+                smokeParticles[i] = smokes[i].GetComponent<ParticleSystem>();
+                smokes[i].transform.parent = wheels[i].skidMarks.transform;
+                smokes[i].transform.position = wheels[i].skidMarks.transform.position;
+                smokes[i].transform.rotation = Quaternion.identity;
+                smokes[i].transform.localScale = Vector3.one;
+            }
+        }
+    }
     protected void AntiRollBar()
     {
         travelL = 1.0f;
