@@ -41,6 +41,46 @@ public partial class Car : Object_Movable
             }
         }
     }
+    protected IEnumerator UpdateNitro()
+    {
+        WaitForSeconds wfs = new WaitForSeconds(0.02f);
+        if (!isNitroInstalled) yield break;
+        while (true)
+        {
+            yield return wfs;
+            if (isNitroActive)
+            {
+                currentNitroAmount -= nitroConsumptionRate * Time.deltaTime;
+                currentNitroAmount = Mathf.Max(0f, currentNitroAmount);
+                nitroRechargeDelayTimer = 0f;
+                nitroAdjustBlurWidth = 1f;
+                if (currentNitroAmount <= 0f)
+                {
+                    ActivateNitro(false);
+                    if (powerMode)
+                        nitroPowerReady = false;
+                }
+            }
+            else
+            {
+                nitroAdjustBlurWidth = 0f;
+                if (nitroRechargeDelayTimer < nitroRechargeDelay)
+                { nitroRechargeDelayTimer += Time.deltaTime; }
+                else
+                {
+                    currentNitroAmount += nitroRechargeRate * Time.deltaTime;
+                    currentNitroAmount = Mathf.Min(maxNitroCapacity, currentNitroAmount);
+                    if (currentNitroAmount >= maxNitroCapacity)
+                    {
+                        currentNitroAmount = maxNitroCapacity;
+                        nitroRechargeDelayTimer = 0f;
+                        if (powerMode)
+                            nitroPowerReady = true;
+                    }
+                }
+            }
+        }
+    }
     protected IEnumerator UIUpdating()
     {
         WaitForSeconds waitForSecond = new WaitForSeconds(0.04f);

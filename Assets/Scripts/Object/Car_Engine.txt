@@ -5,7 +5,7 @@ using UnityEngine;
 
 public partial class Car
 {
-    //ÇöÀç Ç¥±â¹æ½ÄÀº ±¸½Ä Ç¥Çö ÇöÀç´Â ±»ÀÌ e¸¦ ºÙÀÌÁö ¾Ê´Â´Ù ÀÌ°æ¿ì ´ë¹®ÀÚÀÌ¸§ÀÌ enumÀÌ´Ù.
+    //í˜„ì¬ í‘œê¸°ë°©ì‹ì€ êµ¬ì‹ í‘œí˜„ í˜„ì¬ëŠ” êµ³ì´ eë¥¼ ë¶™ì´ì§€ ì•ŠëŠ”ë‹¤ ì´ê²½ìš° ëŒ€ë¬¸ìì´ë¦„ì´ enumì´ë‹¤.
     public enum eGEAR
     {
         eGEAR_NEUTURAL,
@@ -22,23 +22,22 @@ public partial class Car
     protected bool ignition = true;
     private bool engineStartUP = false;
     protected float dragAmount;
-    [SerializeField] protected AudioSource engineSound;
+    [SerializeField] private AudioSource engineSound;
     [SerializeField] private GameObject startUpSoundObject;
     private GameObject _tempSoundObject;
     private AudioSource startUpSound;
     #endregion
 
     #region Value Engine
-    [Header("EngineValue")]
-    [SerializeField] private AnimationCurve horsePowerCurve;
-    [SerializeField] private AnimationCurve engineTorqueCurve;
-    [SerializeField] protected float throttle;
-    [SerializeField] private float engineAcceleration;
-    [SerializeField] private float maxEngineRPM, minEngineRPM, currentEngineRPM, tempWheelRPM, currentWheelRPM;
-    [SerializeField] private float currentEngineTorque, currentWheelTorque;
-    [SerializeField] private float overSpeed;
-    [SerializeField] private bool redLine = false;
-    [SerializeField] private float engineLerpValue;
+    private AnimationCurve horsePowerCurve;
+    private AnimationCurve engineTorqueCurve;
+    protected float throttle;
+    private float engineAcceleration;
+    private float maxEngineRPM, minEngineRPM, currentEngineRPM, tempWheelRPM, currentWheelRPM;
+    private float currentEngineTorque, currentWheelTorque;
+    private float overSpeed;
+    private bool redLine = false;
+    private float engineLerpValue;
     #endregion
 
     #region Function Engine setting
@@ -101,7 +100,7 @@ public partial class Car
             else
                 overSpeed = 1f;
             if (clutch < 0.1f)
-                currentEngineRPM = Mathf.Lerp(currentEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle), Time.deltaTime * 3.5f);
+                currentEngineRPM = Mathf.Lerp(currentEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle), Time.deltaTime * 5f);
             else
             {
                 currentEngineRPM = Mathf.Lerp
@@ -110,20 +109,19 @@ public partial class Car
                         Mathf.Max(minEngineRPM, Mathf.Abs(currentWheelRPM) * finalDriveRatio * Mathf.Abs(gearRatio[currentGear])),
                         (overSpeed * engineAcceleration * Time.deltaTime) * Mathf.Abs(gearRatio[currentGear])
                     );
-                nitroMultiplier = isNitroActive ? nitroPowerMultiplier : 1f;
                 if (speed < gearSpeedLimit[currentGear])
-                    currentWheelTorque = (engineTorqueCurve.Evaluate(currentEngineRPM) * nitroMultiplier * (gearRatio[currentGear] * finalDriveRatio) * clutch);
+                    currentWheelTorque = (engineTorqueCurve.Evaluate(currentEngineRPM) * (gearRatio[currentGear] * finalDriveRatio) * clutch);
                 else
                     currentWheelTorque = 0f;
             }
         }
-        //¿£Áø ÅäÅ©(Engine Torque) °è»ê¹ı
-        //¿£Áø ÅäÅ©(Nm) = (¿£Áø Ãâ·Â(kW) ¡¿ 9549) / ¿£Áø È¸Àü¼ö(RPM)
-        //¿£Áø ÅäÅ©(Nm) = (¿£Áø Ãâ·Â(hp) x 7121) / ¿£Áø È¸Àü¼ö(RPM)
-        //¹ÙÄû ÅäÅ©(Wheel Torque) °è»ê¹ı
-        //¹ÙÄû ÅäÅ© = ¿£Áø ÅäÅ©(Engine Torque) ¡¿ º¯¼Ó±â ±â¾îºñ(Gear ratio) ¡¿ Â÷µ¿±â¾îºñ(Differential ratio)
+        //ì—”ì§„ í† í¬(Engine Torque) ê³„ì‚°ë²•
+        //ì—”ì§„ í† í¬(Nm) = (ì—”ì§„ ì¶œë ¥(kW) Ã— 9549) / ì—”ì§„ íšŒì „ìˆ˜(RPM)
+        //ì—”ì§„ í† í¬(Nm) = (ì—”ì§„ ì¶œë ¥(hp) x 7121) / ì—”ì§„ íšŒì „ìˆ˜(RPM)
+        //ë°”í€´ í† í¬(Wheel Torque) ê³„ì‚°ë²•
+        //ë°”í€´ í† í¬ = ì—”ì§„ í† í¬(Engine Torque) Ã— ë³€ì†ê¸° ê¸°ì–´ë¹„(Gear ratio) Ã— ì°¨ë™ê¸°ì–´ë¹„(Differential ratio)
     }
-    protected void SetEngineLerp(float _num)//·¹µå¶óÀÎ µµ´ŞÇßÀ»¶§ µ¿ÀÛ
+    protected void SetEngineLerp(float _num)//ë ˆë“œë¼ì¸ ë„ë‹¬í–ˆì„ë•Œ ë™ì‘
     {
         redLine = true;
         engineLerpValue = _num;
@@ -303,73 +301,5 @@ public partial class Car
             ForceChangeGear(eGEAR.eGEAR_FIRST);
     }
     public eGEAR GetCurrentGear() { return currentGear; }
-    #endregion
-
-    #region Value Nitro
-    [Header("NitroValue")]
-    [SerializeField] private AudioSource nitroSoundEffect;
-    [SerializeField] private ParticleSystem nitroParticles;
-    [SerializeField] private bool isNitroInstalled;
-    [SerializeField] private bool powerMode = false;
-    [SerializeField] private float maxNitroCapacity = 100f;
-    [SerializeField] private float currentNitroAmount;
-    [SerializeField] private float nitroConsumptionRate = 10f;
-    [SerializeField] private float nitroRechargeRate = 5f;
-    [SerializeField] private float nitroRechargeDelay = 2f;
-    [SerializeField] private float nitroRechargeDelayTimer = 0f;
-    [SerializeField] private float nitroPowerMultiplier = 1.5f;
-    [SerializeField] private float nitroMultiplier;
-    [SerializeField] private float nitroRechargeAmount = 20f;
-    [SerializeField] private float nitroAdjustBlurWidth = 0.0f;//ºí·¯È¿°ú Á¶Á¤¿ë ÃÖ´ë°ª 1f;
-    [SerializeField] private float nitroDuration = 1f;//ÆÄ¿ö¸ğµå Áö¼Ó½Ã°£
-    [SerializeField] private float nitroDurationTimer = 0f;//ÆÄ¿ö¸ğµå Áö¼Ó½Ã°£ Å¸ÀÌ¸Ó
-    [SerializeField] private bool nitroPowerReady = true;//ÆÄ¿ö¸ğµå Áö¼Ó½Ã°£ Å¸ÀÌ¸Ó ÃÖ´ë°ª
-    [SerializeField] private bool isNitroActive = false;
-    #endregion
-
-    #region Function Nitro setting
-    public void SetNitroInstall(bool _isNitroInstalled) { isNitroInstalled = _isNitroInstalled; }
-    public void SetNitroPowerMode(bool _powerMode) { powerMode = _powerMode; }
-    public void SetMaxNitroCapacity(float _maxNitroCapacity) { maxNitroCapacity = _maxNitroCapacity; currentNitroAmount = maxNitroCapacity; }
-    public void SetNitroConsumptionRate(float _nitroConsumptionRate) { nitroConsumptionRate = _nitroConsumptionRate; }
-    public void SetNitroRechargeRate(float _nitroRechargeRate) { nitroRechargeRate = _nitroRechargeRate; }
-    public void SetNitroRechargeDelay(float _nitroRechargeDelay) { nitroRechargeDelay = _nitroRechargeDelay; }
-    public void SetNitroPowerMultiplier(float _nitroPowerMultiplier) { nitroPowerMultiplier = _nitroPowerMultiplier; }
-    public void SetNitroRechargeAmount(float _nitroRechargeAmount) { nitroRechargeAmount = _nitroRechargeAmount; }
-    public void SetNitroDuration(float _nitroDuration) { nitroDuration = _nitroDuration; }
-    #endregion
-
-    #region Function Nitro
-    protected void ActivateNitro(bool _activate)
-    {
-        if(!isNitroInstalled) return;
-        if(powerMode && !nitroPowerReady) return;
-        if (_activate && currentNitroAmount > 0f)
-        {
-            isNitroActive = true;
-            if (nitroSoundEffect != null && !nitroSoundEffect.isPlaying)
-            { nitroSoundEffect.Play(); }
-            if (nitroParticles != null && !nitroParticles.isPlaying)
-            { nitroParticles.Play(); }
-        }
-        else
-        {
-            isNitroActive = false;
-            if (nitroSoundEffect != null && nitroSoundEffect.isPlaying)
-            { nitroSoundEffect.Stop(); }
-            if (nitroParticles != null && nitroParticles.isPlaying)
-            { nitroParticles.Stop(); }
-        }
-    }
-    public float GetCurrentNitroAmount() { return currentNitroAmount; }
-    public float GetMaxNitroAmount() { return maxNitroCapacity; }
-    public float GetNitroBlurWidth() { return nitroAdjustBlurWidth; }
-    public bool GetPowerMode() { return powerMode; }
-    public bool GetIsNitroActive() { return isNitroActive; }
-    public void RefillNitro(float _amount)
-    {
-        currentNitroAmount += _amount * nitroRechargeAmount;
-        currentNitroAmount = Mathf.Clamp(currentNitroAmount, 0f, maxNitroCapacity);
-    }
     #endregion
 }

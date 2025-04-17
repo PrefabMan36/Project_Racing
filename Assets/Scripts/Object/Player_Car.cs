@@ -70,6 +70,7 @@ public class Player_Car : Car
         radialBlur = MainCamera.GetComponent<RadialBlur>();
         //SetCenterMass();
 
+        SetNitroInstall(true);
         speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
         gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
         freeLookCamera.m_XAxis.Value = 0f;
@@ -80,6 +81,7 @@ public class Player_Car : Car
         freeLookCamera.enabled = true;
         ignition = true;
         braking = false;
+        engineSound.Play();
         SetEngineAcceleration(0.5f);
         SetEngineRPMLimit(9400f, 800f);
         SetAutoGear(true);
@@ -110,6 +112,7 @@ public class Player_Car : Car
         SpawnSmoke();
         StartCoroutine(Controlling());
         StartCoroutine(Engine());
+        StartCoroutine(UpdateNitro());
         StartCoroutine(UIUpdating());
     }
 
@@ -123,8 +126,11 @@ public class Player_Car : Car
         Steering(Input.GetAxis("Horizontal"));
         SetSlpingAngle();
         CameraUpdate();
-
-        if(Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        { ActivateNitro(true); }
+        if(Input.GetKeyUp(KeyCode.RightShift) && !GetPowerMode())
+        { ActivateNitro(false); }
+        if (Input.GetKeyDown(KeyCode.G))
         {
             drifting = !drifting;
             ChangeFriction(drifting);
@@ -254,11 +260,14 @@ public class Player_Car : Car
             else
                 left = true;
         }
-            //freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
-        if(firstPersonCameraCheck)
+        //freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
+        if (firstPersonCameraCheck)
             freeLookCamera.m_Lens.FieldOfView = fov * 2f;
         else
-            freeLookCamera.m_Lens.FieldOfView = fov * 2f;
+            freeLookCamera.m_Lens.FieldOfView = 
+                GetIsNitroActive() ?
+                Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2.5f, Time.deltaTime) : 
+                Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
     }
     private void firstPerson() { firstPersonCameraCheck = !firstPersonCameraCheck; }
     private void FreeLookCheck()
@@ -282,7 +291,7 @@ public class Player_Car : Car
         if (radialBlur != null)
         {
             radialBlur.blurStrength = Mathf.Lerp(0f, 2.2f, GetSpeed() / 200f);
-            radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / 200f);
+            radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / 200f) + GetNitroBlurWidth();
         }
     }
 }
