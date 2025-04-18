@@ -19,58 +19,74 @@ public partial class Car
         public eAXEL axel;
     }
 
-    [Range(0.0f, 0.5f), SerializeField] private float slipLimit = 0.3f;
-    [SerializeField]private GameObject smokePrefab;
-    private GameObject[] smokes;
-    private ParticleSystem[] smokeParticles;
+    #region Value Steer
+    [Header("Steer Value")]
+    [SerializeField] private AnimationCurve steeringCurve;
+    [SerializeField] private Transform steeringHandle;
+    [SerializeField] private float maxSteerAngle = 30f;
+    [SerializeField] private float curSteerAngle = 0f;
+    [SerializeField] private float steerSpeed;
+    [SerializeField] private float slipingAngle;
+    [SerializeField] private float brakeInput;
+    [SerializeField] private float sideBrakeInput;
+    [SerializeField] private float brakePower;
+    [SerializeField] private float sideBrakePower;
+    #endregion
 
-    protected List<MeshRenderer> wheelTransform;
-    protected Quaternion tempWheelRotation;
-    protected Vector3 tempWheelPosition;
-    private float wheelRadius;
+    #region Value Wheels
+    [Header("Fake Wheels")]
+    [SerializeField] private List<MeshRenderer> wheelTransform;
+    [SerializeField] private Quaternion tempWheelRotation;
+    [SerializeField] private Vector3 tempWheelPosition;
+    [SerializeField] private float wheelRadius;
 
-    [SerializeField] private Transform steeringWheel;
-
-    //wheels
-    private WheelHit WheelHit; //»Ÿ¡§∫∏
-    [SerializeField] protected List<Wheel> wheels;
-    protected int wheelNum;
-    protected List<WheelCollider> driveWheels = new List<WheelCollider>();
-    protected List<WheelCollider> steerWheels = new List<WheelCollider>();
-    protected int driveWheelsNum;
-    protected int steerWheelsNum;
-    protected eCAR_DRIVEAXEL driveAxel;
-    private float[] differentialPower;
+    [Header("Real Wheels")]
+    [SerializeField] private WheelHit WheelHit; //»Ÿ¡§∫∏
+    [SerializeField] private List<Wheel> wheels;
+    [SerializeField] private int wheelNum;
+    [SerializeField] private List<WheelCollider> driveWheels = new List<WheelCollider>();
+    [SerializeField] private List<WheelCollider> steerWheels = new List<WheelCollider>();
+    [SerializeField] private int driveWheelsNum;
+    [SerializeField] private int steerWheelsNum;
+    [SerializeField] private eCAR_DRIVEAXEL driveAxel;
+    [SerializeField] private float[] differentialPower;
     [SerializeField] private float differentialPowerValue = 0f;
+    #endregion
 
-    //tire
-    [Range(0.8f, 1.3f)] private float tireGrip = 1.3f;
-    [Range(1f, 2f)] private float forwardValue = 1f;
-    [Range(1f, 2f)] private float sideValue = 2f;
-    private WheelFrictionCurve forwardFriction, sidewaysFriction;
+    #region Value Tire
+    [Header("Tire Value")]
+    [Range(0.8f, 1.3f), SerializeField] private float tireGrip = 1.3f;
+    [Range(1f, 2f), SerializeField] private float forwardValue = 1f;
+    [Range(1f, 2f), SerializeField] private float sideValue = 2f;
+    [SerializeField] private WheelFrictionCurve forwardFriction, sidewaysFriction;
     [SerializeField] private float[] forwardSlip;
     [SerializeField] private float[] sidewaysSlip;
     [SerializeField] private float[] overallSlip;
+    #endregion
 
-    [SerializeField] protected AnimationCurve steeringCurve;
-    [SerializeField] private float maxSteerAngle = 30f;
-    [SerializeField] protected float curSteerAngle = 0f;
-    protected float steerSpeed;
-    protected float slipingAngle;
-    protected float brakeInput;
-    protected float sideBrakeInput;
-    protected float brakePower;
-    protected float sideBrakePower;
+    #region Value AntiRoll
+    [SerializeField] private float antiRoll;
+    [SerializeField] private float antiRollForce;
+    [SerializeField] private float travelL;
+    [SerializeField] private float travelR;
+    [SerializeField] private bool groundedL;
+    [SerializeField] private bool groundedR;
+    #endregion
 
-    //Anti Roll Bar
-    protected float antiRoll;
-    private float antiRollForce;
-    private float travelL;
-    private float travelR;
-    private bool groundedL;
-    private bool groundedR;
+    #region Value Drift
+    [Header("Drift Value")]
+    [Range(0.0f, 0.5f), SerializeField] private float slipLimit = 0.3f;
+    [SerializeField] private GameObject smokePrefab;
+    [SerializeField] private GameObject[] smokes;
+    [SerializeField] private ParticleSystem[] smokeParticles;
+    #endregion
 
+    #region Function Steer Setting
+    public void SetSteeringCurve(AnimationCurve _steeringCurve) { steeringCurve  = _steeringCurve; }
     protected void SetSteerWheelsCount(int _steerWheelsCount) { steerWheelsNum = _steerWheelsCount; }
+    #endregion
+
+    #region Fuction Wheels Setting
     protected void SetDriveWheels()
     {
         wheelNum = wheels.Count;
@@ -109,6 +125,7 @@ public partial class Car
         wheelRadius = wheels[0].wheelCollider.radius;
         differentialPower = new float[driveWheelsNum];
     }
+    #endregion
     protected void SetFriction()
     {
         forwardSlip = new float[wheelNum];
@@ -201,8 +218,8 @@ public partial class Car
         curSteerAngle = Mathf.Lerp(curSteerAngle, steeringCurve.Evaluate(speed) * input, maxSteerAngle > curSteerAngle ? Time.deltaTime * 2f : Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
-        if (steeringWheel != null)
-            steeringWheel.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
+        if (steeringHandle != null)
+            steeringHandle.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
     }
     protected void Braking()
     {

@@ -1094,6 +1094,7 @@ GameObject:
   - component: {fileID: 2736212739296659131}
   - component: {fileID: 559560253472747298}
   - component: {fileID: 1982242415706992608}
+  - component: {fileID: 8021030302702733571}
   m_Layer: 0
   m_Name: Chev666
   m_TagString: Untagged
@@ -1246,7 +1247,6 @@ MonoBehaviour:
     wheelCollider: {fileID: 6375542328432083250}
     skidMarks: {fileID: 545159218649519804}
     axel: 1
-  differentialPowerValue: 0
   forwardSlip: []
   sidewaysSlip: []
   overallSlip: []
@@ -1256,7 +1256,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  steeringInput: 0
   maxSteerAngle: 30
   curSteerAngle: 0
   centerMass: {fileID: 4880681281052632171}
@@ -1270,7 +1269,8 @@ MonoBehaviour:
   tailLamp:
   - {fileID: 7466813844690450978}
   - {fileID: 8175720268926043303}
-  throttle: 0
+  engineSound: {fileID: 4595467132180779318}
+  startUpSoundObject: {fileID: 0}
   horsePowerCurve:
     serializedVersion: 2
     m_Curve: []
@@ -1283,18 +1283,48 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  throttle: 0
+  engineAcceleration: 0
   maxEngineRPM: 0
   minEngineRPM: 0
-  curEngineRPM: 0
+  currentEngineRPM: 0
   tempWheelRPM: 0
-  curWheelRPM: 0
-  curEngineTorque: 0
-  curWheelTorque: 0
-  engineSound: {fileID: 4595467132180779318}
-  curGear: 0
+  currentWheelRPM: 0
+  currentEngineTorque: 0
+  currentWheelTorque: 0
+  overSpeed: 0
+  redLine: 0
+  engineLerpValue: 0
+  currentGear: 0
   nextGear: 0
   clutch: 0
+  reverse: 0
+  perviousMaxSpeed: 0
+  differentialRatio: 0
+  finalDriveRatio: 0
+  lastGear: 0
   autoGear: 0
+  shiftTiming: 0
+  shiftTimer: 0
+  nitroSoundEffect: {fileID: 0}
+  nitroParticles: {fileID: 0}
+  isNitroInstalled: 0
+  powerMode: 0
+  maxNitroCapacity: 100
+  currentNitroAmount: 0
+  nitroConsumptionRate: 10
+  nitroRechargeRate: 5
+  nitroRechargeDelay: 2
+  nitroRechargeDelayTimer: 0
+  nitroPower: 1.5
+  nitroSpeed: 1.2
+  nitroPowerMultiplier: 0
+  nitroSpeedMultiplier: 0
+  nitroRechargeAmount: 5
+  nitroAdjustBlurWidth: 0
+  nitroDuration: 1
+  nitroPowerReady: 1
+  isNitroActive: 0
   radialBlur: {fileID: 0}
   braking: 0
   sideBraking: 0
@@ -1302,6 +1332,25 @@ MonoBehaviour:
   down: 0
   left: 0
   right: 0
+--- !u!114 &8021030302702733571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948821525999562}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bff4f5a8991d7fa47baed5c5ff25979f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: ae721c767fcd6664ca1cf46b36bb56b7, type: 2}
+  duration: 0.15
+  corner: 1
+  loop: 0
+  points:
+  - {x: -0.6, y: 1.09, z: -2.15}
+  - {x: 0.6, y: 1.09, z: -2.15}
 --- !u!1 &1967885208801384
 GameObject:
   m_ObjectHideFlags: 0

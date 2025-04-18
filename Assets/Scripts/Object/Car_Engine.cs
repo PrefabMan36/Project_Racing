@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Tiny;
 
 public partial class Car
 {
@@ -19,6 +20,7 @@ public partial class Car
     }
 
     #region Value Others
+    [Header("Other Value")]
     protected bool ignition = true;
     private bool engineStartUP = false;
     protected float dragAmount;
@@ -29,7 +31,7 @@ public partial class Car
     #endregion
 
     #region Value Engine
-    [Header("EngineValue")]
+    [Header("Engine Value")]
     [SerializeField] private AnimationCurve horsePowerCurve;
     [SerializeField] private AnimationCurve engineTorqueCurve;
     [SerializeField] protected float throttle;
@@ -42,7 +44,7 @@ public partial class Car
     #endregion
 
     #region Function Engine setting
-    public void SetCurves(AnimationCurve _horsePowerCurve,  AnimationCurve _engineTorqueCurve) { horsePowerCurve = _horsePowerCurve; engineTorqueCurve = _engineTorqueCurve; }
+    public void SetEngineCurves(AnimationCurve _horsePowerCurve,  AnimationCurve _engineTorqueCurve) { horsePowerCurve = _horsePowerCurve; engineTorqueCurve = _engineTorqueCurve; }
     public void SetEngineAcceleration(float _engineAcceleration) { engineAcceleration = _engineAcceleration; }
     public void SetEngineRPMLimit(float _maxEngineRPM, float _minEngineRPM) { maxEngineRPM = _maxEngineRPM; minEngineRPM = _minEngineRPM; }
     public void SetMaxEngineRPM(float _maxRPM) { maxEngineRPM = _maxRPM; }
@@ -110,9 +112,10 @@ public partial class Car
                         Mathf.Max(minEngineRPM, Mathf.Abs(currentWheelRPM) * finalDriveRatio * Mathf.Abs(gearRatio[currentGear])),
                         (overSpeed * engineAcceleration * Time.deltaTime) * Mathf.Abs(gearRatio[currentGear])
                     );
-                nitroMultiplier = isNitroActive ? nitroPowerMultiplier : 1f;
-                if (speed < gearSpeedLimit[currentGear])
-                    currentWheelTorque = (engineTorqueCurve.Evaluate(currentEngineRPM) * nitroMultiplier * (gearRatio[currentGear] * finalDriveRatio) * clutch);
+                nitroPowerMultiplier = isNitroActive ? nitroPower : 1f;
+                nitroSpeedMultiplier = isNitroActive ? nitroSpeed : 1f;
+                if (speed < gearSpeedLimit[currentGear] * nitroSpeed)
+                    currentWheelTorque = (engineTorqueCurve.Evaluate(currentEngineRPM) * nitroPowerMultiplier * (gearRatio[currentGear] * finalDriveRatio) * clutch);
                 else
                     currentWheelTorque = 0f;
             }
@@ -154,19 +157,20 @@ public partial class Car
     #endregion
 
     #region Value Gear
+    [Header("Gear Value")]
     [SerializeField] private eGEAR currentGear = eGEAR.eGEAR_NEUTURAL;
     [SerializeField] private eGEAR nextGear = eGEAR.eGEAR_NEUTURAL;
-    protected float clutch;
-    protected bool reverse;
-    private Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
-    private Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
-    private float perviousMaxSpeed = 0;
-    private float differentialRatio;
-    private float finalDriveRatio;
-    private eGEAR lastGear;
-    private bool autoGear;
-    private float shiftTiming;
-    private float shiftTimer = 0f;
+    [SerializeField] protected float clutch;
+    [SerializeField] protected bool reverse;
+    [SerializeField] private Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
+    [SerializeField] private Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
+    [SerializeField] private float perviousMaxSpeed = 0;
+    [SerializeField] private float differentialRatio;
+    [SerializeField] private float finalDriveRatio;
+    [SerializeField] private eGEAR lastGear;
+    [SerializeField] private bool autoGear;
+    [SerializeField] private float shiftTiming;
+    [SerializeField] private float shiftTimer = 0f;
     #endregion
 
     #region Function Gear setting
@@ -296,8 +300,15 @@ public partial class Car
     {
         if(!IsGrounded()) return;
         if(speed > gearSpeedLimit[currentGear] -10f && currentEngineRPM >= maxEngineRPM - minEngineRPM - 500f) { ChangeGear(true); }
-        if(speed < perviousMaxSpeed + 10f && currentGear != eGEAR.eGEAR_FIRST && currentEngineRPM < maxEngineRPM / 3 + minEngineRPM) { ChangeGear(false); }
-        if(throttle < 0 && speed < 0.1f && currentGear != eGEAR.eGEAR_REVERSE)
+        else if(speed < perviousMaxSpeed + 10f && currentGear != eGEAR.eGEAR_FIRST && currentEngineRPM < maxEngineRPM / 3 + minEngineRPM) { ChangeGear(false); }
+        else if (nextGear == eGEAR.eGEAR_NEUTURAL)
+        {
+            if (throttle > 0)
+                ForceChangeGear(eGEAR.eGEAR_FIRST);
+            else if (throttle < 0)
+                ForceChangeGear(eGEAR.eGEAR_REVERSE);
+        }
+        if (throttle < 0 && speed < 0.1f && currentGear != eGEAR.eGEAR_REVERSE)
             ForceChangeGear(eGEAR.eGEAR_REVERSE);
         else if(currentGear == eGEAR.eGEAR_REVERSE && throttle > 0 && speed < 10f)
             ForceChangeGear(eGEAR.eGEAR_FIRST);
@@ -306,9 +317,9 @@ public partial class Car
     #endregion
 
     #region Value Nitro
-    [Header("NitroValue")]
+    [Header("Nitro Value")]
     [SerializeField] private AudioSource nitroSoundEffect;
-    [SerializeField] private ParticleSystem nitroParticles;
+    [SerializeField] private Trail nitroParticles;
     [SerializeField] private bool isNitroInstalled;
     [SerializeField] private bool powerMode = false;
     [SerializeField] private float maxNitroCapacity = 100f;
@@ -317,24 +328,31 @@ public partial class Car
     [SerializeField] private float nitroRechargeRate = 5f;
     [SerializeField] private float nitroRechargeDelay = 2f;
     [SerializeField] private float nitroRechargeDelayTimer = 0f;
-    [SerializeField] private float nitroPowerMultiplier = 1.5f;
-    [SerializeField] private float nitroMultiplier;
-    [SerializeField] private float nitroRechargeAmount = 20f;
+    [SerializeField] private float nitroPower = 1.5f;
+    [SerializeField] private float nitroSpeed = 1.2f;
+    [SerializeField] private float nitroPowerMultiplier;
+    [SerializeField] private float nitroSpeedMultiplier;
+    [SerializeField] private float nitroRechargeAmount = 5f;
     [SerializeField] private float nitroAdjustBlurWidth = 0.0f;//블러효과 조정용 최대값 1f;
     [SerializeField] private float nitroDuration = 1f;//파워모드 지속시간
-    [SerializeField] private float nitroDurationTimer = 0f;//파워모드 지속시간 타이머
+    //[SerializeField] private float nitroDurationTimer = 0f;//파워모드 지속시간 타이머
     [SerializeField] private bool nitroPowerReady = true;//파워모드 지속시간 타이머 최대값
     [SerializeField] private bool isNitroActive = false;
     #endregion
 
     #region Function Nitro setting
-    public void SetNitroInstall(bool _isNitroInstalled) { isNitroInstalled = _isNitroInstalled; }
+    public void SetNitroParticles(Trail _trail) { nitroParticles = _trail; }
+    public void SetNitroInstall(bool _isNitroInstalled)
+    {
+        isNitroInstalled = _isNitroInstalled;
+        NitroBar.enabled = _isNitroInstalled;
+    }
     public void SetNitroPowerMode(bool _powerMode) { powerMode = _powerMode; }
     public void SetMaxNitroCapacity(float _maxNitroCapacity) { maxNitroCapacity = _maxNitroCapacity; currentNitroAmount = maxNitroCapacity; }
     public void SetNitroConsumptionRate(float _nitroConsumptionRate) { nitroConsumptionRate = _nitroConsumptionRate; }
     public void SetNitroRechargeRate(float _nitroRechargeRate) { nitroRechargeRate = _nitroRechargeRate; }
     public void SetNitroRechargeDelay(float _nitroRechargeDelay) { nitroRechargeDelay = _nitroRechargeDelay; }
-    public void SetNitroPowerMultiplier(float _nitroPowerMultiplier) { nitroPowerMultiplier = _nitroPowerMultiplier; }
+    public void SetNitroPowerMultiplier(float _nitroPowerMultiplier) { nitroPower = _nitroPowerMultiplier; }
     public void SetNitroRechargeAmount(float _nitroRechargeAmount) { nitroRechargeAmount = _nitroRechargeAmount; }
     public void SetNitroDuration(float _nitroDuration) { nitroDuration = _nitroDuration; }
     #endregion
@@ -349,16 +367,16 @@ public partial class Car
             isNitroActive = true;
             if (nitroSoundEffect != null && !nitroSoundEffect.isPlaying)
             { nitroSoundEffect.Play(); }
-            if (nitroParticles != null && !nitroParticles.isPlaying)
-            { nitroParticles.Play(); }
+            if (nitroParticles != null && !nitroParticles.enabled)
+            { nitroParticles.enabled = true; }
         }
         else
         {
             isNitroActive = false;
             if (nitroSoundEffect != null && nitroSoundEffect.isPlaying)
             { nitroSoundEffect.Stop(); }
-            if (nitroParticles != null && nitroParticles.isPlaying)
-            { nitroParticles.Stop(); }
+            if (nitroParticles != null && nitroParticles.enabled)
+            { nitroParticles.enabled = false; }
         }
     }
     public float GetCurrentNitroAmount() { return currentNitroAmount; }
@@ -368,7 +386,7 @@ public partial class Car
     public bool GetIsNitroActive() { return isNitroActive; }
     public void RefillNitro(float _amount)
     {
-        currentNitroAmount += _amount * nitroRechargeAmount;
+        currentNitroAmount += _amount;
         currentNitroAmount = Mathf.Clamp(currentNitroAmount, 0f, maxNitroCapacity);
     }
     #endregion

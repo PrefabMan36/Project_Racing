@@ -4,38 +4,33 @@ using UnityEngine;
 
 public partial class Car
 {
-    //Body차체
-    [SerializeField] GameObject centerMass;
-    [SerializeField] protected Rigidbody carRB;
+    #region Value Body
+    [Header("Body Value")]
+    [SerializeField] private GameObject centerMass;
+    [SerializeField] private Rigidbody carRB;
+    #endregion
 
-    private float dragCoefficient = 0.4f; // Cd 값
-    private float frontalArea = 2.0f; // A 값
-    private float airDensity = 1.225f; // rho 값
-    private float sqrSpeed;
-    private Vector3 dragDirection;
-    private float dragMagnitude;
-    private Vector3 dragForce;
-
-    [SerializeField] private Light[] headLight_Object;
-    [SerializeField] private Light[] headLight_SpotLight;
-    [SerializeField] private Light[] tailLamp;
-    private bool headLightSwitch = false;
-
+    #region Function Body
+    public void SetCarRB(Rigidbody _carRB) { carRB = _carRB; }
     public void SetCenterMass() { carRB.centerOfMass = centerMass.transform.localPosition; }
     public void ShowCenterMass() { centerMass.transform.position = carRB.centerOfMass; }
-    public void SetCarRB(Rigidbody _carRB) { carRB = _carRB; }
     public void SetCarColor(Material[] _CarColor)
     {
         MeshRenderer carMesh = body.gameObject.GetComponent<MeshRenderer>();
         carMesh.materials = _CarColor;
     }
-    protected void SetSpeed()
-    {
-        speed = carRB.velocity.magnitude * 3.6f;//m/s to km/h
-        //carRB.drag = dragAmount + (speed / 6000);
-        //curDownforce = -(Mathf.Lerp(0, 1, speed / gearSpeedLimit[lastGear]) * downForce);
-        //carRB.AddForce(Vector3.up * curDownforce);
-    }
+    protected void SetSpeedToKMH() { speed = carRB.velocity.magnitude * 3.6f; }
+    #endregion
+
+    #region AeroDynamicPhysics
+    [Header("AeroDynamic Physics Value")]
+    [SerializeField] private float dragCoefficient = 0.4f; // Cd 값
+    [SerializeField] private float frontalArea = 2.0f; // A 값
+    [SerializeField] private float airDensity = 1.225f; // rho 값
+    [SerializeField] private float sqrSpeed;
+    [SerializeField] private Vector3 dragDirection;
+    [SerializeField] private float dragMagnitude;
+    [SerializeField] private Vector3 dragForce;
 
     protected void ApplyAerodynamicDrag()
     {
@@ -48,19 +43,48 @@ public partial class Car
         dragForce = dragDirection * dragMagnitude;
         carRB.AddForce(dragForce * Time.deltaTime, ForceMode.Force);
     }
+    #endregion
 
+    #region Lights
+    [Header("Lights Values")]
+    [SerializeField] private Light[] headLight_Object;
+    [SerializeField] private Light[] headLight_SpotLight;
+    [SerializeField] private Light[] tailLamp;
+    [SerializeField] private bool headLightSwitch = false;
+    private void SetLight()
+    {
+        headLight_Object = new Light[2];
+        headLight_SpotLight = new Light[2];
+        tailLamp = new Light[2];
+    }
+    protected void SetLights(Transform _gameObject)
+    {
+        SetLight();
+        headLight_Object[0] = _gameObject.Find("HeadLight_Left").GetComponent<Light>();
+        headLight_Object[1] = _gameObject.Find("HeadLight_Right").GetComponent<Light>();
+        headLight_SpotLight[0] = _gameObject.Find("HeadLight_Left_Spot").GetComponent<Light>();
+        headLight_SpotLight[1] = _gameObject.Find("HeadLight_Right_Spot").GetComponent<Light>();
+        tailLamp[0] = _gameObject.Find("TailLamp_Left").GetComponent<Light>();
+        tailLamp[1] = _gameObject.Find("TailLamp_Right").GetComponent<Light>();
+    }
     protected void HeadLightSwitch()
     {
-        headLightSwitch = !headLightSwitch;
-        foreach(Light light in headLight_Object)
-            light.enabled = headLightSwitch;
-        foreach (Light light in headLight_SpotLight)
-            light.enabled = headLightSwitch;
+        if(headLight_Object[0] != null)
+        {
+            headLightSwitch = !headLightSwitch;
+            foreach (Light light in headLight_Object)
+                light.enabled = headLightSwitch;
+            foreach (Light light in headLight_SpotLight)
+                light.enabled = headLightSwitch;
+        }
     }
-
     private void TailLampSwitch(bool _switch)
     {
-        foreach(Light light in tailLamp)
+        if(tailLamp[0] != null)
+        {
+            foreach(Light light in tailLamp)
             light.enabled = _switch;
+        }
     }
+    #endregion
 }

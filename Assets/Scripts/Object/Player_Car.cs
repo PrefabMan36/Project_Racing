@@ -1,26 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Tiny;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-//void setUpController()
-//{
-//    carController c = car.GetComponent<carController>();
-//    c.gears = new float[7];
-
-//    c.maxRPM = 8000;
-//    c.minRPM = 4000;
-
-//    c.DownForceValue = 5;
-//    c.dragAmount = 0.015f;
-//    c.EngineSmoothTime = 0.5f;
-//    c.finalDrive = 3.71f;
-
-//    if (car.tag != "Player") car.tag = "Player";
-
-//}
 public class Player_Car : Car
 {
     private Curve_data _data;
@@ -44,11 +29,12 @@ public class Player_Car : Car
     private void Start()
     {
         _data = gameObject.transform.Find("Champion_curve").GetComponent<Curve_data>();
-        SetCurves(_data.horsePower, _data.torque);
-        steeringCurve = _data.steer;
+        SetEngineCurves(_data.horsePower, _data.torque);
+        SetSteeringCurve(_data.steer);
         Destroy(_data.gameObject);
 
         rpmGauge = FindAnyObjectByType<RPMGauge>();
+        NitroBar = FindAnyObjectByType<Slider>();
 
         freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
         sideCamera = gameObject.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
@@ -71,13 +57,17 @@ public class Player_Car : Car
         //SetCenterMass();
 
         SetNitroInstall(true);
+        SetNitroParticles(gameObject.GetComponent<Trail>());
+        SetMaxNitroCapacity(100f);
+        SetNitroConsumptionRate(40f);
         speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
         gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
+
         freeLookCamera.m_XAxis.Value = 0f;
         freeLookWaitTime = 1.0f;
         MainCamera = FindAnyObjectByType<Camera>();
         body = gameObject;
-        carRB = gameObject.GetComponent<Rigidbody>();
+        SetCarRB(gameObject.GetComponent<Rigidbody>());
         freeLookCamera.enabled = true;
         ignition = true;
         braking = false;
@@ -106,7 +96,7 @@ public class Player_Car : Car
         SetLastGear(eGEAR.eGEAR_SIXTH);
         SetFinalDriveRatio(3.97f);
         SetShiftTiming(0.5f);
-        brakePower = 50000f;
+        brakePower = 30000f;
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
         SetFriction();
         SpawnSmoke();
@@ -122,7 +112,7 @@ public class Player_Car : Car
         //if (Input.GetKeyDown(KeyCode.V))
         //    changeCameraPosition();
         //Engine();
-        SetSpeed();
+        SetSpeedToKMH();
         Steering(Input.GetAxis("Horizontal"));
         SetSlpingAngle();
         CameraUpdate();
