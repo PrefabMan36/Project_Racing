@@ -46,7 +46,7 @@ public partial class Car
     [SerializeField] private AnimationCurve horsePowerCurve;
     [SerializeField] private AnimationCurve engineTorqueCurve;
     [SerializeField] protected float throttle;
-    [SerializeField] private float baseEngineAcceleration, currentDynamicEngineAcceleration;
+    [SerializeField] private float baseEngineAcceleration = 5f, currentDynamicEngineAcceleration;
     [SerializeField] private float maxHorsePower = 0f, rpmAtMaxHorsePower = 0f;
     [SerializeField] private float maxEngineRPM, minEngineRPM, currentEngineRPM, targetRPM, tempWheelRPM, currentWheelRPM;
     [SerializeField] private float currentEngineTorque, currentWheelTorque;
@@ -67,7 +67,6 @@ public partial class Car
     }
     public void SetBaseEngineAcceleration(float _engineAcceleration) { baseEngineAcceleration = _engineAcceleration; }
     public void SetEngineRPMLimit(float _maxEngineRPM, float _minEngineRPM) { maxEngineRPM = _maxEngineRPM; minEngineRPM = _minEngineRPM; }
-    public void SetMaxEngineRPM(float _maxRPM) { maxEngineRPM = _maxRPM; }
     public void SetEngineSound(AudioSource[] _engineSound) { engineSound = _engineSound; }
     #endregion
 

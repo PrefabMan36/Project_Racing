@@ -5,19 +5,12 @@ using UnityEngine;
 
 public class Mgr_MainGame : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> Cars;
-
-    [SerializeField] private GameObject player;
-    [SerializeField] private GameObject playerCar;
-    private void Start()
+    [SerializeField] private Player_Car playerCar;
+    [SerializeField] private Car_data carData;
+    private void Awake()
     {
-        player = FindAnyObjectByType<Player_Car>().gameObject;
-
-        string carFileName = Shared.CarName + ".prefab";
-
-        //playerCar = Instantiate((GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Prefabs/Colliders/" + carFileName, typeof(GameObject)));
-        //playerCar.transform.position = player.transform.position;
-        //playerCar.transform.rotation = player.transform.rotation;
-        //playerCar.transform.parent = player.transform;
+        playerCar = GameObject.FindWithTag("Player").GetComponent<Player_Car>();
+        carData = (Car_data)CarData_Manager.instance.GetCarDataByName("Super2000");
+        //playerCar.set
     }
 }

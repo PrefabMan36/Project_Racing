@@ -16,30 +16,7 @@ public partial class Car : Object_Movable
     protected void SetSlpingAngle(){ slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
     public int GetSpeedNum(){ return (int)speed; }
     public float GetSpeed() { return speed; }
-    protected IEnumerator Engine()
-    {
-        WaitForSeconds waitForSecond = new WaitForSeconds(0.01f);
-        while (true)
-        {
-            yield return waitForSecond;
-            if (ignition)
-            {
-                GearShifting();
-                CalculateTorque();
-                forceEngineLerp();
-                TorqueToWheel();
-                if (autoGear) AutoGear();
-                EngineSoundUpdate();
-            }
-            else
-            {
-                currentEngineRPM = 0f;
-                currentWheelTorque = 0f;
-                if (!engineStartUP)
-                    StartCoroutine(IgnitionEngine());
-            }
-        }
-    }
+    
     protected void EngineForUpdate()
     {
         if (ignition)

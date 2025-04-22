@@ -284,37 +284,7 @@ public partial class Car
             wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
         }
     }
-    /*protected void Braking()
-    {
-        targetBrakeTorque = brakeInput * brakePower;
-        for (int i = 0; i < wheelNum; i++)
-        {
-            tempWheelColliderForBrake = wheels[i].wheelCollider;
-            if(tempWheelColliderForBrake == null) continue;
-
-            appliedBrakeTorque = targetBrakeTorque;
-            if(isABSEnabled && targetBrakeTorque > 10f)
-            {
-                if(tempWheelColliderForBrake.GetGroundHit(out wheelHit))
-                {
-                    if (wheelHit.forwardSlip < -absSlipThreshold)
-                    {
-                        slipFactorABS = Mathf.Clamp01((Mathf.Abs(wheelHit.forwardSlip) - absSlipThreshold) / (1.0f - absSlipThreshold));
-                        appliedBrakeTorque *= (1.0f - slipFactorABS * absBrakeReleaseFactor);
-                        appliedBrakeTorque = Mathf.Max(0, appliedBrakeTorque); // 브레이크 토크가 음수가 되지 않도록 함
-
-                        // --- 간단한 펄스 효과 (선택적) ---
-                        // 좀 더 실제 ABS처럼 만들려면 아래 주석처리된 코드를 활성화하고 위 appliedBrakeTorque 계산 부분을 주석처리 하세요.
-                        // 펄스 효과를 위해 Time.time 사용 (빠르게 깜빡이는 효과)
-                        // appliedBrakeTorque = Mathf.PingPong(Time.time * brakePower * 0.1f, targetBrakeTorque * (1.0f - absStrength * 0.5f)); // absStrength 만큼 최소 제동력 확보
-
-                    }
-                }
-            }
-            tempWheelColliderForBrake.brakeTorque = appliedBrakeTorque;
-        }
-        TailLampSwitch(brakeInput > 0 ? true : false);
-    }*/
+    
     public void SetAntiRoll(float _antiRoll) { antiRoll = _antiRoll; }
     protected void SideBrakingDown()
     {
