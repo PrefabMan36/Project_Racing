@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Tiny;
+using Unity.VisualScripting;
 
 public partial class Car
 {
@@ -24,10 +25,20 @@ public partial class Car
     protected bool ignition = true;
     private bool engineStartUP = false;
     protected float dragAmount;
-    [SerializeField] protected AudioSource engineSound;
+    [SerializeField] protected AudioSource[] engineSound;
     [SerializeField] private GameObject startUpSoundObject;
     private GameObject _tempSoundObject;
     private AudioSource startUpSound;
+
+    [Header("Value TCS")]
+    [SerializeField] private bool isTCSEnabled = true; // TCS 사용 여부
+    [SerializeField, Range(0.05f, 1.0f)] private float tcsSlipThreshold = 0.25f; // TCS 개입을 시작할 Forward Slip 임계값
+    [SerializeField, Range(0.0f, 1.0f)] private float tcsTorqueReductionFactor = 1.0f; // TCS 개입 강도 (1이면 슬립 시 토크 0, 낮을수록 약하게 개입)
+    [SerializeField] private float tcsBrake = 0f;
+    [SerializeField] private float tcsBrakeFactor = 50f;
+    [SerializeField] private float slipFactorTCS;
+    [SerializeField] private float baseTorquePerWheel;
+    [SerializeField] private float appliedTorque;
     #endregion
 
     #region Value Engine
@@ -35,20 +46,29 @@ public partial class Car
     [SerializeField] private AnimationCurve horsePowerCurve;
     [SerializeField] private AnimationCurve engineTorqueCurve;
     [SerializeField] protected float throttle;
-    [SerializeField] private float engineAcceleration;
-    [SerializeField] private float maxEngineRPM, minEngineRPM, currentEngineRPM, tempWheelRPM, currentWheelRPM;
+    [SerializeField] private float baseEngineAcceleration, currentDynamicEngineAcceleration;
+    [SerializeField] private float maxHorsePower = 0f, rpmAtMaxHorsePower = 0f;
+    [SerializeField] private float maxEngineRPM, minEngineRPM, currentEngineRPM, targetRPM, tempWheelRPM, currentWheelRPM;
     [SerializeField] private float currentEngineTorque, currentWheelTorque;
     [SerializeField] private float overSpeed;
     [SerializeField] private bool redLine = false;
     [SerializeField] private float engineLerpValue;
+    [SerializeField] private bool isEngineBrakingEnabled = true;
+    [SerializeField] private float engineBrakingFactor = 800f;
+    [SerializeField] private float engineBrakeEffect;
     #endregion
 
     #region Function Engine setting
-    public void SetEngineCurves(AnimationCurve _horsePowerCurve,  AnimationCurve _engineTorqueCurve) { horsePowerCurve = _horsePowerCurve; engineTorqueCurve = _engineTorqueCurve; }
-    public void SetEngineAcceleration(float _engineAcceleration) { engineAcceleration = _engineAcceleration; }
+    public void SetEngineCurves(AnimationCurve _horsePowerCurve,  AnimationCurve _engineTorqueCurve)
+    {
+        horsePowerCurve = _horsePowerCurve;
+        engineTorqueCurve = _engineTorqueCurve;
+        CalculateOptimalShiftPoints();
+    }
+    public void SetBaseEngineAcceleration(float _engineAcceleration) { baseEngineAcceleration = _engineAcceleration; }
     public void SetEngineRPMLimit(float _maxEngineRPM, float _minEngineRPM) { maxEngineRPM = _maxEngineRPM; minEngineRPM = _minEngineRPM; }
     public void SetMaxEngineRPM(float _maxRPM) { maxEngineRPM = _maxRPM; }
-    public void SetEngineSound(AudioSource _engineSound) { engineSound = _engineSound; }
+    public void SetEngineSound(AudioSource[] _engineSound) { engineSound = _engineSound; }
     #endregion
 
     #region Function Engine
@@ -59,13 +79,17 @@ public partial class Car
         if (ignition)
         {
             ignition = false;
-            engineSound.Stop();
+            foreach (var sound in engineSound)
+            {
+                if (sound.isPlaying)
+                    sound.Stop();
+            }
             yield break;
         }
         if (startUpSound == null ) yield break;
         _tempSoundObject = Instantiate(startUpSoundObject);
         startUpSound = _tempSoundObject.GetComponent<AudioSource>();
-        _tempSoundObject.transform.position = engineSound.transform.position;
+        _tempSoundObject.transform.position = engineSound[0].transform.position;
         while (true)
         {
             yield return wfs;
@@ -74,11 +98,48 @@ public partial class Car
             {
                 Destroy(_tempSoundObject);
                 ignition = true;
-                if (!engineSound.isPlaying)
-                    engineSound.Play();
+                foreach (var sound in engineSound)
+                {
+                    if (!sound.isPlaying)
+                        sound.Play();
+                }
                 yield break;
             }
         }
+    }
+    protected void CalculateOptimalShiftPoints()
+    {
+        if (horsePowerCurve == null || horsePowerCurve.length < 2)
+        {
+            Debug.LogError("Horsepower curve is not set or invalid. Using default shift points.");
+            maxHorsePower = 100f;
+            rpmAtMaxHorsePower = maxEngineRPM * 0.75f;
+            optimalShiftUpRPM = maxEngineRPM * 0.85f;
+            optimalShiftDownRPM = maxEngineRPM * 0.3f;
+            return;
+        }
+        maxHorsePower = 0f;
+        foreach(var key in horsePowerCurve.keys)
+        {
+            if(key.value > maxHorsePower)
+            {
+                maxHorsePower = key.value;
+                rpmAtMaxHorsePower = key.time;
+            }
+        }
+        optimalShiftUpRPM = Mathf.Clamp(rpmAtMaxHorsePower * 0.95f, minEngineRPM + 500f, maxEngineRPM - 500f);
+        optimalShiftDownRPM = Mathf.Clamp(rpmAtMaxHorsePower * 0.5f, minEngineRPM + 200f, maxEngineRPM);
+        Debug.Log($"Optimal Shift Points Calculated: MaxHP={maxHorsePower} at RPM={rpmAtMaxHorsePower}, ShiftUpRPM={optimalShiftUpRPM}, ShiftDownRPM={optimalShiftDownRPM}");
+    }
+    private float GetPowerFactor(float _RPM)
+    {
+        if (horsePowerCurve == null || horsePowerCurve.length < 1 || maxHorsePower <= 0)
+        {
+            return 0.5f; // 커브 없으면 중간값 반환
+        }
+        // 현재 RPM의 마력을 최대 마력으로 나누어 정규화 (최대값이 1이 되도록)
+        float currentHP = horsePowerCurve.Evaluate(currentEngineRPM);
+        return Mathf.Clamp01(currentHP / maxHorsePower); // 0~1 사이 값으로 제한
     }
     private void CalculateWheelRPM()
     {
@@ -98,26 +159,57 @@ public partial class Car
         if (currentEngineRPM >= maxEngineRPM) SetEngineLerp(maxEngineRPM - 1000f);
         if(!redLine)
         {
-            if (speed > gearSpeedLimit[currentGear])
-                overSpeed = 4f;
-            else
-                overSpeed = 1f;
+            currentDynamicEngineAcceleration = baseEngineAcceleration * Mathf.Max(0.15f, GetPowerFactor(currentEngineRPM));
+            overSpeed = (speed > gearSpeedLimit[currentGear]) ? 4f : 1f;
             if (clutch < 0.1f)
-                currentEngineRPM = Mathf.Lerp(currentEngineRPM, Mathf.Max(minEngineRPM, maxEngineRPM * throttle), Time.deltaTime * 3.5f);
+            {
+                targetRPM = Mathf.Max(minEngineRPM, maxEngineRPM * throttle);
+                currentEngineRPM = Mathf.Lerp(currentEngineRPM, targetRPM, Time.deltaTime * currentDynamicEngineAcceleration * 2f);
+                currentWheelTorque = 0f;
+            }
             else
             {
+                CalculateWheelRPM();
+                targetRPM = 
+                    Mathf.Max
+                    (
+                        minEngineRPM,
+                        Mathf.Abs(currentWheelRPM) * finalDriveRatio * Mathf.Abs(gearRatio[currentGear])
+                    );
                 currentEngineRPM = Mathf.Lerp
                     (
                         currentEngineRPM,
-                        Mathf.Max(minEngineRPM, Mathf.Abs(currentWheelRPM) * finalDriveRatio * Mathf.Abs(gearRatio[currentGear])),
-                        (overSpeed * engineAcceleration * Time.deltaTime) * Mathf.Abs(gearRatio[currentGear])
+                        targetRPM,
+                        (overSpeed * currentDynamicEngineAcceleration * Time.deltaTime) * Mathf.Abs(gearRatio[currentGear])
                     );
                 nitroPowerMultiplier = isNitroActive ? nitroPower : 1f;
                 nitroSpeedMultiplier = isNitroActive ? nitroSpeed : 1f;
                 if (speed < gearSpeedLimit[currentGear] * nitroSpeed)
-                    currentWheelTorque = (engineTorqueCurve.Evaluate(currentEngineRPM) * nitroPowerMultiplier * (gearRatio[currentGear] * finalDriveRatio) * clutch);
+                    currentWheelTorque =
+                        (
+                            engineTorqueCurve.Evaluate(currentEngineRPM) *
+                            nitroPowerMultiplier * (gearRatio[currentGear] *finalDriveRatio)
+                            * clutch
+                        );
                 else
                     currentWheelTorque = 0f;
+                if
+                (
+                    isEngineBrakingEnabled &&
+                    throttle < 0.05f &&
+                    clutch > 0.5f &&
+                    currentGear != eGEAR.eGEAR_NEUTURAL &&
+                    //currentGear != eGEAR.eGEAR_REVERSE &&
+                    currentEngineRPM > minEngineRPM + 500
+                )
+                {
+                    engineBrakeEffect =
+                        (currentEngineRPM / maxEngineRPM) *
+                        engineBrakingFactor * Mathf.Abs(gearRatio[currentGear]);
+                        currentWheelTorque -= engineBrakeEffect;
+                }
+                if (throttle > 0.1f && currentWheelTorque < 0)
+                    currentWheelTorque = 0;
             }
         }
         //엔진 토크(Engine Torque) 계산법
@@ -142,17 +234,86 @@ public partial class Car
     }
     private void TorqueToWheel()
     {
+        // 엔진 제동이 활성화되어 스로틀이 꺼져 있을 때 음의 토크를 허용합니다.
+        // 그렇지 않으면 Mathf.Abs(스로틀) * 휠당 토크를 사용합니다.
+        baseTorquePerWheel = (driveWheelsNum > 0) ? currentWheelTorque / driveWheelsNum : 0;
+        //if (driveWheelsNum > 0)
+        //{ baseTorquePerWheel = Mathf.Abs(throttle) * (currentWheelTorque / driveWheelsNum); }
+        //else return;
         for (int i = 0; i < driveWheelsNum; i++)
         {
-            driveWheels[i].motorTorque = Mathf.Abs(throttle) * (currentWheelTorque / driveWheelsNum);
+            //적용 모터토크 = baseTorquePerWheel;
+            //기본 토크 결정: 엔진 제동 시 음수, 스로틀에 의해 양의 스케일이 조정되지 않는 경우
+            if (baseTorquePerWheel < 0 && throttle < 0.1f && isEngineBrakingEnabled) // Engine braking case
+            {
+                appliedTorque = baseTorquePerWheel; // 음의 토크를 직접 적용합니다
+                driveWheels[i].brakeTorque = 0f; // TCS에서 충돌하는 브레이크가 없는지 확인합니다
+            }
+            else // 가속 또는 정상적인 코스팅/페달 제동
+            {
+                appliedTorque = Mathf.Max(0, throttle) * baseTorquePerWheel; // 스로틀에 의해 조정된 비음의 토크를 보장합니다
+            }
+            // --- TCS 논리 통합 ---
+            float tcsBrake = 0f; // 이 휠의 TCS 브레이크 힘 초기화
+            if (isTCSEnabled && throttle > 0.1f && appliedTorque > 0 && clutch > 0.5f) // 가속 중 양의 토크에만 TCS 적용
+            {
+                if (driveWheels[i].GetGroundHit(out WheelHit wheelHitInfo)) // WheelHit에 로컬 변수 사용
+                {
+                    // 가속도 제어를 위해 전진 슬립을 확인합니다
+                    if (Mathf.Abs(wheelHitInfo.forwardSlip) > tcsSlipThreshold)
+                    {
+                        // 미끄러질 경우 모터 토크를 크게 줄입니다
+                        appliedTorque *= (1.0f - tcsTorqueReductionFactor);
+                        // 선택 사항: 미끄러짐 휠에 작은 제동력을 가합니다
+                        tcsBrake = tcsBrakeFactor * Mathf.Abs(wheelHitInfo.forwardSlip - tcsSlipThreshold); // Scale brake by slip amount
+                    }
+                }
+            }
+            //if (isTCSEnabled && clutch >= 0.9f && throttle > 0.1f)
+            //{
+            //    if (driveWheels[i].GetGroundHit(out wheelHit))
+            //    {
+            //        if (wheelHit.forwardSlip > tcsSlipThreshold && wheelHit.forwardSlip > Mathf.Abs(wheelHit.sidewaysSlip))
+            //        {
+            //            slipFactorTCS = Mathf.Clamp01((wheelHit.forwardSlip - tcsSlipThreshold) / (1.0f - tcsSlipThreshold)); // 슬립 초과량 정규화
+            //            appliedTorque *= (1.0f - slipFactorTCS * tcsStrength);
+            //            appliedTorque = Mathf.Max(0, appliedTorque);
+            //        }
+            //    }
+            //}
+            driveWheels[i].motorTorque = appliedTorque;
+            if (tcsBrake > 0)
+            {
+                // TCS 브레이크를 추가하지만 ABS 또는 플레이어 브레이크가 더 강하면 오버라이드하지 마십시오
+                // 덮어쓰기 전에 기존 브레이크 토크를 확인합니다(안전한 접근 방식)
+                driveWheels[i].brakeTorque = Mathf.Max(driveWheels[i].brakeTorque, tcsBrake);
+            }
+            // 중요: TCS 브레이크를 적용하지 않을 경우, 휠 브레이크가 ABS/브레이크 기능에 의해 관리되는지 확인합니다
+            // 브레이크() 기능은 브레이크 입력이 0일 때 브레이크 토크 재설정을 처리해야 합니다.
         }
     }
     private void EngineSoundUpdate()
     {
         if (engineSound == null)
             return;
-        engineSound.volume = Mathf.Lerp(0.3f, 0.4f, clutch);
-        engineSound.pitch = Mathf.Lerp(0.1f, 1.4f, currentEngineRPM / maxEngineRPM);
+        foreach (var sound in engineSound)
+        {
+            if (sound.isPlaying)
+            {
+                sound.volume = Mathf.Lerp(0.3f, 0.4f, clutch);
+                sound.pitch = Mathf.Lerp(1.0f, 2.2f, currentEngineRPM / maxEngineRPM);
+            }
+        }
+    }
+    protected void ForcePlayEngineSound()
+    {
+        if (engineSound == null)
+            return;
+        foreach (var sound in engineSound)
+        {
+            if (!sound.isPlaying)
+                sound.Play();
+        }
     }
     #endregion
 
@@ -164,6 +325,8 @@ public partial class Car
     [SerializeField] protected bool reverse;
     [SerializeField] private Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
     [SerializeField] private Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
+    [SerializeField] private float optimalShiftUpRPM = 0f, optimalShiftDownRPM = 0f;
+    [SerializeField] private float speedThresholdForUpshift;
     [SerializeField] private float perviousMaxSpeed = 0;
     [SerializeField] private float differentialRatio;
     [SerializeField] private float finalDriveRatio;
@@ -248,7 +411,11 @@ public partial class Car
             }
         }
     }
-    protected void ForceChangeGear(eGEAR _gear) { nextGear = _gear; }
+    protected void ForceChangeGear(eGEAR _gear)
+    {
+        if(lastGear == eGEAR.eGEAR_FIFTH && _gear == eGEAR.eGEAR_SIXTH) return;
+        nextGear = _gear; 
+    }
     protected void GearShifting()
     {
         if (currentGear == nextGear)
@@ -298,20 +465,45 @@ public partial class Car
     }
     private void AutoGear()
     {
-        if(!IsGrounded()) return;
-        if(speed > gearSpeedLimit[currentGear] -10f && currentEngineRPM >= maxEngineRPM - minEngineRPM - 500f) { ChangeGear(true); }
-        else if(speed < perviousMaxSpeed + 10f && currentGear != eGEAR.eGEAR_FIRST && currentEngineRPM < maxEngineRPM / 3 + minEngineRPM) { ChangeGear(false); }
-        else if (nextGear == eGEAR.eGEAR_NEUTURAL)
+        if(!IsGrounded() || currentGear == eGEAR.eGEAR_NEUTURAL || shiftTimer > 0f) return;
+
+        speedThresholdForUpshift = 
+            currentGear == eGEAR.eGEAR_FIRST ?
+            gearSpeedLimit[eGEAR.eGEAR_FIRST] / 2f :
+            throttle > 0.9f ?
+            gearSpeedLimit[currentGear] * 0.8f : gearSpeedLimit[currentGear] * 0.6f;
+
+        // Up-Shift 조건: 다음 기어로 변속해도 괜찮은 속도 && 현재 RPM이 마력 기반 Up 시점 도달
+        // (속도 조건은 급격한 저속 고 RPM 상태에서 불필요한 변속 방지용으로 추가 가능)
+        if (currentGear < lastGear && currentEngineRPM > optimalShiftUpRPM && speed > speedThresholdForUpshift)
+        { ChangeGear(true); }
+
+        // Down-Shift 조건: 현재 RPM이 마력 기반 Down 시점 미만 && 첫번째 기어가 아님
+        // (브레이크/감속 중인지 확인하는 로직 추가하면 더 자연스러움)
+        else if (currentGear > eGEAR.eGEAR_FIRST && currentEngineRPM < optimalShiftDownRPM && speed < perviousMaxSpeed)
+        {/*if(throttle <= 0.1f)*/ ChangeGear(false); }
+
+        //자동 중립에서 시작 로직
+        if (nextGear == eGEAR.eGEAR_NEUTURAL)
         {
             if (throttle > 0)
                 ForceChangeGear(eGEAR.eGEAR_FIRST);
             else if (throttle < 0)
                 ForceChangeGear(eGEAR.eGEAR_REVERSE);
         }
-        if (throttle < 0 && speed < 0.1f && currentGear != eGEAR.eGEAR_REVERSE)
-            ForceChangeGear(eGEAR.eGEAR_REVERSE);
-        else if(currentGear == eGEAR.eGEAR_REVERSE && throttle > 0 && speed < 10f)
-            ForceChangeGear(eGEAR.eGEAR_FIRST);
+
+        //자동 후진 로직
+        if (speed < 1.0f) // 매우 느릴 때만 방향 전환 고려
+        {
+            if (throttle < -0.1f && currentGear != eGEAR.eGEAR_REVERSE)
+                ForceChangeGear(eGEAR.eGEAR_REVERSE); // 후진 입력 시 후진 기어
+            else if (throttle > 0.1f && currentGear == eGEAR.eGEAR_REVERSE)
+                ForceChangeGear(eGEAR.eGEAR_FIRST); // 후진 중 전진 입력 시 1단 기어
+        }
+        //if (throttle < 0 && speed < 0.1f && currentGear != eGEAR.eGEAR_REVERSE)
+        //    ForceChangeGear(eGEAR.eGEAR_REVERSE);
+        //else if(currentGear == eGEAR.eGEAR_REVERSE && throttle > 0 && speed < 10f)
+        //    ForceChangeGear(eGEAR.eGEAR_FIRST);
     }
     public eGEAR GetCurrentGear() { return currentGear; }
     #endregion

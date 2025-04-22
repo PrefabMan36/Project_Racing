@@ -21,16 +21,14 @@ public partial class Car
 
     #region Value Steer
     [Header("Steer Value")]
+    [SerializeField] protected float brakeInput;
     [SerializeField] private AnimationCurve steeringCurve;
     [SerializeField] private Transform steeringHandle;
     [SerializeField] private float maxSteerAngle = 30f;
     [SerializeField] private float curSteerAngle = 0f;
     [SerializeField] private float steerSpeed;
     [SerializeField] private float slipingAngle;
-    [SerializeField] private float brakeInput;
     [SerializeField] private float sideBrakeInput;
-    [SerializeField] private float brakePower;
-    [SerializeField] private float sideBrakePower;
     #endregion
 
     #region Value Wheels
@@ -41,7 +39,7 @@ public partial class Car
     [SerializeField] private float wheelRadius;
 
     [Header("Real Wheels")]
-    [SerializeField] private WheelHit WheelHit; //휠정보
+    [SerializeField] private WheelHit wheelHit; //휠정보
     [SerializeField] private List<Wheel> wheels;
     [SerializeField] private int wheelNum;
     [SerializeField] private List<WheelCollider> driveWheels = new List<WheelCollider>();
@@ -55,7 +53,8 @@ public partial class Car
 
     #region Value Tire
     [Header("Tire Value")]
-    [Range(0.8f, 1.3f), SerializeField] private float tireGrip = 1.3f;
+    [Range(0.8f, 1.3f), SerializeField] private float forwardTireGrip = 1.8f;
+    [Range(0.8f, 1.3f), SerializeField] private float sidewaysTireGrip = 2.2f;
     [Range(1f, 2f), SerializeField] private float forwardValue = 1f;
     [Range(1f, 2f), SerializeField] private float sideValue = 2f;
     [SerializeField] private WheelFrictionCurve forwardFriction, sidewaysFriction;
@@ -126,6 +125,19 @@ public partial class Car
         differentialPower = new float[driveWheelsNum];
     }
     #endregion
+
+    #region Value Brake
+    [Header("Value Brake")]
+    [SerializeField] private float brakePower;
+    [SerializeField] private float sideBrakePower;
+    [SerializeField] private float targetBrakeTorque;
+    [SerializeField] private float appliedBrakeTorque;
+    [SerializeField] private float slipFactorABS;
+    [SerializeField] private WheelCollider tempWheelColliderForBrake;
+    [SerializeField] private bool isABSEnabled = true; // ABS 사용 여부
+    [SerializeField, Range(0.1f, 1.0f)] private float absSlipThreshold = 0.35f; // ABS 개입을 시작할 Forward Slip 임계값 (음수)
+    [SerializeField, Range(0.1f, 1.0f)] private float absBrakeReleaseFactor = 0.3f; // ABS 개입 강도 (1이면 슬립 시 브레이크 0, 낮을수록 약하게 개입)
+    #endregion
     protected void SetFriction()
     {
         forwardSlip = new float[wheelNum];
@@ -136,19 +148,20 @@ public partial class Car
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
 
-            forwardFriction.extremumSlip = 0.065f;
-            forwardFriction.extremumValue = 1.8f;
-            forwardFriction.asymptoteSlip = 1.2f;
-            forwardFriction.asymptoteValue = 1.8f;
+            forwardFriction.extremumSlip = 0.4f;
+            forwardFriction.extremumValue = 2.0f;
+            forwardFriction.asymptoteSlip = 0.8f;
+            forwardFriction.asymptoteValue = 1.5f;
 
-            sidewaysFriction.extremumSlip = 0.065f;
-            sidewaysFriction.extremumValue = 2.2f;
-            sidewaysFriction.asymptoteSlip = 1.6f;
-            sidewaysFriction.asymptoteValue = 2.0f;
+            sidewaysFriction.extremumSlip = 0.2f;
+            sidewaysFriction.extremumValue = 2.5f;
+            sidewaysFriction.asymptoteSlip = 0.7f;
+            sidewaysFriction.asymptoteValue = 1.8f;
 
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
+        Braking();
     }
 
     protected void ChangeFriction(bool _mode)
@@ -171,14 +184,14 @@ public partial class Car
             }
             else
             {
-                forwardFriction.extremumSlip = 0.065f;
+                forwardFriction.extremumSlip = 0.4f;
                 forwardFriction.extremumValue = 2.0f;
-                forwardFriction.asymptoteSlip = 1.2f;
-                forwardFriction.asymptoteValue = 2.0f;
-                sidewaysFriction.extremumSlip = 0.065f;
-                sidewaysFriction.extremumValue = 2.2f;
-                sidewaysFriction.asymptoteSlip = 1.6f;
-                sidewaysFriction.asymptoteValue = 2.4f;
+                forwardFriction.asymptoteSlip = 0.8f;
+                forwardFriction.asymptoteValue = 1.5f;
+                sidewaysFriction.extremumSlip = 0.2f;
+                sidewaysFriction.extremumValue = 2.5f;
+                sidewaysFriction.asymptoteSlip = 0.7f;
+                sidewaysFriction.asymptoteValue = 1.8f;
             }
 
 
@@ -221,14 +234,88 @@ public partial class Car
         if (steeringHandle != null)
             steeringHandle.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
     }
-    protected void Braking()
+    protected void Braking() // FixedUpdate에서 호출하는 것이 최적입니다.
     {
+        // 플레이어 입력에 의해 요청된 최대 브레이크 토크를 계산합니다.
+        float requestedBrakeTorque = brakeInput * brakePower; // [출처:2] [출처:4] brakeInput는 Player_Car의 Update에서 업데이트됩니다.
+        bool isBrakingIntent = brakeInput > 0.05f; // 플레이어가 브레이크를 의도했는지 확인합니다.
+
+        TailLampSwitch(isBrakingIntent); // 브레이크 의도에 따라 테일 램프를 업데이트합니다. [출처:49]
+
+        // ABS 로직을 적용하기 전에 마찰/슬립 값을 업데이트합니다.
+        // UpdatingFriction이 FixedUpdate에서 다른 곳에서 호출되었다면 이 라인은 중복일 수 있습니다.
+        // UpdatingFriction()이 FixedUpdate에서 브레이크를 호출하기 전에 한 번 실행되도록 해야 합니다.
+        // UpdatingFriction(); // --> Braking() 전에 확실히 호출되도록 설정하세요.
+
         for (int i = 0; i < wheelNum; i++)
         {
-            wheels[i].wheelCollider.brakeTorque = brakeInput * brakePower;
+            float finalBrakeTorque = 0f; // 이 휠에 대한 브레이크 토크를 0으로 시작합니다.
+
+            if (isBrakingIntent) // 플레이어가 브레이크를 요청한 경우에만 브레이크를 적용합니다.
+            {
+                if (isABSEnabled && wheels[i].wheelCollider.isGrounded) // ABS가 활성화되어 있고 휠이 지면에 닿아있는지 확인합니다. [출처:53 관련]
+                {
+                    // overallSlip[i]는 이 함수가 실행되기 전에 UpdatingFriction()에 의해 업데이트되어야 합니다. [출처:55]
+                    if (overallSlip[i] > absSlipThreshold)
+                    {
+                        // 휠이 미끄러짐 (잠금 상태)이 발생한 경우, 브레이크 압력을 줄입니다.
+                        finalBrakeTorque = requestedBrakeTorque * absBrakeReleaseFactor;
+                    }
+                    else
+                    {
+                        // 휠이 과도하게 미끄러지지 않은 경우, 요청된 브레이크 토크를 완전히 적용합니다.
+                        finalBrakeTorque = requestedBrakeTorque;
+                    }
+                }
+                else if (wheels[i].wheelCollider.isGrounded) // ABS 비활성화 또는 휠이 지면에 닿아 있는 경우 정상적으로 적용
+                {
+                    finalBrakeTorque = requestedBrakeTorque;
+                }
+                // 지면에 닿아 있지 않고 브레이크를 작동하면 finalBrakeTorque는 0으로 유지됩니다(또는 요청된 브레이크를 적용? 동작 테스트 필요).
+            }
+
+            // TCS가 브레이크 힘을 적용하는지 확인합니다. (TorqueToWheel 수정에서 발생)
+            // TCS 브레이크가 활성화된 경우, 혼합하거나 우선 순위를 지정할 가능성이 있습니다.
+            // 간단하게 하기 위해, 페달 브레이크가 TCS 브레이크보다 우선하도록 설정합니다.
+            // TCS가 ABS가 활성화된 상태에서 브레이크를 적용하려면 더 복잡한 로직이 필요합니다.
+            // brakeInput > 0일 때 페달/ABS가 우선한다고 가정합니다.
+
+            // 이 휠에 대해 최종 계산된 브레이크 토크를 적용합니다.
+            wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
+        }
+    }
+    /*protected void Braking()
+    {
+        targetBrakeTorque = brakeInput * brakePower;
+        for (int i = 0; i < wheelNum; i++)
+        {
+            tempWheelColliderForBrake = wheels[i].wheelCollider;
+            if(tempWheelColliderForBrake == null) continue;
+
+            appliedBrakeTorque = targetBrakeTorque;
+            if(isABSEnabled && targetBrakeTorque > 10f)
+            {
+                if(tempWheelColliderForBrake.GetGroundHit(out wheelHit))
+                {
+                    if (wheelHit.forwardSlip < -absSlipThreshold)
+                    {
+                        slipFactorABS = Mathf.Clamp01((Mathf.Abs(wheelHit.forwardSlip) - absSlipThreshold) / (1.0f - absSlipThreshold));
+                        appliedBrakeTorque *= (1.0f - slipFactorABS * absBrakeReleaseFactor);
+                        appliedBrakeTorque = Mathf.Max(0, appliedBrakeTorque); // 브레이크 토크가 음수가 되지 않도록 함
+
+                        // --- 간단한 펄스 효과 (선택적) ---
+                        // 좀 더 실제 ABS처럼 만들려면 아래 주석처리된 코드를 활성화하고 위 appliedBrakeTorque 계산 부분을 주석처리 하세요.
+                        // 펄스 효과를 위해 Time.time 사용 (빠르게 깜빡이는 효과)
+                        // appliedBrakeTorque = Mathf.PingPong(Time.time * brakePower * 0.1f, targetBrakeTorque * (1.0f - absStrength * 0.5f)); // absStrength 만큼 최소 제동력 확보
+
+                    }
+                }
+            }
+            tempWheelColliderForBrake.brakeTorque = appliedBrakeTorque;
         }
         TailLampSwitch(brakeInput > 0 ? true : false);
-    }
+    }*/
+    public void SetAntiRoll(float _antiRoll) { antiRoll = _antiRoll; }
     protected void SideBrakingDown()
     {
         for (int i = 0; i < wheelNum; i++)
@@ -260,31 +347,32 @@ public partial class Car
     {
         for (int i = 0; i < wheelNum; i++)
         {
-            if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
+            if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                overallSlip[i] = Mathf.Abs(WheelHit.forwardSlip + WheelHit.sidewaysSlip);
+                overallSlip[i] = Mathf.Abs(wheelHit.forwardSlip + wheelHit.sidewaysSlip);
 
                 forwardFriction = wheels[i].wheelCollider.forwardFriction;
-                forwardFriction.stiffness = tireGrip - (overallSlip[i] / 2) / forwardValue;
+                forwardFriction.stiffness = forwardTireGrip - overallSlip[i] / forwardValue;
                 wheels[i].wheelCollider.forwardFriction = forwardFriction;
 
                 sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
-                sidewaysFriction.stiffness = tireGrip - overallSlip[i] / sideValue;
+                sidewaysFriction.stiffness = sidewaysTireGrip - overallSlip[i] / sideValue;
                 wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
 
-                forwardSlip[i] = WheelHit.forwardSlip;
-                sidewaysSlip[i] = WheelHit.sidewaysSlip;
+                forwardSlip[i] = wheelHit.forwardSlip;
+                sidewaysSlip[i] = wheelHit.sidewaysSlip;
             }
         }
+        Braking();
     }
 
     protected void EffectDrift()
     {
         for(int i = 0; i < wheelNum; i++)
         {
-            if (wheels[i].wheelCollider.GetGroundHit(out WheelHit))
+            if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                if (Mathf.Abs(WheelHit.sidewaysSlip) >= 0.15f || Mathf.Abs(WheelHit.forwardSlip) >= 0.3f && IsGrounded())
+                if (Mathf.Abs(wheelHit.sidewaysSlip) >= 0.15f || Mathf.Abs(wheelHit.forwardSlip) >= 0.3f && IsGrounded())
                 {
                     wheels[i].skidMarks.emitting = true;
                     if (!smokeParticles[i].isPlaying)
@@ -320,15 +408,15 @@ public partial class Car
     {
         travelL = 1.0f;
         travelR = 1.0f;
-        groundedL = steerWheels[0].GetGroundHit(out WheelHit) ? true : false;
-        groundedR = steerWheels[1].GetGroundHit(out WheelHit) ? true : false;
+        groundedL = steerWheels[0].GetGroundHit(out wheelHit) ? true : false;
+        groundedR = steerWheels[1].GetGroundHit(out wheelHit) ? true : false;
         if (groundedL)
         {
-            travelL = (-steerWheels[0].transform.InverseTransformPoint(WheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;
+            travelL = (-steerWheels[0].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;
         }
         if (groundedR)
         {
-            travelR = (-steerWheels[1].transform.InverseTransformPoint(WheelHit.point).y - steerWheels[1].radius) / steerWheels[1].suspensionDistance;
+            travelR = (-steerWheels[1].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[1].radius) / steerWheels[1].suspensionDistance;
         }
         antiRollForce = (travelL - travelR) * antiRoll;
         if (groundedL)

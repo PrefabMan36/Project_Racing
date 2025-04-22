@@ -25,7 +25,6 @@ public partial class Car : Object_Movable
             if (ignition)
             {
                 GearShifting();
-                CalculateWheelRPM();
                 CalculateTorque();
                 forceEngineLerp();
                 TorqueToWheel();
@@ -34,12 +33,30 @@ public partial class Car : Object_Movable
             }
             else
             {
-                engineSound.Stop();
                 currentEngineRPM = 0f;
                 currentWheelTorque = 0f;
                 if (!engineStartUP)
                     StartCoroutine(IgnitionEngine());
             }
+        }
+    }
+    protected void EngineForUpdate()
+    {
+        if (ignition)
+        {
+            GearShifting();
+            CalculateTorque();
+            forceEngineLerp();
+            TorqueToWheel();
+            if (autoGear) AutoGear();
+            EngineSoundUpdate();
+        }
+        else
+        {
+            currentEngineRPM = 0f;
+            currentWheelTorque = 0f;
+            if (!engineStartUP)
+                StartCoroutine(IgnitionEngine());
         }
     }
     protected IEnumerator UpdateNitro()

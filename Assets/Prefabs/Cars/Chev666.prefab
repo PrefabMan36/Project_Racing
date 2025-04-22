@@ -1227,9 +1227,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 0}
-  slipLimit: 0.5
-  smokePrefab: {fileID: 100000, guid: bafe3b28ce202a749a940ce779c3a90d, type: 3}
-  steeringWheel: {fileID: 4192775986064308}
+  brakeInput: 0
+  steeringCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  steeringHandle: {fileID: 0}
+  maxSteerAngle: 30
+  curSteerAngle: 0
+  steerSpeed: 0
+  slipingAngle: 0
+  sideBrakeInput: 0
+  wheelTransform: []
+  tempWheelRotation: {x: 0, y: 0, z: 0, w: 0}
+  tempWheelPosition: {x: 0, y: 0, z: 0}
+  wheelRadius: 0
   wheels:
   - wheelModel: {fileID: 1620928895707546}
     wheelCollider: {fileID: 5604836763513589620}
@@ -1247,19 +1261,48 @@ MonoBehaviour:
     wheelCollider: {fileID: 6375542328432083250}
     skidMarks: {fileID: 545159218649519804}
     axel: 1
+  wheelNum: 0
+  driveWheels: []
+  steerWheels: []
+  driveWheelsNum: 0
+  steerWheelsNum: 0
+  driveAxel: 0
+  differentialPower: []
+  differentialPowerValue: 0
+  tireGrip: 1.3
+  forwardValue: 1
+  sideValue: 2
   forwardSlip: []
   sidewaysSlip: []
   overallSlip: []
-  steeringCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  maxSteerAngle: 30
-  curSteerAngle: 0
+  antiRoll: 0
+  antiRollForce: 0
+  travelL: 0
+  travelR: 0
+  groundedL: 0
+  groundedR: 0
+  slipLimit: 0.5
+  smokePrefab: {fileID: 100000, guid: bafe3b28ce202a749a940ce779c3a90d, type: 3}
+  smokes: []
+  smokeParticles: []
+  brakePower: 0
+  sideBrakePower: 0
+  targetBrakeTorque: 0
+  appliedBrakeTorque: 0
+  slipFactorABS: 0
+  tempWheelColliderForBrake: {fileID: 0}
+  isABSEnabled: 1
+  absSlipThreshold: 0.35
+  absBrakeReleaseFactor: 0.3
   centerMass: {fileID: 4880681281052632171}
   carRB: {fileID: 0}
+  dragCoefficient: 0.4
+  frontalArea: 2
+  airDensity: 1.225
+  sqrSpeed: 0
+  dragDirection: {x: 0, y: 0, z: 0}
+  dragMagnitude: 0
+  dragForce: {x: 0, y: 0, z: 0}
   headLight_Object:
   - {fileID: 2548393500099216438}
   - {fileID: 8719057731069453682}
@@ -1269,8 +1312,18 @@ MonoBehaviour:
   tailLamp:
   - {fileID: 7466813844690450978}
   - {fileID: 8175720268926043303}
-  engineSound: {fileID: 4595467132180779318}
+  headLightSwitch: 0
+  engineSound:
+  - {fileID: 4595467132180779318}
   startUpSoundObject: {fileID: 0}
+  isTCSEnabled: 1
+  tcsSlipThreshold: 0.25
+  tcsTorqueReductionFactor: 0.7
+  tcsBrake: 0
+  tcsBrakeFactor: 50
+  slipFactorTCS: 0
+  baseTorquePerWheel: 0
+  appliedTorque: 0
   horsePowerCurve:
     serializedVersion: 2
     m_Curve: []
@@ -1284,10 +1337,14 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   throttle: 0
-  engineAcceleration: 0
+  baseEngineAcceleration: 0
+  currentDynamicEngineAcceleration: 0
+  maxHorsePower: 0
+  rpmAtMaxHorsePower: 0
   maxEngineRPM: 0
   minEngineRPM: 0
   currentEngineRPM: 0
+  targetRPM: 0
   tempWheelRPM: 0
   currentWheelRPM: 0
   currentEngineTorque: 0
@@ -1295,10 +1352,16 @@ MonoBehaviour:
   overSpeed: 0
   redLine: 0
   engineLerpValue: 0
+  isEngineBrakingEnabled: 1
+  engineBrakingFactor: 800
+  engineBrakeEffect: 0
   currentGear: 0
   nextGear: 0
   clutch: 0
   reverse: 0
+  optimalShiftUpRPM: 0
+  optimalShiftDownRPM: 0
+  speedThresholdForUpshift: 0
   perviousMaxSpeed: 0
   differentialRatio: 0
   finalDriveRatio: 0
@@ -3664,7 +3727,7 @@ Transform:
   m_GameObject: {fileID: 4880681281052632171}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0.6}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4312,7 +4375,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a3691b0c8eb804744a953a9d6dff4804, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 75fa27e467267c74f91f1f6f4e74ff88, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.2
   m_Pitch: -3

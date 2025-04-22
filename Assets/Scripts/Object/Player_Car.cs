@@ -71,11 +71,12 @@ public class Player_Car : Car
         freeLookCamera.enabled = true;
         ignition = true;
         braking = false;
-        engineSound.Play();
-        SetEngineAcceleration(0.5f);
+        //SetEngineSound(transform.Find("EngineSound").GetComponent<AudioSource[]>());
+        ForcePlayEngineSound();
+        SetBaseEngineAcceleration(5f);
         SetEngineRPMLimit(9400f, 800f);
-        SetAutoGear(true);
-        antiRoll = 5000f;
+        SetAutoGear(false);
+        SetAntiRoll(35000f);
         dragAmount = 0.015f;
         SetGearRatio(eGEAR.eGEAR_NEUTURAL, 0f);
         SetGearSpeedLimit(eGEAR.eGEAR_NEUTURAL, 0f);
@@ -96,26 +97,25 @@ public class Player_Car : Car
         SetLastGear(eGEAR.eGEAR_SIXTH);
         SetFinalDriveRatio(3.97f);
         SetShiftTiming(0.5f);
-        brakePower = 30000f;
+        SetBrakePower(3000f);
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
         SetFriction();
         SpawnSmoke();
+        CalculateOptimalShiftPoints();
         StartCoroutine(Controlling());
-        StartCoroutine(Engine());
+        //StartCoroutine(Engine());
         StartCoroutine(UpdateNitro());
         StartCoroutine(UIUpdating());
     }
 
     private void Update()
     {
-
-        //if (Input.GetKeyDown(KeyCode.V))
-        //    changeCameraPosition();
-        //Engine();
         SetSpeedToKMH();
         Steering(Input.GetAxis("Horizontal"));
         SetSlpingAngle();
         CameraUpdate();
+        if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
+            clutch = Input.GetKey(KeyCode.C) == true ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
         if (Input.GetKeyDown(KeyCode.RightShift))
         { ActivateNitro(true); }
         if(Input.GetKeyUp(KeyCode.RightShift) && !GetPowerMode())
@@ -133,21 +133,58 @@ public class Player_Car : Car
             ChangeGear(true);
         if (Input.GetKeyDown(KeyCode.LeftControl))
             ChangeGear(false);
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Keypad0))
+            ForceChangeGear(eGEAR.eGEAR_REVERSE);
+        if (Input.GetKeyDown(KeyCode.Keypad1))
             ForceChangeGear(eGEAR.eGEAR_FIRST);
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Keypad2))
             ForceChangeGear(eGEAR.eGEAR_SECOND);
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Keypad3))
             ForceChangeGear(eGEAR.eGEAR_THIRD);
-        if(Input.GetKeyDown(KeyCode.Alpha4))
+        if(Input.GetKeyDown(KeyCode.Keypad4))
             ForceChangeGear(eGEAR.eGEAR_FOURTH);
+        if (Input.GetKeyDown(KeyCode.Keypad5))
+            ForceChangeGear(eGEAR.eGEAR_FIFTH);
+        if (Input.GetKeyDown(KeyCode.Keypad6))
+            ForceChangeGear(eGEAR.eGEAR_SIXTH);
     }
 
     private void FixedUpdate()
     {
+        EngineForUpdate();
         ApplyAerodynamicDrag();
-        //UpdatingFriction();
-        AntiRollBar();
+        UpdatingFriction();
+        //AntiRollBar();
+        // Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
+        // (Update의 논리를 복제하므로 입력 처리를 통합하는 것을 고려하십시오.)
+        throttle = Input.GetAxis("Vertical");
+        if (ignition)
+        {
+            if (throttle > 0 && GetCurrentGear() == eGEAR.eGEAR_REVERSE)
+            {
+                brakeInput = Mathf.Abs(throttle); // 후진 시 가속하며 브레이크 작동
+            }
+            else if (throttle < 0 && GetCurrentGear() != eGEAR.eGEAR_REVERSE)
+            {
+                brakeInput = Mathf.Abs(throttle); // 전진/중립 상태에서 브레이크 작동
+            }
+            else
+            {
+                brakeInput = 0f; // 스로틀/후진 입력으로 브레이크 작동 안 함
+            }
+
+            // 선택 사항: 직접 브레이크 키 추가? 예시:
+            // if (Input.GetKey(KeyCode.B)) // 직접 브레이크 키 예시
+            // {
+            //     brakeInput = 1.0f; // 전체 브레이크 오버라이드
+            // }
+        }
+        else
+        {
+            brakeInput = 0f; // 점화가 꺼진 경우 브레이크 없음
+        }
+
+        // 슬립 계산 및 입력 처리 후 FixedUpdate에서 Braking() 호출
     }
 
     IEnumerator Controlling()
@@ -157,38 +194,8 @@ public class Player_Car : Car
         {
             yield return wfs;
 
-            if(GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
-                clutch = Input.GetAxis("Vertical") == 0 ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
-            if(Input.GetKey(KeyCode.C))
-                clutch = 0f;
-            if (ignition)
-            {
-                if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
-                    throttle = Input.GetAxis("Vertical");
-                if (throttle > 0)
-                {
-                    if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
-                    {
-                        clutch *= throttle;
-                        brakeInput = Mathf.Abs(throttle);
-                    }
-                    else
-                        brakeInput = 0f;
-                }
-                else if (throttle < 0)
-                {
-                    if (GetCurrentGear() != eGEAR.eGEAR_REVERSE)
-                    {
-                        clutch *= throttle;
-                        brakeInput = Mathf.Abs(throttle);
-                    }
-                    else
-                        brakeInput = 0f;
-                }
-                else
-                    brakeInput = 0f;
-                Braking();
-            }
+            
+            
             if (Input.GetKey(KeyCode.Space))
             {
                 SideBrakingDown();

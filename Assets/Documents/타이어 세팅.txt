@@ -29,3 +29,18 @@ Extremum Value: 1.2 ~ 2.2 (타이어가 발휘할 수 있는 최대 횡 G(latera
 Asymptote Slip: 1.0 ~ 1.5 (Extremum Slip보다 높게 설정. 이 값을 넘어서면 타이어가 옆으로 미끄러지기 시작)
 Asymptote Value: 0.6 ~ 1.2 (핵심: Forward Friction과 마찬가지로, Extremum Value보다 상당히 낮게 설정합니다. 코너링 한계를 넘어서 타이어가 미끄러지기 시작하면 횡 방향 그립이 크게 줄어들어 차량이 스핀하거나 언더스티어가 발생하기 쉽게 만듭니다. 드리프트가 아케이드처럼 쉽지 않고 더 정교한 컨트롤을 요구하게 됩니다.)
 Stiffness: 1.0 (시작 값)
+
+1. Forward Friction (전방 마찰력 - 가속 및 제동 시)
+
+Extremum Slip: 0.4
+Extremum Value: 1.5 ~ 2.0 (기본값 1보다 높게 설정하여 최대 가속/제동력 증가)
+Asymptote Slip: 0.8
+Asymptote Value: 1.0 ~ 1.5 (기본값 0.5~0.75보다 높게 설정하여 휠 스핀/락 상태에서도 마찰 유지)
+Stiffness: 1.5 ~ 3.0 (값을 높여 가속/제동 시 반응성을 좋게 함)
+2. Sideways Friction (측면 마찰력 - 코너링 시)
+
+Extremum Slip: 0.2 ~ 0.3 (낮은 슬립에서 최대 코너링 포스 도달)
+Extremum Value: 1.8 ~ 2.5 (코너링 그립을 매우 높게 설정)
+Asymptote Slip: 0.5 ~ 0.7
+Asymptote Value: 1.2 ~ 1.8 (미끄러지기 시작해도 코너링 포스를 상당 부분 유지)
+Stiffness: 2.0 ~ 4.0 (값을 높여 코너링 시 타이어가 단단하게 버티는 느낌 부여)
