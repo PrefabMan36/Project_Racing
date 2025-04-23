@@ -11,6 +11,7 @@ public partial class Car
     #endregion
 
     #region Function Body
+    public void SetCarMass(float _mass) { carRB.mass = _mass; }
     public void SetCarRB(Rigidbody _carRB) { carRB = _carRB; }
     public void SetCenterMass() { carRB.centerOfMass = centerMass.transform.localPosition; }
     public void ShowCenterMass() { centerMass.transform.position = carRB.centerOfMass; }
@@ -32,6 +33,7 @@ public partial class Car
     [SerializeField] private float dragMagnitude;
     [SerializeField] private Vector3 dragForce;
 
+    public void SetDragCoefficient(float _Cd) { dragCoefficient = _Cd; }
     protected void ApplyAerodynamicDrag()
     {
         sqrSpeed = speed * speed;

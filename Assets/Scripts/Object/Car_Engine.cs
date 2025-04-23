@@ -24,7 +24,6 @@ public partial class Car
     [Header("Other Value")]
     protected bool ignition = true;
     private bool engineStartUP = false;
-    protected float dragAmount;
     [SerializeField] protected AudioSource[] engineSound;
     [SerializeField] private GameObject startUpSoundObject;
     private GameObject _tempSoundObject;
