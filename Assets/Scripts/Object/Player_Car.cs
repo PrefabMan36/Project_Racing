@@ -138,30 +138,54 @@ public class Player_Car : Car
         // Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
         // (Update의 논리를 복제하므로 입력 처리를 통합하는 것을 고려하십시오.)
         throttle = Input.GetAxis("Vertical");
+
         if (ignition)
         {
-            if (throttle > 0 && GetCurrentGear() == eGEAR.eGEAR_REVERSE)
+            if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
             {
-                brakeInput = Mathf.Abs(throttle); // 후진 시 가속하며 브레이크 작동
-            }
-            else if (throttle < 0 && GetCurrentGear() != eGEAR.eGEAR_REVERSE)
-            {
-                brakeInput = Mathf.Abs(throttle); // 전진/중립 상태에서 브레이크 작동
+                if (throttle > 0.05f)
+                {
+                    brakeInput = Mathf.Abs(throttle);
+                    throttle = 0;
+                }
+                else if (throttle < -0.05f)
+                {
+                    brakeInput = 0f;
+                }
+                else
+                {
+                    brakeInput = 0f;
+                    throttle = 0f;
+                }
             }
             else
             {
-                brakeInput = 0f; // 스로틀/후진 입력으로 브레이크 작동 안 함
+                if (throttle < -0.05f)
+                {
+                    brakeInput = Mathf.Abs(throttle);
+                    throttle = 0;
+                }
+                else if (throttle > 0.05f)
+                {
+                    brakeInput = 0f;
+                }
+                else
+                {
+                    brakeInput = 0f;
+                    throttle = 0f;
+                }
             }
 
-            // 선택 사항: 직접 브레이크 키 추가? 예시:
-            // if (Input.GetKey(KeyCode.B)) // 직접 브레이크 키 예시
-            // {
-            //     brakeInput = 1.0f; // 전체 브레이크 오버라이드
-            // }
+            // 주의: 이 수정된 입력 로직은 TorqueToWheel 함수가
+            // 음수 throttle을 후진 가속 토크로 올바르게 해석할 수 있어야 작동합니다.
+            // 현재 TorqueToWheel의 Mathf.Max(0, throttle) 부분은 이대로라면
+            // 음수 throttle을 0으로 만들게 됩니다.
+            // 따라서 TorqueToWheel 함수에서도 후진 기어 상태일 때는
+            // 음수 throttle을 받아 후진 토크를 적용하는 로직 수정이 필요할 수 있습니다.
         }
-        else
+        else // 시동이 꺼진 경우
         {
-            brakeInput = 0f; // 점화가 꺼진 경우 브레이크 없음
+            throttle = 0f;
         }
 
         // 슬립 계산 및 입력 처리 후 FixedUpdate에서 Braking() 호출

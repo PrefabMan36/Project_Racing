@@ -48,7 +48,7 @@ public partial class Car
     [SerializeField] private int steerWheelsNum;
     [SerializeField] private eCAR_DRIVEAXEL driveAxel;
     [SerializeField] private float[] differentialPower;
-    [SerializeField] private float differentialPowerValue = 0f;
+    //[SerializeField] private float differentialPowerValue = 0f;
     #endregion
 
     #region Value Tire
@@ -234,53 +234,35 @@ public partial class Car
         if (steeringHandle != null)
             steeringHandle.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
     }
-    protected void Braking() // FixedUpdate에서 호출하는 것이 최적입니다.
+    protected void Braking()
     {
-        // 플레이어 입력에 의해 요청된 최대 브레이크 토크를 계산합니다.
-        float requestedBrakeTorque = brakeInput * brakePower; // [출처:2] [출처:4] brakeInput는 Player_Car의 Update에서 업데이트됩니다.
-        bool isBrakingIntent = brakeInput > 0.05f; // 플레이어가 브레이크를 의도했는지 확인합니다.
+        float requestedBrakeTorque = brakeInput * brakePower;
+        bool isBrakingIntent = brakeInput > 0.05f;
 
-        TailLampSwitch(isBrakingIntent); // 브레이크 의도에 따라 테일 램프를 업데이트합니다. [출처:49]
-
-        // ABS 로직을 적용하기 전에 마찰/슬립 값을 업데이트합니다.
-        // UpdatingFriction이 FixedUpdate에서 다른 곳에서 호출되었다면 이 라인은 중복일 수 있습니다.
-        // UpdatingFriction()이 FixedUpdate에서 브레이크를 호출하기 전에 한 번 실행되도록 해야 합니다.
-        // UpdatingFriction(); // --> Braking() 전에 확실히 호출되도록 설정하세요.
+        TailLampSwitch(isBrakingIntent);
 
         for (int i = 0; i < wheelNum; i++)
         {
-            float finalBrakeTorque = 0f; // 이 휠에 대한 브레이크 토크를 0으로 시작합니다.
+            float finalBrakeTorque = 0f;
 
-            if (isBrakingIntent) // 플레이어가 브레이크를 요청한 경우에만 브레이크를 적용합니다.
+            if (isBrakingIntent)
             {
-                if (isABSEnabled && wheels[i].wheelCollider.isGrounded) // ABS가 활성화되어 있고 휠이 지면에 닿아있는지 확인합니다. [출처:53 관련]
+                if (isABSEnabled && wheels[i].wheelCollider.isGrounded)
                 {
-                    // overallSlip[i]는 이 함수가 실행되기 전에 UpdatingFriction()에 의해 업데이트되어야 합니다. [출처:55]
                     if (overallSlip[i] > absSlipThreshold)
                     {
-                        // 휠이 미끄러짐 (잠금 상태)이 발생한 경우, 브레이크 압력을 줄입니다.
                         finalBrakeTorque = requestedBrakeTorque * absBrakeReleaseFactor;
                     }
                     else
                     {
-                        // 휠이 과도하게 미끄러지지 않은 경우, 요청된 브레이크 토크를 완전히 적용합니다.
                         finalBrakeTorque = requestedBrakeTorque;
                     }
                 }
-                else if (wheels[i].wheelCollider.isGrounded) // ABS 비활성화 또는 휠이 지면에 닿아 있는 경우 정상적으로 적용
+                else if (wheels[i].wheelCollider.isGrounded)
                 {
                     finalBrakeTorque = requestedBrakeTorque;
                 }
-                // 지면에 닿아 있지 않고 브레이크를 작동하면 finalBrakeTorque는 0으로 유지됩니다(또는 요청된 브레이크를 적용? 동작 테스트 필요).
             }
-
-            // TCS가 브레이크 힘을 적용하는지 확인합니다. (TorqueToWheel 수정에서 발생)
-            // TCS 브레이크가 활성화된 경우, 혼합하거나 우선 순위를 지정할 가능성이 있습니다.
-            // 간단하게 하기 위해, 페달 브레이크가 TCS 브레이크보다 우선하도록 설정합니다.
-            // TCS가 ABS가 활성화된 상태에서 브레이크를 적용하려면 더 복잡한 로직이 필요합니다.
-            // brakeInput > 0일 때 페달/ABS가 우선한다고 가정합니다.
-
-            // 이 휠에 대해 최종 계산된 브레이크 토크를 적용합니다.
             wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
         }
     }

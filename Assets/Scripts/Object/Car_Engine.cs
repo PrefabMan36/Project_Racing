@@ -37,6 +37,7 @@ public partial class Car
     [SerializeField] private float tcsBrakeFactor = 50f;
     [SerializeField] private float slipFactorTCS;
     [SerializeField] private float baseTorquePerWheel;
+    [SerializeField] private float appliedMotorTorque;
     [SerializeField] private float appliedTorque;
     #endregion
 
@@ -197,7 +198,7 @@ public partial class Car
                     throttle < 0.05f &&
                     clutch > 0.5f &&
                     currentGear != eGEAR.eGEAR_NEUTURAL &&
-                    //currentGear != eGEAR.eGEAR_REVERSE &&
+                    currentGear != eGEAR.eGEAR_REVERSE &&
                     currentEngineRPM > minEngineRPM + 500
                 )
                 {
@@ -232,62 +233,48 @@ public partial class Car
     }
     private void TorqueToWheel()
     {
-        // 엔진 제동이 활성화되어 스로틀이 꺼져 있을 때 음의 토크를 허용합니다.
-        // 그렇지 않으면 Mathf.Abs(스로틀) * 휠당 토크를 사용합니다.
         baseTorquePerWheel = (driveWheelsNum > 0) ? currentWheelTorque / driveWheelsNum : 0;
-        //if (driveWheelsNum > 0)
-        //{ baseTorquePerWheel = Mathf.Abs(throttle) * (currentWheelTorque / driveWheelsNum); }
-        //else return;
+
         for (int i = 0; i < driveWheelsNum; i++)
         {
-            //적용 모터토크 = baseTorquePerWheel;
-            //기본 토크 결정: 엔진 제동 시 음수, 스로틀에 의해 양의 스케일이 조정되지 않는 경우
-            if (baseTorquePerWheel < 0 && throttle < 0.1f && isEngineBrakingEnabled) // Engine braking case
+            appliedMotorTorque = 0f;
+            if (currentGear == eGEAR.eGEAR_REVERSE)
             {
-                appliedTorque = baseTorquePerWheel; // 음의 토크를 직접 적용합니다
-                driveWheels[i].brakeTorque = 0f; // TCS에서 충돌하는 브레이크가 없는지 확인합니다
+                if (throttle < 0)
+                { appliedMotorTorque = Mathf.Abs(throttle) * baseTorquePerWheel; }
             }
-            else // 가속 또는 정상적인 코스팅/페달 제동
+            else
             {
-                appliedTorque = Mathf.Max(0, throttle) * baseTorquePerWheel; // 스로틀에 의해 조정된 비음의 토크를 보장합니다
+                if (throttle > 0)
+                { appliedMotorTorque = Mathf.Max(0, throttle) * baseTorquePerWheel; }
             }
-            // --- TCS 논리 통합 ---
-            float tcsBrake = 0f; // 이 휠의 TCS 브레이크 힘 초기화
-            if (isTCSEnabled && throttle > 0.1f && appliedTorque > 0 && clutch > 0.5f) // 가속 중 양의 토크에만 TCS 적용
+
+            if (isEngineBrakingEnabled && throttle < 0.1f && clutch > 0.5f && currentGear != eGEAR.eGEAR_NEUTURAL && currentGear != eGEAR.eGEAR_REVERSE && currentEngineRPM > minEngineRPM + 500)
             {
-                if (driveWheels[i].GetGroundHit(out WheelHit wheelHitInfo)) // WheelHit에 로컬 변수 사용
+                if (baseTorquePerWheel < 0)
                 {
-                    // 가속도 제어를 위해 전진 슬립을 확인합니다
+                    appliedMotorTorque = baseTorquePerWheel;
+                    driveWheels[i].brakeTorque = 0f;
+                }
+            }
+
+            tcsBrake = 0f;
+            if (isTCSEnabled && throttle > 0.1f && appliedMotorTorque > 0 && clutch > 0.5f)
+            {
+                if (driveWheels[i].GetGroundHit(out WheelHit wheelHitInfo))
+                {
                     if (Mathf.Abs(wheelHitInfo.forwardSlip) > tcsSlipThreshold)
                     {
-                        // 미끄러질 경우 모터 토크를 크게 줄입니다
-                        appliedTorque *= (1.0f - tcsTorqueReductionFactor);
-                        // 선택 사항: 미끄러짐 휠에 작은 제동력을 가합니다
-                        tcsBrake = tcsBrakeFactor * Mathf.Abs(wheelHitInfo.forwardSlip - tcsSlipThreshold); // Scale brake by slip amount
+                        appliedMotorTorque *= (1.0f - tcsTorqueReductionFactor);
+                        tcsBrake = tcsBrakeFactor * Mathf.Abs(wheelHitInfo.forwardSlip - tcsSlipThreshold);
                     }
                 }
             }
-            //if (isTCSEnabled && clutch >= 0.9f && throttle > 0.1f)
-            //{
-            //    if (driveWheels[i].GetGroundHit(out wheelHit))
-            //    {
-            //        if (wheelHit.forwardSlip > tcsSlipThreshold && wheelHit.forwardSlip > Mathf.Abs(wheelHit.sidewaysSlip))
-            //        {
-            //            slipFactorTCS = Mathf.Clamp01((wheelHit.forwardSlip - tcsSlipThreshold) / (1.0f - tcsSlipThreshold)); // 슬립 초과량 정규화
-            //            appliedTorque *= (1.0f - slipFactorTCS * tcsStrength);
-            //            appliedTorque = Mathf.Max(0, appliedTorque);
-            //        }
-            //    }
-            //}
-            driveWheels[i].motorTorque = appliedTorque;
+
+            driveWheels[i].motorTorque = appliedMotorTorque;
+
             if (tcsBrake > 0)
-            {
-                // TCS 브레이크를 추가하지만 ABS 또는 플레이어 브레이크가 더 강하면 오버라이드하지 마십시오
-                // 덮어쓰기 전에 기존 브레이크 토크를 확인합니다(안전한 접근 방식)
-                driveWheels[i].brakeTorque = Mathf.Max(driveWheels[i].brakeTorque, tcsBrake);
-            }
-            // 중요: TCS 브레이크를 적용하지 않을 경우, 휠 브레이크가 ABS/브레이크 기능에 의해 관리되는지 확인합니다
-            // 브레이크() 기능은 브레이크 입력이 0일 때 브레이크 토크 재설정을 처리해야 합니다.
+            { driveWheels[i].brakeTorque = Mathf.Max(driveWheels[i].brakeTorque, tcsBrake); }
         }
     }
     private void EngineSoundUpdate()
@@ -490,18 +477,13 @@ public partial class Car
                 ForceChangeGear(eGEAR.eGEAR_REVERSE);
         }
 
-        //자동 후진 로직
-        if (speed < 1.0f) // 매우 느릴 때만 방향 전환 고려
+        if (speed < 1.0f)
         {
             if (throttle < -0.1f && currentGear != eGEAR.eGEAR_REVERSE)
-                ForceChangeGear(eGEAR.eGEAR_REVERSE); // 후진 입력 시 후진 기어
+                ForceChangeGear(eGEAR.eGEAR_REVERSE);
             else if (throttle > 0.1f && currentGear == eGEAR.eGEAR_REVERSE)
-                ForceChangeGear(eGEAR.eGEAR_FIRST); // 후진 중 전진 입력 시 1단 기어
+                ForceChangeGear(eGEAR.eGEAR_FIRST);
         }
-        //if (throttle < 0 && speed < 0.1f && currentGear != eGEAR.eGEAR_REVERSE)
-        //    ForceChangeGear(eGEAR.eGEAR_REVERSE);
-        //else if(currentGear == eGEAR.eGEAR_REVERSE && throttle > 0 && speed < 10f)
-        //    ForceChangeGear(eGEAR.eGEAR_FIRST);
     }
     public eGEAR GetCurrentGear() { return currentGear; }
     #endregion

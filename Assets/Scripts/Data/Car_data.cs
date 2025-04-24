@@ -18,7 +18,7 @@ public class CarData // 클래스 이름 변경 (선택적이지만 권장)
 
     public float maxEngineRPM { get; set; }
     public float minEngineRPM { get; set; }
-    public int lastGear { get; set; }
+    public short lastGear { get; set; }
 
     // gearRatio와 gearSpeedLimit은 CSV에 리스트 형태가 아니므로
     // 직접 매핑하기 어렵습니다. 이전 CarSpecRecord처럼 개별 속성으로 받거나,

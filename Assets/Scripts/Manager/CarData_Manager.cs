@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.IO; // 추가
 using System.Globalization; // 추가
 using CsvHelper; // 추가
-using CsvHelper.Configuration; // 추가
+using CsvHelper.Configuration;
+using System.Threading.Tasks; // 추가
 // using CSVToolKit; // 제거
 
 public class CarData_Manager : MonoBehaviour
 {
     public static CarData_Manager instance { get; private set; }
     public List<CarData> carDatas;// = new List<CarData>();
-    private string csvRelativePathInStreamingAssets = "CSV"; // StreamingAssets 내부의 상대 경로
-    private string csvFileName = "Car_spec"; // 파일 이름
+    private string csvFileName = "Car_spec.csv"; // 파일 이름
 
-    private void Awake()
+    private async void Awake()
     {
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            LoadCarData();
+            await LoadCarData();
         }
         else
         {
@@ -27,9 +27,10 @@ public class CarData_Manager : MonoBehaviour
         }
     }
 
-    private void LoadCarData()
+    private async Task LoadCarData()
     {
-       carDatas = CSVParser.ParseCSV<CarData>(csvFileName);
+        Debug.Log($"[CSVLoaderExample] StreamingAssets에서 '{csvFileName}' 로딩 시작...");
+        carDatas = await CSVParser.ParseCSV<CarData>(csvFileName);
         if(carDatas.Count > 0)
         {
             Debug.Log($"[CSVLoaderExample] '{csvFileName}.csv' 파일에서 총 {carDatas.Count}개의 데이터 레코드를 로드했습니다.");
