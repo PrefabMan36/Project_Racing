@@ -58,7 +58,7 @@ public static class CSVParser
 
         using (var www = UnityWebRequest.Get(uri))
         {
-            //await www.SendWebRequest(); // 비동기 로드 시작 및 대기
+            await www.SendWebRequest(); // 비동기 로드 시작 및 대기
 
             if (www.result != UnityWebRequest.Result.Success)
             {
