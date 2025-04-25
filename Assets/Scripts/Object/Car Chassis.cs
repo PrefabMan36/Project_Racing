@@ -19,6 +19,8 @@ public partial class Car
         public eAXEL axel;
     }
 
+    //-------------------------VALUE-----------------------------
+
     #region Value Steer
     [Header("Steer Value")]
     [SerializeField] protected float brakeInput;
@@ -138,6 +140,18 @@ public partial class Car
     [SerializeField, Range(0.1f, 1.0f)] private float absSlipThreshold = 0.35f; // ABS 개입을 시작할 Forward Slip 임계값 (음수)
     [SerializeField, Range(0.1f, 1.0f)] private float absBrakeReleaseFactor = 0.3f; // ABS 개입 강도 (1이면 슬립 시 브레이크 0, 낮을수록 약하게 개입)
     #endregion
+
+    //-------------------------FUNCTION-----------------------------
+
+    #region Fuction Wheels
+    public void SetWheelMesh(Material _wheelMesh)
+    {
+        for (int i = 0; i < wheels.Count; i++)
+        {
+            MeshRenderer curWheel = wheels[i].wheelModel.GetComponent<MeshRenderer>();
+            curWheel.material = _wheelMesh;
+        }
+    }
     protected void SetFriction()
     {
         forwardSlip = new float[wheelNum];
@@ -163,7 +177,6 @@ public partial class Car
         }
         Braking();
     }
-
     protected void ChangeFriction(bool _mode)
     {
         for (int i = 0; i < wheelNum; i++)
@@ -200,20 +213,10 @@ public partial class Car
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
     }
-
     public void SetDriveAxel(eCAR_DRIVEAXEL _driveAxel)
     {
         driveAxel = _driveAxel;
         SetDriveWheels();
-    }
-    public void SetBrakePower(float _brakePower) { brakePower = _brakePower; }
-    public void SetWheelMesh(Material _wheelMesh)
-    {
-        for (int i = 0; i < wheels.Count; i++)
-        {
-            MeshRenderer curWheel = wheels[i].wheelModel.GetComponent<MeshRenderer>();
-            curWheel.material = _wheelMesh;
-        }
     }
     protected void UpdatingWheels()
     {
@@ -225,6 +228,31 @@ public partial class Car
             wheels[i].skidMarks.transform.position = tempWheelPosition - (Vector3.up * wheelRadius);
         }
     }
+    protected void UpdatingFriction()
+    {
+        for (int i = 0; i < wheelNum; i++)
+        {
+            if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
+            {
+                overallSlip[i] = Mathf.Abs(wheelHit.forwardSlip + wheelHit.sidewaysSlip);
+
+                forwardFriction = wheels[i].wheelCollider.forwardFriction;
+                forwardFriction.stiffness = forwardTireGrip - overallSlip[i] / forwardValue;
+                wheels[i].wheelCollider.forwardFriction = forwardFriction;
+
+                sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
+                sidewaysFriction.stiffness = sidewaysTireGrip - overallSlip[i] / sideValue;
+                wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
+
+                forwardSlip[i] = wheelHit.forwardSlip;
+                sidewaysSlip[i] = wheelHit.sidewaysSlip;
+            }
+        }
+        Braking();
+    }
+    #endregion
+
+    #region Funtion Wheels Controll
     protected void Steering(float _input)
     {
         float input = _input;
@@ -266,16 +294,6 @@ public partial class Car
             wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
         }
     }
-    
-    public void SetAntiRoll(float _antiRoll) { antiRoll = _antiRoll; }
-    protected void SideBrakingDown()
-    {
-        for (int i = 0; i < wheelNum; i++)
-        {
-            if (wheels[i].axel == eAXEL.eAXEL_BACK)
-                wheels[i].wheelCollider.brakeTorque = Mathf.Infinity;
-        }
-    }
     protected void SideBrakingUp()
     {
         for (int i = 0; i < driveWheelsNum; i++)
@@ -284,7 +302,39 @@ public partial class Car
                 wheels[i].wheelCollider.brakeTorque = 0f;
         }
     }
+    protected void SideBrakingDown()
+    {
+        for (int i = 0; i < wheelNum; i++)
+        {
+            if (wheels[i].axel == eAXEL.eAXEL_BACK)
+                wheels[i].wheelCollider.brakeTorque = Mathf.Infinity;
+        }
+    }
+    public void SetBrakePower(float _brakePower) { brakePower = _brakePower; }
+    #endregion
 
+    #region Fuction Other
+    public void SetAntiRoll(float _antiRoll) { antiRoll = _antiRoll; }
+    protected void AntiRollBar()
+    {
+        travelL = 1.0f;
+        travelR = 1.0f;
+        groundedL = steerWheels[0].GetGroundHit(out wheelHit) ? true : false;
+        groundedR = steerWheels[1].GetGroundHit(out wheelHit) ? true : false;
+        if (groundedL)
+        {
+            travelL = (-steerWheels[0].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;
+        }
+        if (groundedR)
+        {
+            travelR = (-steerWheels[1].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[1].radius) / steerWheels[1].suspensionDistance;
+        }
+        antiRollForce = (travelL - travelR) * antiRoll;
+        if (groundedL)
+            carRB.AddForceAtPosition(steerWheels[0].transform.up * -antiRollForce, steerWheels[0].transform.position);
+        if (groundedR)
+            carRB.AddForceAtPosition(steerWheels[1].transform.up * antiRollForce, steerWheels[1].transform.position);
+    }
     private bool IsGrounded()
     {
         for (int i = 0; i < wheelNum; i++)
@@ -294,30 +344,6 @@ public partial class Car
         }
         return false;
     }
-
-    protected void UpdatingFriction()
-    {
-        for (int i = 0; i < wheelNum; i++)
-        {
-            if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
-            {
-                overallSlip[i] = Mathf.Abs(wheelHit.forwardSlip + wheelHit.sidewaysSlip);
-
-                forwardFriction = wheels[i].wheelCollider.forwardFriction;
-                forwardFriction.stiffness = forwardTireGrip - overallSlip[i] / forwardValue;
-                wheels[i].wheelCollider.forwardFriction = forwardFriction;
-
-                sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
-                sidewaysFriction.stiffness = sidewaysTireGrip - overallSlip[i] / sideValue;
-                wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
-
-                forwardSlip[i] = wheelHit.forwardSlip;
-                sidewaysSlip[i] = wheelHit.sidewaysSlip;
-            }
-        }
-        Braking();
-    }
-
     protected void EffectDrift()
     {
         for(int i = 0; i < wheelNum; i++)
@@ -356,24 +382,5 @@ public partial class Car
             }
         }
     }
-    protected void AntiRollBar()
-    {
-        travelL = 1.0f;
-        travelR = 1.0f;
-        groundedL = steerWheels[0].GetGroundHit(out wheelHit) ? true : false;
-        groundedR = steerWheels[1].GetGroundHit(out wheelHit) ? true : false;
-        if (groundedL)
-        {
-            travelL = (-steerWheels[0].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;
-        }
-        if (groundedR)
-        {
-            travelR = (-steerWheels[1].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[1].radius) / steerWheels[1].suspensionDistance;
-        }
-        antiRollForce = (travelL - travelR) * antiRoll;
-        if (groundedL)
-            carRB.AddForceAtPosition(steerWheels[0].transform.up * -antiRollForce, steerWheels[0].transform.position);
-        if (groundedR)
-            carRB.AddForceAtPosition(steerWheels[1].transform.up * antiRollForce, steerWheels[1].transform.position);
-    }
+    #endregion
 }

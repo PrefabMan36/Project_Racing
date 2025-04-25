@@ -5,6 +5,7 @@ using Tiny;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using Fusion;
 
 public class Player_Car : Car
 {
@@ -28,7 +29,7 @@ public class Player_Car : Car
     public bool braking, sideBraking, up, down, left, right;
     private void Start()
     {
-        _data = gameObject.transform.Find("Champion_curve").GetComponent<Curve_data>();
+        _data = FindAnyObjectByType<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
         Destroy(_data.gameObject);
