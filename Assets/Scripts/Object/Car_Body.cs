@@ -52,7 +52,7 @@ public partial class Car
     [SerializeField] private Light[] headLight_Object;
     [SerializeField] private Light[] headLight_SpotLight;
     [SerializeField] private Light[] tailLamp;
-    [SerializeField] private bool headLightSwitch = false;
+    [SerializeField] private bool headLightSwitch = true;
     private void SetLight()
     {
         headLight_Object = new Light[2];

@@ -8,7 +8,7 @@ public class Mgr_MainGame : MonoBehaviour
     [SerializeField] private Player_Car playerCar;
     // 변경: Car_data 대신 CarData 클래스 사용
     [SerializeField] private CarData carData;
-    private void Start()
+    public void Spawned()
     {
         playerCar = GameObject.FindWithTag("Player").GetComponent<Player_Car>();
         carData = CarData_Manager.instance.GetCarDataByName("Super2000");
@@ -58,5 +58,6 @@ public class Mgr_MainGame : MonoBehaviour
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FOURTH, carData.gearSpeedLimit_eGEAR_FOURTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FIFTH, carData.gearSpeedLimit_eGEAR_FIFTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_SIXTH, carData.gearSpeedLimit_eGEAR_SIXTH);
+        playerCar.Spawned();
     }
 }

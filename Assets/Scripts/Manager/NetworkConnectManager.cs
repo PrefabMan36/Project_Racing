@@ -1,102 +1,49 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Fusion;
 using Fusion.Sockets;
-using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 
 public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
 {
-    private NetworkRunner _runner;
+    [SerializeField] private Transform spawnPosition;
+    [SerializeField] private Mgr_MainGame game;
+    private NetworkRunner runner;
+    [SerializeField] private NetworkPrefabRef _playerPrefab;
+    private Dictionary<PlayerRef, NetworkObject> _spwawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+    private NetworkInputManager inputData = new NetworkInputManager();
 
-    void Awake()
+    async void StartGame(GameMode mode)
     {
-        // NetworkRunner가 아직 없으면 추가합니다.
-        if (_runner == null)
+        if (runner == null)
         {
-            _runner = gameObject.AddComponent<NetworkRunner>();
-        }
-        _runner.AddCallbacks(this); // 콜백 등록
+            runner = gameObject.AddComponent<NetworkRunner>();
+            runner.ProvideInput = true;
 
-        Debug.Log("NetworkConnectManager Initialized. Ready to connect.");
-    }
+            var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+            var sceneInfo = new NetworkSceneInfo();
+            if(scene.IsValid)
+                sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
 
-    // 씬 로드 시 자동으로 연결을 시작하고 싶다면 이 부분을 사용하세요.
-    // 하지만 UI 버튼으로 연결하는 경우 Start에서는 초기화만 하는 것이 좋습니다.
-    /*
-    async void Start()
-    {
-        _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.AddCallbacks(this);
-        await StartHost(); // 예시: 씬 시작 시 바로 호스트로 시작
-    }
-    */
-
-    // 호스트로 게임 시작
-    public async void StartHost()
-    {
-        if (_runner == null)
-        {
-            Debug.LogError("NetworkRunner is not initialized!");
-            return;
-        }
-        if (_runner.IsRunning) // 이미 실행 중인지 확인
-        {
-            Debug.LogWarning("NetworkRunner is already running.");
-            return;
-        }
-
-        Debug.Log("Attempting to Start Host...");
-
-        var result = await _runner.StartGame(new StartGameArgs()
-        {
-            GameMode = GameMode.Host, // 호스트 모드
-            SessionName = "MyTestSession", // 세션 이름 (참여할 클라이언트와 동일해야 함)
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>() // 씬 매니저 추가 (없다면)
-            // 기본 씬 로딩 처리를 위해 NetworkSceneManagerDefault를 사용합니다.
-            // 프로젝트 설정에 따라 다른 씬 매니저가 필요할 수 있습니다.
-        });
-
-        if (result.Ok)
-        {
-            // OnConnectedToServer 콜백에서 성공 로그가 출력될 것입니다.
-        }
-        else
-        {
-            Debug.LogError($"Failed to start Host: {result.ShutdownReason}");
+            await runner.StartGame(new StartGameArgs()
+            {
+                GameMode = mode,
+                SessionName = "TestRoom",
+                Scene = scene,
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            });
         }
     }
 
-    // 클라이언트로 게임 참여
-    public async void JoinClient()
+    private void OnGUI()
     {
-        if (_runner == null)
+        if (runner == null)
         {
-            Debug.LogError("NetworkRunner is not initialized!");
-            return;
-        }
-        if (_runner.IsRunning) // 이미 실행 중인지 확인
-        {
-            Debug.LogWarning("NetworkRunner is already running.");
-            return;
-        }
-
-        Debug.Log("Attempting to Join Client...");
-
-        var result = await _runner.StartGame(new StartGameArgs()
-        {
-            GameMode = GameMode.Client, // 클라이언트 모드
-            SessionName = "MyTestSession", // 참여할 세션 이름 (호스트와 동일해야 함)
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>() // 씬 매니저 추가 (없다면)
-        });
-
-        if (result.Ok)
-        {
-            // OnConnectedToServer 콜백에서 성공 로그가 출력될 것입니다.
-        }
-        else
-        {
-            Debug.LogError($"Failed to join Client: {result.ShutdownReason}");
+            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
+                StartGame(GameMode.Host);
+            if(GUI.Button(new Rect(0,40,200,40), "Join"))
+                StartGame(GameMode.Client);
         }
     }
 
@@ -119,10 +66,37 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log($"<color=orange>Network Runner Shutdown:</color> {shutdownReason}");
         // 연결이 종료되거나 러너가 중지될 때 호출됩니다.
     }
-
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { Debug.Log($"<color=blue>Player Joined:</color> {player.PlayerId}"); }
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { Debug.Log($"<color=blue>Player Left:</color> {player.PlayerId}"); }
-    public void OnInput(NetworkRunner runner, NetworkInput input) { }
+    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    {
+        if(runner.IsServer)
+        {
+            //Vector3 spawnPosition = new Vector3(player.RawEncoded % runner.Config.Simulation.PlayerCount * 3, 1, 0);
+            //NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition.position, spawnPosition.rotation, player);
+            _spwawnedCharacters.Add(player, networkPlayerObject);
+            game.Spawned();
+            Debug.Log($"<color=blue>Player Joined:</color> {player.PlayerId}");
+        }
+    }
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    {
+        if(_spwawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
+        {
+            runner.Despawn(networkObject);
+            Debug.Log($"<color=blue>Player Left:</color> {player.PlayerId}");
+            _spwawnedCharacters.Remove(player);
+        }
+    }
+    public void OnInput(NetworkRunner runner, NetworkInput input)
+    {
+        inputData.direction.x = Input.GetAxis("Horizontal");
+        inputData.direction.y = Input.GetAxis("Vertical");
+        inputData.sideBraking = Input.GetAxis("Jump") > 0 ? true : false;
+        inputData.boosting = Input.GetKey(KeyCode.RightShift);
+        inputData.gearUP = Input.GetKey(KeyCode.LeftShift);
+        inputData.gearDOWN = Input.GetKey(KeyCode.RightControl);
+        input.Set(inputData);
+    }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { Debug.Log($"Session list updated. Found {sessionList.Count} sessions."); }
@@ -131,41 +105,19 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnSceneLoadDone(NetworkRunner runner) { Debug.Log("Scene load done."); }
     public void OnSceneLoadStart(NetworkRunner runner) { Debug.Log("Scene load start."); }
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
-    {
-        // Debug.Log($"Object {obj.Id} exited AOI for player {player.PlayerId}"); // AOI 관련 로그는 필요에 따라 활성화
-    }
+    { Debug.Log($"Object {obj.Id} exited AOI for player {player.PlayerId}"); }
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
-    {
-        // Debug.Log($"Object {obj.Id} entered AOI for player {player.PlayerId}"); // AOI 관련 로그는 필요에 따라 활성화
-    }
+    { Debug.Log($"Object {obj.Id} entered AOI for player {player.PlayerId}"); }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
-    {
-        throw new NotImplementedException();
-    }
+    { throw new NotImplementedException(); }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
-    {
-        throw new NotImplementedException();
-    }
+    { throw new NotImplementedException(); }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
-    {
-        throw new NotImplementedException();
-    }
+    { throw new NotImplementedException(); }
 
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnInput(NetworkRunner runner, Fusion.NetworkInput input)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnInputMissing(NetworkRunner runner, PlayerRef player, Fusion.NetworkInput input)
-    {
-        throw new NotImplementedException();
-    }
+    { throw new NotImplementedException(); }
 }

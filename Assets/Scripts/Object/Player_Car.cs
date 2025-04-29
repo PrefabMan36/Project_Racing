@@ -27,7 +27,7 @@ public class Player_Car : Car
     private float fov = 30f;
 
     public bool braking, sideBraking, up, down, left, right;
-    private void Start()
+    public void Spawned()
     {
         _data = FindAnyObjectByType<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);

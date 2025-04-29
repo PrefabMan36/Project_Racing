@@ -255,8 +255,7 @@ public partial class Car
     #region Funtion Wheels Controll
     protected void Steering(float _input)
     {
-        float input = _input;
-        curSteerAngle = Mathf.Lerp(curSteerAngle, steeringCurve.Evaluate(speed) * input, maxSteerAngle > curSteerAngle ? Time.deltaTime * 2f : Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
+        curSteerAngle = Mathf.Lerp(curSteerAngle, steeringCurve.Evaluate(speed) * _input, maxSteerAngle > curSteerAngle ? Time.deltaTime * 2f : Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
         if (steeringHandle != null)
