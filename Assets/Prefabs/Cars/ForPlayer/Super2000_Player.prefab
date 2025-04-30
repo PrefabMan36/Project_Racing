@@ -1301,12 +1301,14 @@ MonoBehaviour:
   smokes: []
   smokeParticles: []
   brakePower: 0
+  requestedBrakeTorque: 0
   sideBrakePower: 0
   targetBrakeTorque: 0
   appliedBrakeTorque: 0
   slipFactorABS: 0
   tempWheelColliderForBrake: {fileID: 0}
   isABSEnabled: 1
+  isBrakingIntent: 0
   absSlipThreshold: 0.35
   absBrakeReleaseFactor: 0.3
   centerMass: {fileID: 4880681281052632171}
@@ -1448,6 +1450,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: -8131154835171242146}
+  - {fileID: 1982242415706992608}
   - {fileID: 8658955145431997335}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &8658955145431997335

@@ -4,6 +4,7 @@ using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
+using static Car;
 
 public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -12,7 +13,6 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spwawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-    private NetworkInputManager inputData = new NetworkInputManager();
 
     async void StartGame(GameMode mode)
     {
@@ -47,6 +47,18 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    public void OnEnable()
+    {
+        if(runner != null)
+            runner.AddCallbacks(this);
+    }
+
+    public void OnDisable()
+    {
+        if (runner != null)
+            runner.RemoveCallbacks(this);
+    }
+
     // NetworkRunner 콜백 메서드 (INetworkRunnerCallbacks 인터페이스 구현) - 연결 상태 확인에 유용
 
     public void OnConnectedToServer(NetworkRunner runner)
@@ -71,10 +83,9 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
         if(runner.IsServer)
         {
             //Vector3 spawnPosition = new Vector3(player.RawEncoded % runner.Config.Simulation.PlayerCount * 3, 1, 0);
-            //NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition.position, spawnPosition.rotation, player);
             _spwawnedCharacters.Add(player, networkPlayerObject);
-            game.Spawned();
+            game.Init();
             Debug.Log($"<color=blue>Player Joined:</color> {player.PlayerId}");
         }
     }
@@ -83,18 +94,36 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
         if(_spwawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
         {
             runner.Despawn(networkObject);
-            Debug.Log($"<color=blue>Player Left:</color> {player.PlayerId}");
             _spwawnedCharacters.Remove(player);
+            Debug.Log($"<color=blue>Player Left:</color> {player.PlayerId}");
         }
     }
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        var inputData = new NetworkInputManager();
         inputData.direction.x = Input.GetAxis("Horizontal");
         inputData.direction.y = Input.GetAxis("Vertical");
+        inputData.direction.z = Input.GetAxis("Clutch");
         inputData.sideBraking = Input.GetAxis("Jump") > 0 ? true : false;
         inputData.boosting = Input.GetKey(KeyCode.RightShift);
         inputData.gearUP = Input.GetKey(KeyCode.LeftShift);
-        inputData.gearDOWN = Input.GetKey(KeyCode.RightControl);
+        inputData.gearDOWN = Input.GetKey(KeyCode.LeftControl);
+        inputData.forceGear = 0;
+        if (Input.GetKey(KeyCode.Keypad0))
+            inputData.forceGear = 1;
+        if (Input.GetKey(KeyCode.Keypad1))
+            inputData.forceGear = 2;
+        if (Input.GetKey(KeyCode.Keypad2))
+            inputData.forceGear = 3;
+        if (Input.GetKey(KeyCode.Keypad3))
+            inputData.forceGear = 4;
+        if (Input.GetKey(KeyCode.Keypad4))
+            inputData.forceGear = 5;
+        if (Input.GetKey(KeyCode.Keypad5))
+            inputData.forceGear = 6;
+        if (Input.GetKey(KeyCode.Keypad6))
+            inputData.forceGear = 7;
+
         input.Set(inputData);
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

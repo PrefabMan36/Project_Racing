@@ -131,12 +131,14 @@ public partial class Car
     #region Value Brake
     [Header("Value Brake")]
     [SerializeField] private float brakePower;
+    [SerializeField] private float requestedBrakeTorque;
     [SerializeField] private float sideBrakePower;
     [SerializeField] private float targetBrakeTorque;
     [SerializeField] private float appliedBrakeTorque;
     [SerializeField] private float slipFactorABS;
     [SerializeField] private WheelCollider tempWheelColliderForBrake;
     [SerializeField] private bool isABSEnabled = true; // ABS 사용 여부
+    [SerializeField] private bool isBrakingIntent = false; // 브레이크 의도 여부
     [SerializeField, Range(0.1f, 1.0f)] private float absSlipThreshold = 0.35f; // ABS 개입을 시작할 Forward Slip 임계값 (음수)
     [SerializeField, Range(0.1f, 1.0f)] private float absBrakeReleaseFactor = 0.3f; // ABS 개입 강도 (1이면 슬립 시 브레이크 0, 낮을수록 약하게 개입)
     #endregion
@@ -175,7 +177,6 @@ public partial class Car
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
             wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
         }
-        Braking();
     }
     protected void ChangeFriction(bool _mode)
     {
@@ -255,7 +256,7 @@ public partial class Car
     #region Funtion Wheels Controll
     protected void Steering(float _input)
     {
-        curSteerAngle = Mathf.Lerp(curSteerAngle, steeringCurve.Evaluate(speed) * _input, maxSteerAngle > curSteerAngle ? Time.deltaTime * 2f : Time.deltaTime * 10f);//steeringCurve.Evaluate(speed);
+        curSteerAngle = Mathf.Lerp(curSteerAngle, steeringCurve.Evaluate(speed) * _input, maxSteerAngle > curSteerAngle ? Runner.DeltaTime * 2f : Runner.DeltaTime * 6f);//steeringCurve.Evaluate(speed);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
         if (steeringHandle != null)
@@ -263,8 +264,8 @@ public partial class Car
     }
     protected void Braking()
     {
-        float requestedBrakeTorque = brakeInput * brakePower;
-        bool isBrakingIntent = brakeInput > 0.05f;
+        requestedBrakeTorque = brakeInput * brakePower;
+        isBrakingIntent = brakeInput > 0.05f;
 
         TailLampSwitch(isBrakingIntent);
 

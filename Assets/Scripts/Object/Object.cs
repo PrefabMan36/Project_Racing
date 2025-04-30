@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
-public class Object : MonoBehaviour
+public class Object : NetworkBehaviour
 {
     [SerializeField] protected GameObject body;
-
 }

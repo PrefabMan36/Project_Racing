@@ -3,12 +3,12 @@ using Fusion.Addons.Physics;
 
 public class Player_Control : NetworkBehaviour
 {
-    //private NetworkCharacterController characterController;
+    private NetworkRigidbody3D networkRigidbody;
     private Player_Car player_Car;
 
     private void Awake()
     {
-        //characterController = GetComponent<NetworkCharacterController>();
+        networkRigidbody = GetComponent<NetworkRigidbody3D>();
         player_Car = GetComponent<Player_Car>();
     }
     public override void FixedUpdateNetwork()
@@ -16,7 +16,6 @@ public class Player_Control : NetworkBehaviour
         if(GetInput(out NetworkInputManager data))
         {
             data.direction.Normalize();
-            //characterController.Move(5*data.direction*Runner.DeltaTime);
         }
     }
 }

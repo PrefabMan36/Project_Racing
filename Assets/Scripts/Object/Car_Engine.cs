@@ -163,7 +163,7 @@ public partial class Car
             if (clutch < 0.1f)
             {
                 targetRPM = Mathf.Max(minEngineRPM, maxEngineRPM * throttle);
-                currentEngineRPM = Mathf.Lerp(currentEngineRPM, targetRPM, Time.deltaTime * currentDynamicEngineAcceleration * 2f);
+                currentEngineRPM = Mathf.Lerp(currentEngineRPM, targetRPM, Runner.DeltaTime * currentDynamicEngineAcceleration * 2f);
                 currentWheelTorque = 0f;
             }
             else
@@ -179,7 +179,7 @@ public partial class Car
                     (
                         currentEngineRPM,
                         targetRPM,
-                        (overSpeed * currentDynamicEngineAcceleration * Time.deltaTime) * Mathf.Abs(gearRatio[currentGear])
+                        (overSpeed * currentDynamicEngineAcceleration * Runner.DeltaTime) * Mathf.Abs(gearRatio[currentGear])
                     );
                 nitroPowerMultiplier = isNitroActive ? nitroPower : 1f;
                 nitroSpeedMultiplier = isNitroActive ? nitroSpeed : 1f;
@@ -227,7 +227,7 @@ public partial class Car
         if(redLine)
         {
             //curEngineTorque = 0f;
-            currentEngineRPM = Mathf.Lerp(currentEngineRPM,engineLerpValue,20 * Time.deltaTime);
+            currentEngineRPM = Mathf.Lerp(currentEngineRPM,engineLerpValue,20 * Runner.DeltaTime);
             redLine = currentEngineRPM <= engineLerpValue + 100 ? false : true;
         }
     }
@@ -413,8 +413,8 @@ public partial class Car
             if(throttle > 0)
                 throttle = 0f;
             clutch = 0f;
-            shiftTimer += Time.deltaTime;
-            //curEngineRPM = Mathf.Lerp(curEngineRPM, maxEngineRPM / 3 + minEngineRPM, Time.deltaTime * 5f);
+            shiftTimer += Runner.DeltaTime;
+            //curEngineRPM = Mathf.Lerp(curEngineRPM, maxEngineRPM / 3 + minEngineRPM, Runner.DeltaTime * 5f);
         }
         else
         {

@@ -8,4 +8,7 @@ public struct NetworkInputManager : INetworkInput
     public bool boosting;
     public bool gearUP;
     public bool gearDOWN;
+
+    public bool headLight;
+    public byte forceGear;
 }

@@ -36,6 +36,30 @@ public partial class Car : Object_Movable
                 StartCoroutine(IgnitionEngine());
         }
     }
+    protected IEnumerator Engine()
+    {
+        WaitForSeconds waitForSecond = new WaitForSeconds(0.01f);
+        while (true)
+        {
+            yield return waitForSecond;
+            if (ignition)
+            {
+                GearShifting();
+                CalculateTorque();
+                forceEngineLerp();
+                TorqueToWheel();
+                if (autoGear) AutoGear();
+                EngineSoundUpdate();
+            }
+            else
+            {
+                currentEngineRPM = 0f;
+                currentWheelTorque = 0f;
+                if (!engineStartUP && throttle > 0)
+                    StartCoroutine(IgnitionEngine());
+            }
+        }
+    }
     protected IEnumerator UpdateNitro()
     {
         WaitForSeconds wfs = new WaitForSeconds(0.02f);

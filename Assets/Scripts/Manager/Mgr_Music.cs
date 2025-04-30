@@ -21,13 +21,13 @@ public class Mgr_Music : MonoBehaviour
 
     private void Start()
     {
-        MusicPlayer = GetComponent<AudioSource>();
+        //MusicPlayer = GetComponent<AudioSource>();
 
-        string[] Audio_Path = System.IO.Directory.GetFiles("Assets/Audio/BGM", "*.wav");
-        for (int i = 0; i < Audio_Path.Length; i++)
-            BGM.Add((AudioClip)AssetDatabase.LoadAssetAtPath(Audio_Path[i], typeof(AudioClip)));
+        //string[] Audio_Path = System.IO.Directory.GetFiles("Assets/Audio/BGM", "*.wav");
+        //for (int i = 0; i < Audio_Path.Length; i++)
+        //    BGM.Add((AudioClip)AssetDatabase.LoadAssetAtPath(Audio_Path[i], typeof(AudioClip)));
 
-        MusicPlayer.clip = BGM[1];
-        MusicPlayer.Play();
+        //MusicPlayer.clip = BGM[1];
+        //MusicPlayer.Play();
     }
 }

@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using Tiny;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Fusion;
@@ -27,7 +25,13 @@ public class Player_Car : Car
     private float fov = 30f;
 
     public bool braking, sideBraking, up, down, left, right;
-    public void Spawned()
+    private bool gearUp, gearDown;
+    private byte forceGear;
+    private float clutching;
+
+    [Networked] public NetworkInputManager inputData { get; set; }
+
+    public void Init()
     {
         _data = FindAnyObjectByType<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
@@ -83,8 +87,8 @@ public class Player_Car : Car
         SetFriction();
         SpawnSmoke();
         CalculateOptimalShiftPoints();
+        StartCoroutine(Engine());
         StartCoroutine(Controlling());
-        //StartCoroutine(Engine());
         StartCoroutine(UpdateNitro());
         StartCoroutine(UIUpdating());
     }
@@ -92,54 +96,67 @@ public class Player_Car : Car
     private void Update()
     {
         SetSpeedToKMH();
-        Steering(Input.GetAxis("Horizontal"));
-        SetSlpingAngle();
-        CameraUpdate();
-        if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
-            clutch = Input.GetKey(KeyCode.C) == true ? 0 : Mathf.Lerp(clutch, 1, Time.deltaTime);
-        if (Input.GetKeyDown(KeyCode.RightShift))
-        { ActivateNitro(true); }
-        if(Input.GetKeyUp(KeyCode.RightShift) && !GetPowerMode())
-        { ActivateNitro(false); }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            drifting = !drifting;
-            ChangeFriction(drifting);
-        }
+        //if (Input.GetKeyDown(KeyCode.G))
+        //{
+        //    drifting = !drifting;
+        //    ChangeFriction(drifting);
+        //}
         if(Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
         UpdatingWheels();
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-            ChangeGear(true);
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-            ChangeGear(false);
-        if (Input.GetKeyDown(KeyCode.Keypad0))
-            ForceChangeGear(eGEAR.eGEAR_REVERSE);
-        if (Input.GetKeyDown(KeyCode.Keypad1))
-            ForceChangeGear(eGEAR.eGEAR_FIRST);
-        if (Input.GetKeyDown(KeyCode.Keypad2))
-            ForceChangeGear(eGEAR.eGEAR_SECOND);
-        if (Input.GetKeyDown(KeyCode.Keypad3))
-            ForceChangeGear(eGEAR.eGEAR_THIRD);
-        if(Input.GetKeyDown(KeyCode.Keypad4))
-            ForceChangeGear(eGEAR.eGEAR_FOURTH);
-        if (Input.GetKeyDown(KeyCode.Keypad5))
-            ForceChangeGear(eGEAR.eGEAR_FIFTH);
-        if (Input.GetKeyDown(KeyCode.Keypad6))
-            ForceChangeGear(eGEAR.eGEAR_SIXTH);
     }
 
-    private void FixedUpdate()
+    public override void FixedUpdateNetwork()
     {
-        EngineForUpdate();
-        ApplyAerodynamicDrag();
-        UpdatingFriction();
         //AntiRollBar();
-        // Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
-        // (Update의 논리를 복제하므로 입력 처리를 통합하는 것을 고려하십시오.)
-        throttle = Input.GetAxis("Vertical");
-
+        //Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
+        if (GetInput(out NetworkInputManager data))
+        {
+            data.direction.Normalize();
+            throttle = data.direction.y;
+            Steering(data.direction.x);
+            sideBraking = data.sideBraking;
+            ActivateNitro(data.boosting);
+            clutching = data.direction.z;
+            forceGear = data.forceGear;
+            gearUp = data.gearUP;
+            gearDown = data.gearDOWN;
+        }
+        if (gearUp)
+            ChangeGear(true);
+        if (gearDown)
+            ChangeGear(false);
+        if (sideBraking)
+            SideBrakingDown();
+        else
+            SideBrakingUp();
+        if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
+            clutch = Mathf.Lerp(1, 0, clutching);
+        switch(forceGear)
+        {
+            case 1:
+                ForceChangeGear(eGEAR.eGEAR_REVERSE);
+                break;
+            case 2:
+                ForceChangeGear(eGEAR.eGEAR_FIRST);
+                break;
+            case 3:
+                ForceChangeGear(eGEAR.eGEAR_SECOND);
+                break;
+            case 4:
+                ForceChangeGear(eGEAR.eGEAR_THIRD);
+                break;
+            case 5:
+                ForceChangeGear(eGEAR.eGEAR_FOURTH);
+                break;
+            case 6:
+                ForceChangeGear(eGEAR.eGEAR_FIFTH);
+                break;
+            case 7:
+                ForceChangeGear(eGEAR.eGEAR_SIXTH);
+                break;
+        }
         if (ignition)
         {
             if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
@@ -188,29 +205,20 @@ public class Player_Car : Car
         {
             throttle = 0f;
         }
-
         // 슬립 계산 및 입력 처리 후 FixedUpdate에서 Braking() 호출
     }
 
     IEnumerator Controlling()
     {
-        WaitForSeconds wfs = new WaitForSeconds(0.02f);
+        WaitForSeconds wfs = new WaitForSeconds(0.01f);
         while (true)
         {
             yield return wfs;
-
-            
-            
-            if (Input.GetKey(KeyCode.Space))
-            {
-                SideBrakingDown();
-                sideBraking = true;
-            }
-            else
-            {
-                SideBrakingUp();
-                sideBraking = false;
-            }
+            CameraUpdate();
+            SetSlpingAngle();
+            //EngineForUpdate();
+            ApplyAerodynamicDrag();
+            UpdatingFriction();
             EffectDrift();
             SetRadialBlur();
         }
@@ -287,7 +295,6 @@ public class Player_Car : Car
                 freeLook = false;
         }
     }
-
     private void SetRadialBlur()
     {
         if (radialBlur != null)
