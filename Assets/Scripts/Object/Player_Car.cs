@@ -7,18 +7,18 @@ using Fusion;
 
 public class Player_Car : Car
 {
-    private Curve_data _data;
-    private CinemachineFreeLook freeLookCamera;
-    private CinemachineFreeLook sideCamera;
+    public Vector3 inputCheck;
+
+    public Curve_data _data;
+    [SerializeField] private CinemachineFreeLook freeLookCamera;
+    [SerializeField] private CinemachineFreeLook sideCamera;
     private Transform firstPersonCamera;
     private Transform lookBack;
-    private Camera MainCamera;
+    [SerializeField] private Camera MainCamera;
     [SerializeField] private RadialBlur radialBlur;
 
     private bool firstPersonCameraCheck = false;
     private GameObject windowF, windowL, windowR;
-
-    private bool drifting = false;
 
     private bool freeLook;
     private float freeLookWaitTime;
@@ -33,23 +33,9 @@ public class Player_Car : Car
 
     public void Init()
     {
-        _data = FindAnyObjectByType<Curve_data>();
+        _data = gameObject.GetComponent<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
-        Destroy(_data.gameObject);
-
-        rpmGauge = FindAnyObjectByType<RPMGauge>();
-        NitroBar = FindAnyObjectByType<Slider>();
-
-        freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
-        sideCamera = gameObject.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
-        firstPersonCamera = gameObject.transform.Find("FirstPersonCamera");
-        lookBack = gameObject.transform.Find("LookBackCamera");
-        freeLookCamera.Follow = gameObject.transform;
-        freeLookCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
-        sideCamera.Follow = gameObject.transform;
-        sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
-        MainCamera = FindAnyObjectByType<Camera>();
 
         //if(gameObject.transform.Find("WindowFront").gameObject != null)
         //    windowF = gameObject.transform.Find("WindowFront").gameObject;
@@ -58,7 +44,6 @@ public class Player_Car : Car
         //if(gameObject.transform.Find("WindowRight").gameObject != null)
         //    windowR = gameObject.transform.Find("WindowRight").gameObject;
 
-        radialBlur = MainCamera.GetComponent<RadialBlur>();
         //SetCenterMass();
 
         SetNitroInstall(true);
@@ -77,6 +62,7 @@ public class Player_Car : Car
         ignition = true;
         braking = false;
         //SetEngineSound(transform.Find("EngineSound").GetComponent<AudioSource[]>());
+        HeadLightSwitch();
         ForcePlayEngineSound();
         SetBaseEngineAcceleration(5f);
         SetAutoGear(false);
@@ -91,6 +77,19 @@ public class Player_Car : Car
         StartCoroutine(Controlling());
         StartCoroutine(UpdateNitro());
         StartCoroutine(UIUpdating());
+    }
+
+    public void CamInit()
+    {
+        freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
+        sideCamera = gameObject.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
+        firstPersonCamera = gameObject.transform.Find("FirstPersonCamera");
+        lookBack = gameObject.transform.Find("LookBackCamera");
+        freeLookCamera.Follow = gameObject.transform;
+        freeLookCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
+        sideCamera.Follow = gameObject.transform;
+        sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
+        radialBlur = MainCamera.GetComponent<RadialBlur>();
     }
 
     private void Update()
@@ -122,6 +121,7 @@ public class Player_Car : Car
             forceGear = data.forceGear;
             gearUp = data.gearUP;
             gearDown = data.gearDOWN;
+            inputCheck = data.direction;
         }
         if (gearUp)
             ChangeGear(true);
@@ -222,6 +222,13 @@ public class Player_Car : Car
             EffectDrift();
             SetRadialBlur();
         }
+    }
+    public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
+    public void SetCamAndUI(Camera _cam, Slider _NitroBar, RPMGauge _rpmGauge)
+    {
+        MainCamera = _cam;
+        NitroBar = _NitroBar;
+        rpmGauge = _rpmGauge;
     }
     private void CameraUpdate()
     {

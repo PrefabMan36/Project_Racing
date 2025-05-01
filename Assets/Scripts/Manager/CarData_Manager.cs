@@ -11,6 +11,7 @@ public class CarData_Manager : MonoBehaviour
 {
     public static CarData_Manager instance { get; private set; }
     public List<CarData> carDatas;// = new List<CarData>();
+    public List<Curve_data> curve_Datas;
     private string csvFileName = "Car_spec.csv"; // 파일 이름
 
     private async void Awake()

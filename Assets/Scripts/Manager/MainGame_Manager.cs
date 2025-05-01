@@ -1,18 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+using Fusion;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Mgr_MainGame : MonoBehaviour
+public class MainGame_Manager : NetworkBehaviour
 {
     [SerializeField] private Player_Car playerCar;
+    private bool localPlayer = false;
     // 변경: Car_data 대신 CarData 클래스 사용
     [SerializeField] private CarData carData;
-    public void Init()
+    [SerializeField] private Camera MainCamera;
+    [SerializeField] private Slider NitroBar;
+    [SerializeField] private RPMGauge rpmGauge;
+    private void FixedUpdate()
     {
-        playerCar = GameObject.FindWithTag("Player").GetComponent<Player_Car>();
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            ExitGame();
+        }
+    }
+    public void Init(NetworkObject _spawnedObject)
+    {
+
+        playerCar = _spawnedObject.GetComponent<Player_Car>();
         carData = CarData_Manager.instance.GetCarDataByName("Super2000");
 
+        if(true)
+        {
+            playerCar.SetCamAndUI(MainCamera, NitroBar, rpmGauge);
+            playerCar.CamInit();
+            localPlayer = true;
+        }
         playerCar.SetCarMass(carData.Mass);
         playerCar.SetDragCoefficient(carData.dragCoefficient);
         playerCar.SetBaseEngineAcceleration(carData.baseEngineAcceleration);
@@ -59,5 +76,13 @@ public class Mgr_MainGame : MonoBehaviour
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FIFTH, carData.gearSpeedLimit_eGEAR_FIFTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_SIXTH, carData.gearSpeedLimit_eGEAR_SIXTH);
         playerCar.Init();
+    }
+
+    private void ExitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 }

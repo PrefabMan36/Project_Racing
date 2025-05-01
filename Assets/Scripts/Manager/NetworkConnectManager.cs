@@ -6,12 +6,15 @@ using System;
 using System.Collections.Generic;
 using static Car;
 
-public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
+public class NetworkConnectManager : SimulationBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField] private Transform spawnPosition;
-    [SerializeField] private Mgr_MainGame game;
-    private NetworkRunner runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
+    [SerializeField] private Transform[] spawnPosition;
+    private Dictionary<PlayerRef, byte> spawnedPositions = new Dictionary<PlayerRef, byte>();
+    private byte playerCount = 0;
+    private byte spawnNum = 0;
+    [SerializeField] private MainGame_Manager game;
+    private NetworkRunner runner;
     private Dictionary<PlayerRef, NetworkObject> _spwawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     async void StartGame(GameMode mode)
@@ -82,10 +85,12 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         if(runner.IsServer)
         {
-            //Vector3 spawnPosition = new Vector3(player.RawEncoded % runner.Config.Simulation.PlayerCount * 3, 1, 0);
-            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition.position, spawnPosition.rotation, player);
+            spawnNum = (byte)UnityEngine.Random.Range(0, spawnPosition.Length - playerCount++);
+            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition[spawnNum].position, spawnPosition[spawnNum].rotation, player);
+            spawnPosition = SortToBack_Array(spawnPosition, spawnNum);
+            spawnedPositions.Add(player, spawnNum);
             _spwawnedCharacters.Add(player, networkPlayerObject);
-            game.Init();
+            game.Init(networkPlayerObject);
             Debug.Log($"<color=blue>Player Joined:</color> {player.PlayerId}");
         }
     }
@@ -94,7 +99,10 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
         if(_spwawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
         {
             runner.Despawn(networkObject);
+            spawnPosition = SortToFront_Array(spawnPosition, spawnedPositions[player]);
             _spwawnedCharacters.Remove(player);
+            spawnedPositions.Remove(player);
+            playerCount--;
             Debug.Log($"<color=blue>Player Left:</color> {player.PlayerId}");
         }
     }
@@ -138,15 +146,35 @@ public class NetworkConnectManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     { Debug.Log($"Object {obj.Id} entered AOI for player {player.PlayerId}"); }
 
-    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
-    { throw new NotImplementedException(); }
+    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) {}
 
-    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
-    { throw new NotImplementedException(); }
+    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) {}
 
-    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
-    { throw new NotImplementedException(); }
+    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) {}
 
-    public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
-    { throw new NotImplementedException(); }
+    public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) {}
+
+    private Transform[] SortToBack_Array(Transform[] _array, int changeNum)
+    {
+        Queue<Transform> newArray = new Queue<Transform>(_array.Length - 1);
+        for (int i = 0; i < _array.Length; i++)
+        {
+            if(i != changeNum)
+                newArray.Enqueue(_array[i]);
+        }
+        newArray.Enqueue(_array[changeNum]);
+        return newArray.ToArray();
+    }
+
+    private Transform[] SortToFront_Array(Transform[] _array, int changeNum)
+    {
+        Queue<Transform> newArray = new Queue<Transform>(_array.Length - 1);
+        newArray.Enqueue(_array[changeNum]);
+        for (int i = 0; i < _array.Length; i++)
+        {
+            if (i != changeNum)
+                newArray.Enqueue(_array[i]);
+        }
+        return newArray.ToArray();
+    }
 }

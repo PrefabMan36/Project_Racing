@@ -1411,6 +1411,7 @@ GameObject:
   - component: {fileID: 2048616764513898630}
   - component: {fileID: 5057114853527505778}
   - component: {fileID: 1320996229396768987}
+  - component: {fileID: 2225677494413920681}
   m_Layer: 0
   m_Name: Champion_Player
   m_TagString: Player
@@ -1548,7 +1549,6 @@ MonoBehaviour:
   steerWheelsNum: 0
   driveAxel: 0
   differentialPower: []
-  differentialPowerValue: 0
   forwardTireGrip: 1.3
   sidewaysTireGrip: 1.3
   forwardValue: 1
@@ -1567,12 +1567,14 @@ MonoBehaviour:
   smokes: []
   smokeParticles: []
   brakePower: 0
+  requestedBrakeTorque: 0
   sideBrakePower: 0
   targetBrakeTorque: 0
   appliedBrakeTorque: 0
   slipFactorABS: 0
   tempWheelColliderForBrake: {fileID: 0}
   isABSEnabled: 1
+  isBrakingIntent: 0
   absSlipThreshold: 0.35
   absBrakeReleaseFactor: 0.3
   centerMass: {fileID: 6068399552217583815}
@@ -1598,6 +1600,7 @@ MonoBehaviour:
   tcsBrakeFactor: 50
   slipFactorTCS: 0
   baseTorquePerWheel: 0
+  appliedMotorTorque: 0
   appliedTorque: 0
   horsePowerCurve:
     serializedVersion: 2
@@ -1843,6 +1846,7 @@ MonoBehaviour:
   nitroDuration: 1
   nitroPowerReady: 1
   isNitroActive: 0
+  _data: {fileID: 0}
   radialBlur: {fileID: 0}
   braking: 0
   sideBraking: 0
@@ -1850,6 +1854,36 @@ MonoBehaviour:
   down: 0
   left: 0
   right: 0
+--- !u!114 &2225677494413920681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3225874551983908691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37f41f45fdb73284bbd8db61d80e1953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horsePower:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  torque:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  steer:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &3263149667454813771
 GameObject:
   m_ObjectHideFlags: 0
