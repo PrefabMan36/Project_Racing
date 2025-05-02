@@ -10,15 +10,19 @@ public class Player_Car : Car
     public Vector3 inputCheck;
 
     public Curve_data _data;
+    private MainGame_Manager gameManager;
+
+    [SerializeField] private GameObject cameraData;
+    [SerializeField] private GameObject cameraPositions;
+    [SerializeField] private Transform focusPoint;
     [SerializeField] private CinemachineFreeLook freeLookCamera;
     [SerializeField] private CinemachineFreeLook sideCamera;
-    private Transform firstPersonCamera;
-    private Transform lookBack;
-    [SerializeField] private Camera MainCamera;
+    [SerializeField] private Transform firstPersonCamera;
+    [SerializeField] private Transform lookBack;
+    [SerializeField] private Camera mainCamera;
     [SerializeField] private RadialBlur radialBlur;
 
-    private bool firstPersonCameraCheck = false;
-    private GameObject windowF, windowL, windowR;
+    private bool firstPersonCameraCheck;
 
     private bool freeLook;
     private float freeLookWaitTime;
@@ -31,34 +35,43 @@ public class Player_Car : Car
 
     [Networked] public NetworkInputManager inputData { get; set; }
 
+    public override void Spawned()
+    {
+        Runner.SetIsSimulated(Object, true);
+        gameManager = FindAnyObjectByType<MainGame_Manager>();
+        gameManager.Init(this);
+    }
     public void Init()
     {
+        if (HasInputAuthority)
+        {
+            cameraPositions = Instantiate(cameraData, transform);
+            freeLookCamera = cameraPositions.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
+            sideCamera = cameraPositions.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
+            firstPersonCamera = cameraPositions.transform.Find("FirstPersonCamera");
+            lookBack = cameraPositions.transform.Find("LookBackCamera");
+
+            freeLookCamera.Follow = this.transform;
+            freeLookCamera.LookAt = focusPoint;
+            sideCamera.Follow = this.transform;
+            sideCamera.LookAt = focusPoint;
+
+            freeLookCamera.m_XAxis.Value = 0f;
+            freeLookWaitTime = 1.0f;
+            freeLookCamera.enabled = true;
+            StartCoroutine(CameraUpdate());
+            StartCoroutine(UIUpdating());
+        }
         _data = gameObject.GetComponent<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
-
-        //if(gameObject.transform.Find("WindowFront").gameObject != null)
-        //    windowF = gameObject.transform.Find("WindowFront").gameObject;
-        //if(gameObject.transform.Find("WindowLeft").gameObject != null)
-        //    windowL = gameObject.transform.Find("WindowLeft").gameObject;
-        //if(gameObject.transform.Find("WindowRight").gameObject != null)
-        //    windowR = gameObject.transform.Find("WindowRight").gameObject;
-
-        //SetCenterMass();
 
         SetNitroInstall(true);
         SetNitroParticles(gameObject.GetComponent<Trail>());
         SetMaxNitroCapacity(100f);
         SetNitroConsumptionRate(40f);
-        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
-        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
-
-        freeLookCamera.m_XAxis.Value = 0f;
-        freeLookWaitTime = 1.0f;
-        MainCamera = FindAnyObjectByType<Camera>();
         body = gameObject;
         SetCarRB(gameObject.GetComponent<Rigidbody>());
-        freeLookCamera.enabled = true;
         ignition = true;
         braking = false;
         //SetEngineSound(transform.Find("EngineSound").GetComponent<AudioSource[]>());
@@ -76,20 +89,6 @@ public class Player_Car : Car
         StartCoroutine(Engine());
         StartCoroutine(Controlling());
         StartCoroutine(UpdateNitro());
-        StartCoroutine(UIUpdating());
-    }
-
-    public void CamInit()
-    {
-        freeLookCamera = gameObject.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
-        sideCamera = gameObject.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
-        firstPersonCamera = gameObject.transform.Find("FirstPersonCamera");
-        lookBack = gameObject.transform.Find("LookBackCamera");
-        freeLookCamera.Follow = gameObject.transform;
-        freeLookCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
-        sideCamera.Follow = gameObject.transform;
-        sideCamera.LookAt = gameObject.transform.Find("FocusPoint").transform;
-        radialBlur = MainCamera.GetComponent<RadialBlur>();
     }
 
     private void Update()
@@ -104,6 +103,7 @@ public class Player_Car : Car
         UpdatingWheels();
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
+        SetRadialBlur();
     }
 
     public override void FixedUpdateNetwork()
@@ -214,77 +214,76 @@ public class Player_Car : Car
         while (true)
         {
             yield return wfs;
-            CameraUpdate();
             SetSlpingAngle();
             //EngineForUpdate();
             ApplyAerodynamicDrag();
             UpdatingFriction();
             EffectDrift();
-            SetRadialBlur();
         }
     }
     public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
-    public void SetCamAndUI(Camera _cam, Slider _NitroBar, RPMGauge _rpmGauge)
+
+    public void SetCamera(Camera _camera)
     {
-        MainCamera = _cam;
-        NitroBar = _NitroBar;
-        rpmGauge = _rpmGauge;
+        mainCamera = _camera;
+        radialBlur = mainCamera.gameObject.GetComponent<RadialBlur>();
     }
-    private void CameraUpdate()
+    public void SetNitroBar(Slider _nitroBar) { nitroBar = _nitroBar; }
+    public void SetRPMGauge(RPMGauge _rpmGauge)
     {
-        if (Input.GetAxis("Vertical2") < 0)
+        rpmGauge = _rpmGauge;
+        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
+        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
+    }
+
+    IEnumerator CameraUpdate()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(0.01f);
+        while (true)
         {
-            freeLookCamera.enabled = false;
-            sideCamera.enabled = false;
-            MainCamera.fieldOfView = fov * 2f;
-            MainCamera.transform.position = lookBack.position;
-            MainCamera.transform.rotation = lookBack.rotation;
-        }
-        else if (firstPersonCameraCheck)
-        {
-            if (windowF != null)
+            yield return waitForSeconds;
+            if (Input.GetAxis("Vertical2") < 0)
             {
-                windowF.SetActive(true);
-                windowL.SetActive(true);
-                windowR.SetActive(true);
+                freeLookCamera.enabled = false;
+                sideCamera.enabled = false;
+                mainCamera.fieldOfView = fov * 2f;
+                mainCamera.transform.position = lookBack.position;
+                mainCamera.transform.rotation = lookBack.rotation;
             }
-            freeLookCamera.enabled = false;
-            sideCamera.enabled = false;
-            MainCamera.transform.position = firstPersonCamera.position;
-            MainCamera.transform.rotation = firstPersonCamera.rotation;
-        }
-        else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
-        {
-            if(windowF != null)
+            else if (firstPersonCameraCheck)
             {
-                windowL.SetActive(false);
-                windowF.SetActive(false);
-                windowR.SetActive(false);
+                freeLookCamera.enabled = false;
+                sideCamera.enabled = false;
+                mainCamera.transform.position = firstPersonCamera.position;
+                mainCamera.transform.rotation = firstPersonCamera.rotation;
             }
-            freeLookCamera.enabled = true;
-            sideCamera.enabled = false;
-            up = false;
-            down = false;
-            left = false;
-            right = false;
-        }
-        else if(Input.GetAxis("Horizontal2") != 0)
-        {
-            freeLookCamera.enabled = false;
-            sideCamera.enabled = true;
-            if (Input.GetAxis("Horizontal2") > 0)
-                right = true;
+            else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
+            {
+                freeLookCamera.enabled = true;
+                sideCamera.enabled = false;
+                up = false;
+                down = false;
+                left = false;
+                right = false;
+            }
+            else if (Input.GetAxis("Horizontal2") != 0)
+            {
+                freeLookCamera.enabled = false;
+                sideCamera.enabled = true;
+                if (Input.GetAxis("Horizontal2") > 0)
+                    right = true;
+                else
+                    left = true;
+            }
+            //freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
+            if (firstPersonCameraCheck)
+                freeLookCamera.m_Lens.FieldOfView = fov * 2f;
             else
-                left = true;
+                freeLookCamera.m_Lens.FieldOfView =
+                    GetIsNitroActive() ?
+                    Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2.5f, Time.deltaTime) :
+                    Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
         }
-        //freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
-        if (firstPersonCameraCheck)
-            freeLookCamera.m_Lens.FieldOfView = fov * 2f;
-        else
-            freeLookCamera.m_Lens.FieldOfView = 
-                GetIsNitroActive() ?
-                Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2.5f, Time.deltaTime) : 
-                Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
     }
     private void firstPerson() { firstPersonCameraCheck = !firstPersonCameraCheck; }
     private void FreeLookCheck()

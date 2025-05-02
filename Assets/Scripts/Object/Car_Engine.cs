@@ -517,7 +517,8 @@ public partial class Car
     public void SetNitroInstall(bool _isNitroInstalled)
     {
         isNitroInstalled = _isNitroInstalled;
-        NitroBar.enabled = _isNitroInstalled;
+        if(nitroBar !=  null)
+            nitroBar.enabled = _isNitroInstalled;
     }
     public void SetNitroPowerMode(bool _powerMode) { powerMode = _powerMode; }
     public void SetMaxNitroCapacity(float _maxNitroCapacity) { maxNitroCapacity = _maxNitroCapacity; currentNitroAmount = maxNitroCapacity; }

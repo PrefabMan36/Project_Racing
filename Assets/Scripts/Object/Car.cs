@@ -1,16 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 
 public partial class Car : Object_Movable
 {
     private float speed;
-    private int speedInt;
+    [Networked] private int speedInt { get; set; }
     protected Text speedTextForUI;
     protected Text gearTextForUI;
-    protected Slider NitroBar;
+    protected Slider nitroBar;
     protected RPMGauge rpmGauge;
 
     protected void SetSlpingAngle(){ slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
@@ -115,8 +116,8 @@ public partial class Car : Object_Movable
         speedTextForUI.text = speedInt.ToString();
         if(rpmGauge != null)
             rpmGauge.SetValue(Mathf.Lerp(0f, 0.375f, currentEngineRPM / maxEngineRPM));
-        if(NitroBar !=  null)
-            NitroBar.value = currentNitroAmount / maxNitroCapacity;
+        if(nitroBar !=  null)
+            nitroBar.value = currentNitroAmount / maxNitroCapacity;
         switch (currentGear)
         {
             case eGEAR.eGEAR_NEUTURAL:

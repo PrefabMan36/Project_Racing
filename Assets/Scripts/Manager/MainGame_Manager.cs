@@ -2,14 +2,20 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainGame_Manager : NetworkBehaviour
+public class MainGame_Manager : MonoBehaviour
 {
     [SerializeField] private Player_Car playerCar;
-    private bool localPlayer = false;
+    private bool localPlayer = true;
     // 변경: Car_data 대신 CarData 클래스 사용
     [SerializeField] private CarData carData;
+
+    [SerializeField] private Camera MainCamera_Prefab;
     [SerializeField] private Camera MainCamera;
+
+    [SerializeField] private Canvas MainCanvas;
+    [SerializeField] private Slider NitroBar_Prefab;
     [SerializeField] private Slider NitroBar;
+    [SerializeField] private RPMGauge rpmGauge_Prefab;
     [SerializeField] private RPMGauge rpmGauge;
     private void FixedUpdate()
     {
@@ -18,17 +24,25 @@ public class MainGame_Manager : NetworkBehaviour
             ExitGame();
         }
     }
-    public void Init(NetworkObject _spawnedObject)
+    public void Init(Player_Car spawnedCar)
     {
 
-        playerCar = _spawnedObject.GetComponent<Player_Car>();
+        playerCar = spawnedCar;
         carData = CarData_Manager.instance.GetCarDataByName("Super2000");
-
-        if(true)
+        if(MainCamera == null)
         {
-            playerCar.SetCamAndUI(MainCamera, NitroBar, rpmGauge);
-            playerCar.CamInit();
-            localPlayer = true;
+            MainCamera = Instantiate(MainCamera_Prefab);
+            playerCar.SetCamera(MainCamera);
+        }
+        if(NitroBar == null)
+        {
+            NitroBar = Instantiate(NitroBar_Prefab, MainCanvas.transform);
+            playerCar.SetNitroBar(NitroBar);
+        }
+        if(rpmGauge == null)
+        {
+            rpmGauge = Instantiate(rpmGauge_Prefab, MainCanvas.transform);
+            playerCar.SetRPMGauge(rpmGauge);
         }
         playerCar.SetCarMass(carData.Mass);
         playerCar.SetDragCoefficient(carData.dragCoefficient);
