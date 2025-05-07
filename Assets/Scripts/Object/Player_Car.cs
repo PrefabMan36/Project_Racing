@@ -7,7 +7,9 @@ using Fusion;
 
 public class Player_Car : Car
 {
-    private int ID;
+    [SerializeField] private int ID;
+    [SerializeField] private NetworkId playerId;
+    [SerializeField] private string playerName;
 
     public Vector3 inputCheck;
 
@@ -30,8 +32,8 @@ public class Player_Car : Car
     [Networked, SerializeField] private byte rank { get; set; } = 0;
     [Networked, SerializeField] private int currentCheckpointIndex { get; set; } = 1;
     [Networked, SerializeField] private short lap { get; set; } = 0;
-    private Transform nextCheckPoint;
-    private float distanceToCheckPoint;
+    [Networked, SerializeField] private float distanceToCheckPoint { get; set; }
+    [SerializeField]private Transform nextCheckPoint;
 
     private bool firstPersonCameraCheck;
 
@@ -49,9 +51,12 @@ public class Player_Car : Car
     public override void Spawned()
     {
         Runner.SetIsSimulated(Object, true);
+        if (HasInputAuthority)
+            SetName(Shared.UserName);
         gameManager = FindAnyObjectByType<MainGame_Manager>();
         gameManager.CarInit(this, HasInputAuthority);
         networkObject = GetComponent<NetworkObject>();
+        playerId = networkObject.Id;
         rankData.playerId = networkObject.Id;
     }
     public void Init()
@@ -236,6 +241,7 @@ public class Player_Car : Car
             ApplyAerodynamicDrag();
             UpdatingFriction();
             EffectDrift();
+            distanceToCheckPoint = Vector3.Distance(transform.position, nextCheckPoint.position);
         }
     }
     public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
@@ -346,6 +352,13 @@ public class Player_Car : Car
 
     public void SetID(int _id) { ID = _id; }
     public int GetID() { return ID; }
+
+    public void SetName(string _name)
+    {
+        playerName = _name;
+        gameObject.name = playerName;
+    }
+    public string GetName() { return playerName; }
 
     public Rank_Data GetRankData()
     {

@@ -9,6 +9,7 @@ using static Car;
 public class NetworkConnect_Manager : SimulationBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkPrefabRef playerPrefab;
+    [SerializeField] private NetworkPrefabRef playerRank_Prefab;
     [SerializeField] private NetworkPrefabRef gameManagerPrefab;
     [SerializeField] private Transform[] spawnPosition;
     private Dictionary<PlayerRef, byte> spawnedPositions = new Dictionary<PlayerRef, byte>();

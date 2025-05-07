@@ -7,13 +7,15 @@ using UnityEngine.UI;
 
 public class MainGame_Manager : NetworkBehaviour
 {
+    [SerializeField] private bool gameStart = false;
+
     [SerializeField] private Player_Car playerCar;
     [SerializeField] private Player_Car[] playerCars = new Player_Car[4];
     [SerializeField] private NetworkObject localPlayer;
-    [SerializeField] private NetworkId[] playersID = new NetworkId[4];
+    [SerializeField] private Dictionary<int, NetworkId> playersID = new Dictionary<int, NetworkId>();
     [SerializeField] private byte playerNumber = 0;
 
-    [SerializeField] private float gameTimer = 0;
+    [Networked, SerializeField] private float gameTimer { get; set; } = 0;
 
     // 변경: Car_data 대신 CarData 클래스 사용
     [SerializeField] private CarData carData;
@@ -51,6 +53,11 @@ public class MainGame_Manager : NetworkBehaviour
     private byte tempRank;
     private bool isRankingStart = false;
 
+    [SerializeField] private Rank rank_Prefab;
+    [SerializeField] private Dictionary<NetworkId, Rank> rankList = new Dictionary<NetworkId, Rank>();
+    [SerializeField] private Transform[] rankPositons;
+    [SerializeField] private Vector3[] rankTargetPositions = new Vector3[4];
+
 
     [SerializeField]private bool GameStart = false;
 
@@ -60,21 +67,27 @@ public class MainGame_Manager : NetworkBehaviour
         {
             ExitGame();
         }
+        if(gameStart)
+            timerText.text = string.Format("{0:0.00}", gameTimer);
     }
 
     private void Awake()
     {
+        for (int i = 0; i < rankPositons.Length; i++)
+        {
+            rankTargetPositions[i] = rankPositons[i].position;
+        }
         lastCheckPoint = 4;
         checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 1, new Vector3(-288f, 8f, -5f), new Vector3(0, 0, 0), new Vector3(35, 5, 35));
+        checkPoint.SetCheckPointIndex(this, 1, new Vector3(-288f, 8f, -5f), new Vector3(0, -45, 0), new Vector3(35, 5, 35));
         tempCheckPoint = checkPoint;
         firstCheckPoint = checkPoint;
         checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 2, new Vector3(-280f, 10f, -170f), new Vector3(0, 0, 0), new Vector3(35, 5, 35));
+        checkPoint.SetCheckPointIndex(this, 2, new Vector3(-280f, 10f, -170f), new Vector3(0, -135, 0), new Vector3(35, 5, 35));
         tempCheckPoint.SetNextCheckPoint(checkPoint);
         tempCheckPoint = checkPoint;
         checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 3, new Vector3(245f, 7f, -85f), new Vector3(0, 0, 0), new Vector3(35, 5, 35));
+        checkPoint.SetCheckPointIndex(this, 3, new Vector3(245f, 7f, -85f), new Vector3(0, 135, 0), new Vector3(35, 5, 35));
         tempCheckPoint.SetNextCheckPoint(checkPoint);
         tempCheckPoint = checkPoint;
         checkPoint = Instantiate(checkPoint_Prefab);
@@ -89,12 +102,11 @@ public class MainGame_Manager : NetworkBehaviour
         {
             gameTimer += Runner.DeltaTime;
         }
-        timerText.text = string.Format("{0:0.00}", gameTimer);
     }
 
     public void CarInit(Player_Car spawnedCar, bool localPlayer)
     {
-
+        if(!GameStart) gameStart = true;
         playerCar = spawnedCar;
         if (localPlayer)
         {
@@ -167,10 +179,21 @@ public class MainGame_Manager : NetworkBehaviour
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FOURTH, carData.gearSpeedLimit_eGEAR_FOURTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FIFTH, carData.gearSpeedLimit_eGEAR_FIFTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_SIXTH, carData.gearSpeedLimit_eGEAR_SIXTH);
-        rank.Add(playerCar.GetComponent<NetworkObject>().Id, 0);
         playerCar.SetID(playerNumber);
+        if(playersID.ContainsKey(playerNumber))
+            playersID[playerNumber] = playerCar.GetComponent<NetworkObject>().Id;
+        else
+            playersID.Add(playerNumber, playerCar.GetComponent<NetworkObject>().Id);
+        rankList.Add(playersID[playerNumber], Instantiate(rank_Prefab, MainCanvas.transform));
+        if (localPlayer == playerCar.GetComponent<NetworkObject>())
+            rankList[playersID[playerNumber]].SetPlay(null, "YOU");
+        else
+            rankList[playersID[playerNumber]].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString());
+        rankList[playersID[playerNumber]].SetTargets(rankTargetPositions);
+        rankList[playersID[playerNumber]].Rpc_SetPosition(playerNumber);
         playerCars[playerNumber++] = playerCar;
-        if(!isRankingStart && playerNumber > 1 && Runner.IsServer)
+        SetFirstCheckPoint(playerCar);
+        if (!isRankingStart && playerNumber > 1)
         {
             isRankingStart = true;
             StartCoroutine(UpdatingRankings());
@@ -185,8 +208,35 @@ public class MainGame_Manager : NetworkBehaviour
     }
     public void OnLeftPlayer(NetworkObject networkPlayerObject)
     {
-        playerNumber--;
         rank.Remove(networkPlayerObject.Id);
+        Destroy(rankList[networkPlayerObject.Id].gameObject);
+        rankList.Remove(networkPlayerObject.Id);
+        //Queue<Rank> rankQueue = new Queue<Rank>();
+        //Queue<NetworkId> idQueue = new Queue<NetworkId>();
+        //for (int i = 0; i < playerNumber; i++)
+        //{
+        //    if (playersID.TryGetValue(i, out NetworkId currentId))
+        //    {
+        //        if (currentId != networkPlayerObject.Id)
+        //        {
+        //            idQueue.Enqueue(currentId);
+        //            if (rankList.TryGetValue(currentId, out Rank playerRank))
+        //                rankQueue.Enqueue(playerRank);
+        //        }
+        //    }
+        //}
+        //rankList.Clear();
+        //playersID.Clear();
+        //int newIndex = 0;
+        //while (idQueue.Count > 0)
+        //{
+        //    NetworkId playerId = idQueue.Dequeue();
+        //    Rank playerRank = rankQueue.Dequeue();
+        //    playersID.Add(newIndex, playerId);
+        //    rankList.Add(playerId, playerRank);
+        //    newIndex++;
+        //}
+        //playerNumber = (byte)newIndex;
     }
 
     private void ExitGame()
@@ -235,6 +285,7 @@ public class MainGame_Manager : NetworkBehaviour
         WaitForSeconds waitForSeconds = new WaitForSeconds(0.1f);
         while(true)
         {
+            rankData.Clear();
             for (int i = 0; i < playerCars.Length; i++)
             {
                 if (playerCars[i] != null)
@@ -247,8 +298,17 @@ public class MainGame_Manager : NetworkBehaviour
             for (int i = 0; i < sortedRankData.Count; i++)
             {
                 tempRank = (byte)(i + 1);
+                //Debug.Log("sortedRankData[" + i + "] : " + sortedRankData[i].playerId + " " + sortedRankData[i].lap + " " + sortedRankData[i].currentCheckpointIndex + " " + sortedRankData[i].distanceToCheckPoint);
                 rank.Set(sortedRankData[i].playerId, tempRank);
+                if(tempRank - 1 < 4)
+                {
+                    if (rankList.TryGetValue(sortedRankData[i].playerId, out Rank playerRank))
+                    {
+                        playerRank.Rpc_SetPosition(tempRank - 1);
+                    }
+                }
             }
+            yield return waitForSeconds;
         }
     }
 

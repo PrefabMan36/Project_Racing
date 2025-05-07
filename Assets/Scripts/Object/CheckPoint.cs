@@ -13,6 +13,7 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private int checkPointIndex = 0;
 
     [SerializeField] private CheckPoint nextCheckPoint;
+    [SerializeField] private GameObject[] circles;
 
     public void SetCheckPointIndex(MainGame_Manager gameManager, int index, Vector3 position, Vector3 rotation, Vector3 boxSize)
     {
@@ -23,6 +24,12 @@ public class CheckPoint : NetworkBehaviour
         transform.position = position;
         transform.rotation = Quaternion.Euler(rotation);
         checkPointCollider.size = boxSize;
+        float circleSize = boxSize.y > boxSize.x ? boxSize.y : boxSize.x;
+        Vector3 circleSizeVector = new Vector3(circleSize, circleSize, 1);
+        for (int i = 0; i < circles.Length; i++)
+        {
+            circles[i].transform.localScale = circleSizeVector;
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -36,7 +43,7 @@ public class CheckPoint : NetworkBehaviour
                     EnteredPlayer.SetCheckPoint(checkPointIndex + 1);
                     Debug.Log("CheckPoint " + checkPointIndex + " Entered by " + EnteredPlayer.name);
                     tempTimer = mainGameManager.CheckPointChecked(EnteredPlayer, fastestCheckPointTime, checkPointIndex);
-                    fastestCheckPointTime = fastestCheckPointTime < tempTimer ? tempTimer : fastestCheckPointTime;
+                    fastestCheckPointTime = fastestCheckPointTime > tempTimer ? tempTimer : fastestCheckPointTime;
                 }
             }
         }

@@ -8,4 +8,5 @@ public static class Shared
     public static Mgr_Scene mgr_Scene;
     public static string CarName;
     public static string UserID;
+    public static string UserName;
 }
