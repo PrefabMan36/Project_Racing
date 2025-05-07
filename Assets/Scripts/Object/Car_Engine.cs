@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Tiny;
-using Unity.VisualScripting;
+using Fusion;
 
 public partial class Car
 {
@@ -48,7 +48,8 @@ public partial class Car
     [SerializeField] protected float throttle;
     [SerializeField] private float baseEngineAcceleration = 5f, currentDynamicEngineAcceleration;
     [SerializeField] private float maxHorsePower = 0f, rpmAtMaxHorsePower = 0f;
-    [SerializeField] private float maxEngineRPM, minEngineRPM, currentEngineRPM, targetRPM, tempWheelRPM, currentWheelRPM;
+    [SerializeField] private float maxEngineRPM, minEngineRPM, targetRPM, tempWheelRPM, currentWheelRPM;
+    [Networked, SerializeField] private float currentEngineRPM { get; set; }
     [SerializeField] private float currentEngineTorque, currentWheelTorque;
     [SerializeField] private float overSpeed;
     [SerializeField] private bool redLine = false;

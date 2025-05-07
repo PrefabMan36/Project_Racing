@@ -90,6 +90,7 @@ public class NetworkConnect_Manager : SimulationBehaviour, INetworkRunnerCallbac
             NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition[spawnNum].position, spawnPosition[spawnNum].rotation, player);
             spawnPosition = SortToBack_Array(spawnPosition, spawnNum);
             spawnedPositions.Add(player, spawnNum);
+            gameManager.OnJoinPlayer(networkPlayerObject);
             _spwawnedCharacters.Add(player, networkPlayerObject);
             Debug.Log($"<color=blue>Player Joined:</color> {player.PlayerId}");
         }
@@ -98,6 +99,7 @@ public class NetworkConnect_Manager : SimulationBehaviour, INetworkRunnerCallbac
     {
         if(_spwawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
         {
+            gameManager.OnLeftPlayer(networkObject);
             runner.Despawn(networkObject);
             spawnPosition = SortToFront_Array(spawnPosition, spawnedPositions[player]);
             _spwawnedCharacters.Remove(player);

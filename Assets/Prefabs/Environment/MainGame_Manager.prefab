@@ -46,6 +46,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCar: {fileID: 0}
+  localPlayer: {fileID: 0}
+  playersID:
+  - Raw: 0
+  - Raw: 0
+  - Raw: 0
+  - Raw: 0
+  playerNumber: 0
+  gameTimer: 0
   MainCamera_Prefab: {fileID: 7916578112111094242, guid: ead7127616435bd43bcabcaa12a9bcc9, type: 3}
   MainCamera: {fileID: 0}
   MainCanvas: {fileID: 0}
@@ -53,6 +61,14 @@ MonoBehaviour:
   NitroBar: {fileID: 0}
   rpmGauge_Prefab: {fileID: 1899898029282573489, guid: 45faa3b313ff9314fa64ee051a2a8ddd, type: 3}
   rpmGauge: {fileID: 0}
+  Timer_Prefab: {fileID: 0}
+  lapTimeDiff_Prefab: {fileID: 0}
+  timerImage: {fileID: 0}
+  timerText: {fileID: 0}
+  lapTimeDiffImage: {fileID: 0}
+  lapTimeDiffText: {fileID: 0}
+  isLapTimeDiffShowing: 0
+  lapTimeDiffTimer: 0
 --- !u!114 &8716157373942517135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,5 +85,6 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 3137626006388376962}
   ForceRemoteRenderTimeframe: 0

@@ -1,5 +1,5 @@
+using Fusion;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,7 +27,7 @@ public partial class Car
     [SerializeField] private AnimationCurve steeringCurve;
     [SerializeField] private Transform steeringHandle;
     [SerializeField] private float maxSteerAngle = 30f;
-    [SerializeField] private float curSteerAngle = 0f;
+    [Networked, SerializeField] private float curSteerAngle { get; set; } = 0f;
     [SerializeField] private float steerSpeed;
     [SerializeField] private float slipingAngle;
     [SerializeField] private float sideBrakeInput;
@@ -55,10 +55,10 @@ public partial class Car
 
     #region Value Tire
     [Header("Tire Value")]
-    [Range(0.8f, 1.3f), SerializeField] private float forwardTireGrip = 1.8f;
-    [Range(0.8f, 1.3f), SerializeField] private float sidewaysTireGrip = 2.2f;
-    [Range(1f, 2f), SerializeField] private float forwardValue = 1f;
-    [Range(1f, 2f), SerializeField] private float sideValue = 2f;
+    [SerializeField] private float forwardTireGrip = 1.8f;
+    [SerializeField] private float sidewaysTireGrip = 2.2f;
+    [SerializeField] private float forwardValue = 1f;
+    [SerializeField] private float sideValue = 2f;
     [SerializeField] private WheelFrictionCurve forwardFriction, sidewaysFriction;
     [SerializeField] private float[] forwardSlip;
     [SerializeField] private float[] sidewaysSlip;
@@ -88,6 +88,18 @@ public partial class Car
     #endregion
 
     #region Fuction Wheels Setting
+    protected void SetWheels(GameObject _wheelModel, WheelCollider _wheelCollider, TrailRenderer _skidMarks, bool front)
+    {
+        if(wheels == null)
+            wheels = new List<Wheel>();
+
+        Wheel wheel = new Wheel();
+        wheel.wheelModel = _wheelModel;
+        wheel.wheelCollider = _wheelCollider;
+        wheel.skidMarks = _skidMarks;
+        wheel.axel = front ? eAXEL.eAXEL_FRONT : eAXEL.eAXEL_BACK;
+        wheels.Add(wheel);
+    }
     protected void SetDriveWheels()
     {
         wheelNum = wheels.Count;

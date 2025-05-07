@@ -7,6 +7,8 @@ using Fusion;
 
 public class Player_Car : Car
 {
+    private int ID;
+
     public Vector3 inputCheck;
 
     public Curve_data _data;
@@ -14,6 +16,7 @@ public class Player_Car : Car
 
     [SerializeField] private GameObject cameraData;
     [SerializeField] private GameObject cameraPositions;
+    [SerializeField] private NetworkObject networkObject;
     [SerializeField] private Transform focusPoint;
     [SerializeField] private CinemachineFreeLook freeLookCamera;
     [SerializeField] private CinemachineFreeLook sideCamera;
@@ -21,6 +24,14 @@ public class Player_Car : Car
     [SerializeField] private Transform lookBack;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private RadialBlur radialBlur;
+
+
+    private Rank_Data rankData = new Rank_Data();
+    [Networked, SerializeField] private byte rank { get; set; } = 0;
+    [Networked, SerializeField] private int currentCheckpointIndex { get; set; } = 1;
+    [Networked, SerializeField] private short lap { get; set; } = 0;
+    private Transform nextCheckPoint;
+    private float distanceToCheckPoint;
 
     private bool firstPersonCameraCheck;
 
@@ -39,7 +50,9 @@ public class Player_Car : Car
     {
         Runner.SetIsSimulated(Object, true);
         gameManager = FindAnyObjectByType<MainGame_Manager>();
-        gameManager.Init(this);
+        gameManager.CarInit(this, HasInputAuthority);
+        networkObject = GetComponent<NetworkObject>();
+        rankData.playerId = networkObject.Id;
     }
     public void Init()
     {
@@ -62,6 +75,10 @@ public class Player_Car : Car
             StartCoroutine(CameraUpdate());
             StartCoroutine(UIUpdating());
         }
+        SetWheels(transform.Find("Tire_LF").gameObject, transform.Find("Wheel_FrontLeft").GetComponent<WheelCollider>(), transform.Find("TrailFrontLeft").GetComponent<TrailRenderer>(), true);
+        SetWheels(transform.Find("Tire_RF").gameObject, transform.Find("Wheel_FrontRight").GetComponent<WheelCollider>(), transform.Find("TrailFrontRight").GetComponent<TrailRenderer>(), true);
+        SetWheels(transform.Find("Tire_LR").gameObject, transform.Find("Wheel_RearLeft").GetComponent<WheelCollider>(), transform.Find("TrailRearLeft").GetComponent<TrailRenderer>(), false);
+        SetWheels(transform.Find("Tire_RR").gameObject, transform.Find("Wheel_RearRight").GetComponent<WheelCollider>(), transform.Find("TrailRearRight").GetComponent<TrailRenderer>(), false);
         _data = gameObject.GetComponent<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
@@ -99,7 +116,7 @@ public class Player_Car : Car
         //    drifting = !drifting;
         //    ChangeFriction(drifting);
         //}
-        if(Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
+        if (Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
         UpdatingWheels();
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
@@ -133,7 +150,7 @@ public class Player_Car : Car
             SideBrakingUp();
         if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
             clutch = Mathf.Lerp(1, 0, clutching);
-        switch(forceGear)
+        switch (forceGear)
         {
             case 1:
                 ForceChangeGear(eGEAR.eGEAR_REVERSE);
@@ -293,7 +310,7 @@ public class Player_Car : Car
             freeLookWaitTime = 1.0f;
             freeLook = true;
         }
-        if(freeLook)
+        if (freeLook)
         {
             if (freeLookWaitTime > 0f)
                 freeLookWaitTime -= Time.deltaTime;
@@ -305,8 +322,36 @@ public class Player_Car : Car
     {
         if (radialBlur != null)
         {
-            radialBlur.blurStrength = Mathf.Lerp(0f, 2.2f, GetSpeed() / 200f);
+            radialBlur.blurStrength = Mathf.Lerp(0f, 1f, GetSpeed() / 200f);
             radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / 200f) + GetNitroBlurWidth();
         }
+    }
+    public void SetCheckPoint(int _checkPoint) { currentCheckpointIndex = _checkPoint; }
+    public int GetCheckPoint() { return currentCheckpointIndex; }
+
+    public void SetNextCheckPointPosition(CheckPoint _nextCheckPoint)
+    {
+        nextCheckPoint = _nextCheckPoint.transform;
+    }
+    public float GetDistanceToCheckPoint()
+    {
+        if (nextCheckPoint != null)
+            distanceToCheckPoint = Vector3.Distance(transform.position, nextCheckPoint.position);
+        return distanceToCheckPoint;
+    }
+
+    public void SetLap(short _lap) { lap = _lap; }
+
+    public short GetLap() { return lap; }
+
+    public void SetID(int _id) { ID = _id; }
+    public int GetID() { return ID; }
+
+    public Rank_Data GetRankData()
+    {
+        rankData.lap = lap;
+        rankData.currentCheckpointIndex = currentCheckpointIndex;
+        rankData.distanceToCheckPoint = distanceToCheckPoint;
+        return rankData;
     }
 }
