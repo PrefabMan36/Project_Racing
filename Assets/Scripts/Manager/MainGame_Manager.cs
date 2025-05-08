@@ -1,4 +1,5 @@
 using Fusion;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private byte playerNumber = 0;
 
     [Networked, SerializeField] private float gameTimer { get; set; } = 0;
+    [SerializeField] private TimeSpan gameTimeSpan;
+    [SerializeField] private DateTime gameTime;
 
     // 변경: Car_data 대신 CarData 클래스 사용
     [SerializeField] private CarData carData;
@@ -31,15 +34,24 @@ public class MainGame_Manager : NetworkBehaviour
 
     [SerializeField] private GameObject Timer_Prefab;
     [SerializeField] private GameObject lapTimeDiff_Prefab;
+    [SerializeField] private GameObject localLapTimeDiff_Prefab;
 
     [SerializeField] private Image timerImage;
     [SerializeField] private Text timerText;
     [SerializeField] private Image lapTimeDiffImage;
+    [SerializeField] private Image localLapTimeDiffImage;
     [SerializeField] private Text lapTimeDiffText;
+    [SerializeField] private Text localLapTimeDiffText;
     [SerializeField] bool isLapTimeDiffShowing = false;
+    [SerializeField] bool isLocalLapTimeDiffShowing = false;
     [SerializeField] private float lapTimeDiffTimer = 0f;
-    [SerializeField] private float finalLapTime;
+    [SerializeField] private float localLapTimeDiffTimer = 0f;
+    [SerializeField] private float diffTime1;
+    [SerializeField] private float diffTime2;
+    [SerializeField] private float bestLapTime;
 
+    private string trackName = "City_Night";
+    [SerializeField] private TrackData tracksData;
     [SerializeField] private int lastCheckPoint = 0;
     [SerializeField] private CheckPoint checkPoint_Prefab;
     [SerializeField] private CheckPoint tempCheckPoint;
@@ -68,7 +80,12 @@ public class MainGame_Manager : NetworkBehaviour
             ExitGame();
         }
         if(gameStart)
-            timerText.text = string.Format("{0:0.00}", gameTimer);
+        {
+            gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
+            gameTime = DateTime.Today.Add(gameTimeSpan);
+            timerText.text = gameTime.ToString("mm':'ss'.'ff");
+            //timerText.text = string.Format("{0:0.00}", gameTimer);
+        }
     }
 
     private void Awake()
@@ -77,22 +94,7 @@ public class MainGame_Manager : NetworkBehaviour
         {
             rankTargetPositions[i] = rankPositons[i].position;
         }
-        lastCheckPoint = 4;
-        checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 1, new Vector3(-288f, 8f, -5f), new Vector3(0, -45, 0), new Vector3(35, 5, 35));
-        tempCheckPoint = checkPoint;
-        firstCheckPoint = checkPoint;
-        checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 2, new Vector3(-280f, 10f, -170f), new Vector3(0, -135, 0), new Vector3(35, 5, 35));
-        tempCheckPoint.SetNextCheckPoint(checkPoint);
-        tempCheckPoint = checkPoint;
-        checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 3, new Vector3(245f, 7f, -85f), new Vector3(0, 135, 0), new Vector3(35, 5, 35));
-        tempCheckPoint.SetNextCheckPoint(checkPoint);
-        tempCheckPoint = checkPoint;
-        checkPoint = Instantiate(checkPoint_Prefab);
-        checkPoint.SetCheckPointIndex(this, 4, new Vector3(-36f, 3f, 26f), new Vector3(0, 0, 0), new Vector3(35, 5, 35));
-        tempCheckPoint.SetNextCheckPoint(checkPoint);
+        LoadAndSetupTrack();
     }
 
 
@@ -101,6 +103,31 @@ public class MainGame_Manager : NetworkBehaviour
         if (Runner.IsServer)
         {
             gameTimer += Runner.DeltaTime;
+        }
+    }
+
+    private void LoadAndSetupTrack()
+    {
+        tracksData = TrackData_Manager.instance.GetTrackDataByName(trackName);
+        if (tracksData != null)
+        {
+            for (int i = 0; i < tracksData.Checkpoints.Count; i++)
+            {
+                CheckPoint checkPoint = Instantiate(checkPoint_Prefab);
+                checkPoint.SetCheckPointIndex(this, i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale);
+                if (i > 0)
+                {
+                    tempCheckPoint.SetNextCheckPoint(checkPoint);
+                }
+                tempCheckPoint = checkPoint;
+                if(i == 0)
+                    firstCheckPoint = checkPoint;
+                lastCheckPoint = i + 1;
+            }
+        }
+        else
+        {
+            Debug.LogError("Failed to load track data.");
         }
     }
 
@@ -117,6 +144,10 @@ public class MainGame_Manager : NetworkBehaviour
             timerText = timerImage.GetComponentInChildren<Text>();
             lapTimeDiffText = lapTimeDiffImage.GetComponentInChildren<Text>();
             lapTimeDiffImage.gameObject.SetActive(false);
+            localLapTimeDiffImage = Instantiate(localLapTimeDiff_Prefab, MainCanvas.transform).GetComponent<Image>();
+            localLapTimeDiffText = localLapTimeDiffImage.GetComponentInChildren<Text>();
+            localLapTimeDiffImage.gameObject.SetActive(false);
+            playerCar.SetName("YOU");
         }
         carData = CarData_Manager.instance.GetCarDataByName("Super2000");
         if (MainCamera == null)
@@ -247,13 +278,17 @@ public class MainGame_Manager : NetworkBehaviour
 #endif
     }
 
-    public float CheckPointChecked(Player_Car _playerCar, float _bestTime, int checkPointIndex)
+    public float CheckPointChecked(Player_Car _playerCar, float _bestTime, float _localBestTime, int checkPointIndex)
     {
+        //체크 포인트의 기록과 비교후 느릴 경우 표시한다, 개인 기록은 항상 표시한다.
         if (_bestTime != 0 && _playerCar.GetComponent<NetworkObject>().Id == localPlayer.Id)
         {
-            float diffTime = gameTimer - _bestTime;
-            if (!isLapTimeDiffShowing && diffTime > 0)
-                StartCoroutine(Showlaptimedifference(diffTime));
+            diffTime1 = gameTimer - _bestTime;
+            if (!isLapTimeDiffShowing && diffTime1 > 0)
+                StartCoroutine(ShowLapTimeDifference(diffTime1));
+            diffTime2 = gameTimer - _localBestTime;
+            if (!isLocalLapTimeDiffShowing)
+                StartCoroutine(ShowLocalLapTimeDifference(diffTime2));
         }
         if (lastCheckPoint == checkPointIndex)
         {
@@ -262,22 +297,20 @@ public class MainGame_Manager : NetworkBehaviour
             tempLap++;
             _playerCar.SetLap(tempLap);
             Debug.Log("Lap " + tempLap + " CheckPoint " + checkPointIndex + " Entered by " + _playerCar.name);
-            finalLapTime = gameTimer;
+            bestLapTime = gameTimer;
             gameTimer = 0f;
             if (_playerCar.GetLap() >= maxLaps)
             {
-                finalLapTime = gameTimer;
+                bestLapTime = gameTimer;
                 ExitGame();
             }
             else
             {
                 SetFirstCheckPoint(_playerCar);
+                return bestLapTime;
             }
         }
-        if (gameTimer < _bestTime)
-            return gameTimer;
-        else
-            return _bestTime;
+        return gameTimer;
     }
 
     IEnumerator UpdatingRankings()
@@ -317,7 +350,7 @@ public class MainGame_Manager : NetworkBehaviour
         _playerCar.SetNextCheckPointPosition(firstCheckPoint);
     }
 
-    IEnumerator Showlaptimedifference(float _diffTime)
+    IEnumerator ShowLapTimeDifference(float _diffTime)
     {
         WaitForSeconds waitForSeconds = new WaitForSeconds(0.04f);
         Debug.Log("start diff timer");
@@ -341,6 +374,44 @@ public class MainGame_Manager : NetworkBehaviour
             {
                 lapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
                 lapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
+            }
+        }
+    }
+    IEnumerator ShowLocalLapTimeDifference(float _diffTime)
+    {
+        if (Mathf.Abs(_diffTime) > 1000000)
+        {
+            isLocalLapTimeDiffShowing = false;
+            yield break;
+        }
+        WaitForSeconds waitForSeconds = new WaitForSeconds(0.04f);
+        Debug.Log("start diff timer");
+        isLocalLapTimeDiffShowing = true;
+        localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+        if(_diffTime < 0)
+            localLapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
+        else
+            localLapTimeDiffText.color = new Color(0f, 1f, 0f, 1f);
+        localLapTimeDiffText.text = '+' + string.Format("{0:0.00}", _diffTime);
+        localLapTimeDiffImage.gameObject.SetActive(true);
+        while (true)
+        {
+            yield return waitForSeconds;
+            localLapTimeDiffTimer += 0.04f;
+            if (localLapTimeDiffTimer > 3f)
+            {
+                localLapTimeDiffImage.gameObject.SetActive(false);
+                localLapTimeDiffTimer = 0f;
+                isLocalLapTimeDiffShowing = false;
+                yield break;
+            }
+            else if (localLapTimeDiffTimer > 2f)
+            {
+                if (_diffTime < 0)
+                    localLapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
+                else
+                    localLapTimeDiffText.color = new Color(0f, 1f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
+                localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
             }
         }
     }

@@ -47,6 +47,7 @@ public class Player_Car : Car
     private float clutching;
 
     [Networked] public NetworkInputManager inputData { get; set; }
+    private bool localPlayer = false;
 
     public override void Spawned()
     {
@@ -77,6 +78,7 @@ public class Player_Car : Car
             freeLookCamera.m_XAxis.Value = 0f;
             freeLookWaitTime = 1.0f;
             freeLookCamera.enabled = true;
+            localPlayer = true;
             StartCoroutine(CameraUpdate());
             StartCoroutine(UIUpdating());
         }
@@ -109,7 +111,6 @@ public class Player_Car : Car
         SpawnSmoke();
         CalculateOptimalShiftPoints();
         StartCoroutine(Engine());
-        StartCoroutine(Controlling());
         StartCoroutine(UpdateNitro());
     }
 
@@ -228,21 +229,11 @@ public class Player_Car : Car
             throttle = 0f;
         }
         // 슬립 계산 및 입력 처리 후 FixedUpdate에서 Braking() 호출
-    }
-
-    IEnumerator Controlling()
-    {
-        WaitForSeconds wfs = new WaitForSeconds(0.01f);
-        while (true)
-        {
-            yield return wfs;
-            SetSlpingAngle();
-            //EngineForUpdate();
-            ApplyAerodynamicDrag();
-            UpdatingFriction();
-            EffectDrift();
-            distanceToCheckPoint = Vector3.Distance(transform.position, nextCheckPoint.position);
-        }
+        SetSlpingAngle();
+        UpdatingFriction();
+        Braking();
+        ApplyAerodynamicDrag();
+        EffectDrift();
     }
     public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
 
@@ -367,4 +358,6 @@ public class Player_Car : Car
         rankData.distanceToCheckPoint = distanceToCheckPoint;
         return rankData;
     }
+
+    public bool GetLocalPlayer() { return localPlayer; }
 }

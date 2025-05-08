@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CsvHelper.Configuration.Attributes; // [Name] 속성 사용 위해 추가
 
 // struct 대신 class로 변경하고 CsvHelper 매핑 속성 추가
