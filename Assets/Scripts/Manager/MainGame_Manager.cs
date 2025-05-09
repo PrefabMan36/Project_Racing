@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,11 +38,11 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private GameObject localLapTimeDiff_Prefab;
 
     [SerializeField] private Image timerImage;
-    [SerializeField] private Text timerText;
+    [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private Image lapTimeDiffImage;
     [SerializeField] private Image localLapTimeDiffImage;
-    [SerializeField] private Text lapTimeDiffText;
-    [SerializeField] private Text localLapTimeDiffText;
+    [SerializeField] private TextMeshProUGUI lapTimeDiffText;
+    [SerializeField] private TextMeshProUGUI localLapTimeDiffText;
     [SerializeField] bool isLapTimeDiffShowing = false;
     [SerializeField] bool isLocalLapTimeDiffShowing = false;
     [SerializeField] private float lapTimeDiffTimer = 0f;
@@ -69,7 +70,12 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private Dictionary<NetworkId, Rank> rankList = new Dictionary<NetworkId, Rank>();
     [SerializeField] private Transform[] rankPositons;
     [SerializeField] private Vector3[] rankTargetPositions = new Vector3[4];
-
+    [Header("Rank Colors")]
+    private Color tempColor;
+    private Color firstPlaceColor = new Color(1.0f, 0.843f, 0.0f, 0.7f); // 1등 색상 (골드)
+    private Color secondPlaceColor = new Color(0.769f, 0.769f, 0.769f, 0.7f);  // 2등 색상 (실버)
+    private Color thirdPlaceColor = new Color(0.815f, 0.486f, 0.222f, 0.7f); // 3등 색상 (브론즈)
+    private Color defaultColor = new Color(0.65f, 0.65f, 0.65f, 0.8f); // 그 외 등수 색상 또는 기본 색상
 
     [SerializeField]private bool GameStart = false;
 
@@ -88,7 +94,7 @@ public class MainGame_Manager : NetworkBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         for (int i = 0; i < rankPositons.Length; i++)
         {
@@ -141,11 +147,11 @@ public class MainGame_Manager : NetworkBehaviour
 
             timerImage = Instantiate(Timer_Prefab, MainCanvas.transform).GetComponent<Image>();
             lapTimeDiffImage = Instantiate(lapTimeDiff_Prefab, MainCanvas.transform).GetComponent<Image>();
-            timerText = timerImage.GetComponentInChildren<Text>();
-            lapTimeDiffText = lapTimeDiffImage.GetComponentInChildren<Text>();
+            timerText = timerImage.GetComponentInChildren<TextMeshProUGUI>();
+            lapTimeDiffText = lapTimeDiffImage.GetComponentInChildren<TextMeshProUGUI>();
             lapTimeDiffImage.gameObject.SetActive(false);
             localLapTimeDiffImage = Instantiate(localLapTimeDiff_Prefab, MainCanvas.transform).GetComponent<Image>();
-            localLapTimeDiffText = localLapTimeDiffImage.GetComponentInChildren<Text>();
+            localLapTimeDiffText = localLapTimeDiffImage.GetComponentInChildren<TextMeshProUGUI>();
             localLapTimeDiffImage.gameObject.SetActive(false);
             playerCar.SetName("YOU");
         }
@@ -221,7 +227,7 @@ public class MainGame_Manager : NetworkBehaviour
         else
             rankList[playersID[playerNumber]].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString());
         rankList[playersID[playerNumber]].SetTargets(rankTargetPositions);
-        rankList[playersID[playerNumber]].Rpc_SetPosition(playerNumber);
+        rankList[playersID[playerNumber]].Rpc_SetPosition(playerNumber, defaultColor);
         playerCars[playerNumber++] = playerCar;
         SetFirstCheckPoint(playerCar);
         if (!isRankingStart && playerNumber > 1)
@@ -242,32 +248,6 @@ public class MainGame_Manager : NetworkBehaviour
         rank.Remove(networkPlayerObject.Id);
         Destroy(rankList[networkPlayerObject.Id].gameObject);
         rankList.Remove(networkPlayerObject.Id);
-        //Queue<Rank> rankQueue = new Queue<Rank>();
-        //Queue<NetworkId> idQueue = new Queue<NetworkId>();
-        //for (int i = 0; i < playerNumber; i++)
-        //{
-        //    if (playersID.TryGetValue(i, out NetworkId currentId))
-        //    {
-        //        if (currentId != networkPlayerObject.Id)
-        //        {
-        //            idQueue.Enqueue(currentId);
-        //            if (rankList.TryGetValue(currentId, out Rank playerRank))
-        //                rankQueue.Enqueue(playerRank);
-        //        }
-        //    }
-        //}
-        //rankList.Clear();
-        //playersID.Clear();
-        //int newIndex = 0;
-        //while (idQueue.Count > 0)
-        //{
-        //    NetworkId playerId = idQueue.Dequeue();
-        //    Rank playerRank = rankQueue.Dequeue();
-        //    playersID.Add(newIndex, playerId);
-        //    rankList.Add(playerId, playerRank);
-        //    newIndex++;
-        //}
-        //playerNumber = (byte)newIndex;
     }
 
     private void ExitGame()
@@ -335,9 +315,24 @@ public class MainGame_Manager : NetworkBehaviour
                 rank.Set(sortedRankData[i].playerId, tempRank);
                 if(tempRank - 1 < 4)
                 {
+                    switch (tempRank - 1)
+                    {
+                        case 0:
+                            tempColor = firstPlaceColor;
+                            break;
+                        case 1:
+                            tempColor = secondPlaceColor;
+                            break;
+                        case 2:
+                            tempColor = thirdPlaceColor;
+                            break;
+                        default:
+                            tempColor = defaultColor;
+                            break;
+                    }
                     if (rankList.TryGetValue(sortedRankData[i].playerId, out Rank playerRank))
                     {
-                        playerRank.Rpc_SetPosition(tempRank - 1);
+                        playerRank.Rpc_SetPosition(tempRank - 1, tempColor);
                     }
                 }
             }

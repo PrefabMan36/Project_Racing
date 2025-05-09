@@ -4,6 +4,7 @@ using Tiny;
 using UnityEngine;
 using UnityEngine.UI;
 using Fusion;
+using TMPro;
 
 public class Player_Car : Car
 {
@@ -246,8 +247,8 @@ public class Player_Car : Car
     public void SetRPMGauge(RPMGauge _rpmGauge)
     {
         rpmGauge = _rpmGauge;
-        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<Text>();
-        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<Text>();
+        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<TextMeshProUGUI>();
+        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<TextMeshProUGUI>();
     }
 
     IEnumerator CameraUpdate()

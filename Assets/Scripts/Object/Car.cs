@@ -1,7 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Fusion;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,10 +8,10 @@ public partial class Car : Object_Movable
 {
     private float speed;
     [Networked] private int speedInt { get; set; }
-    protected Text speedTextForUI;
-    protected Text gearTextForUI;
-    protected Slider nitroBar;
-    protected RPMGauge rpmGauge;
+    [SerializeField] protected TextMeshProUGUI speedTextForUI;
+    [SerializeField] protected TextMeshProUGUI gearTextForUI;
+    [SerializeField] protected Slider nitroBar;
+    [SerializeField] protected RPMGauge rpmGauge;
 
     protected void SetSlpingAngle(){ slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
     public int GetSpeedNum(){ return (int)speed; }
@@ -112,11 +111,15 @@ public partial class Car : Object_Movable
     }
     public void SetUI()
     {
-        speedInt = (int)speed;
-        speedTextForUI.text = speedInt.ToString();
         if(rpmGauge != null)
+        {
+            speedInt = (int)speed;
+            speedTextForUI.text = speedInt.ToString();
             rpmGauge.SetValue(Mathf.Lerp(0f, 0.375f, currentEngineRPM / maxEngineRPM));
-        if(nitroBar !=  null)
+        }
+        else
+            Debug.LogWarning("RPM Gauge is not assigned in the inspector");
+        if (nitroBar != null)
             nitroBar.value = currentNitroAmount / maxNitroCapacity;
         switch (currentGear)
         {
