@@ -7,7 +7,7 @@ using Fusion;
 
 public partial class Car
 {
-    //현재 표기방식은 구식 표현 현재는 굳이 e를 붙이지 않는다 이경우 대문자이름이 enum이다.
+    //차량의 기어 상태를 나타내줄 Enum
     public enum eGEAR
     {
         eGEAR_NEUTURAL,
@@ -72,6 +72,7 @@ public partial class Car
     #endregion
 
     #region Function Engine
+    //엔진 시동을 거는 열거자(코루틴)사용을 위해
     IEnumerator IgnitionEngine()
     {
         WaitForSeconds wfs = new WaitForSeconds(0.04f);
@@ -107,6 +108,7 @@ public partial class Car
             }
         }
     }
+    // 엔진 회전수 계산하는 함수
     protected void CalculateOptimalShiftPoints()
     {
         if (horsePowerCurve == null || horsePowerCurve.length < 2)
@@ -131,6 +133,7 @@ public partial class Car
         optimalShiftDownRPM = Mathf.Clamp(rpmAtMaxHorsePower * 0.5f, minEngineRPM + 200f, maxEngineRPM);
         Debug.Log($"Optimal Shift Points Calculated: MaxHP={maxHorsePower} at RPM={rpmAtMaxHorsePower}, ShiftUpRPM={optimalShiftUpRPM}, ShiftDownRPM={optimalShiftDownRPM}");
     }
+    // 엔진 회전수에 따른 마력 비율 계산하는 함수
     private float GetPowerFactor(float _RPM)
     {
         if (horsePowerCurve == null || horsePowerCurve.length < 1 || maxHorsePower <= 0)
@@ -141,6 +144,7 @@ public partial class Car
         float currentHP = horsePowerCurve.Evaluate(currentEngineRPM);
         return Mathf.Clamp01(currentHP / maxHorsePower); // 0~1 사이 값으로 제한
     }
+    // 바퀴 회전수 계산하는 함수
     private void CalculateWheelRPM()
     {
         tempWheelRPM = 0f;
@@ -154,6 +158,8 @@ public partial class Car
         else
             reverse = true;
     }
+
+    //바퀴 회전수를  이용하여 엔진 회전수를 계산하는 함수
     private void CalculateTorque()
     {
         if (currentEngineRPM >= maxEngineRPM) SetEngineLerp(maxEngineRPM - 1000f);
@@ -218,20 +224,7 @@ public partial class Car
         //바퀴 토크(Wheel Torque) 계산법
         //바퀴 토크 = 엔진 토크(Engine Torque) × 변속기 기어비(Gear ratio) × 차동기어비(Differential ratio)
     }
-    protected void SetEngineLerp(float _num)//레드라인 도달했을때 동작
-    {
-        redLine = true;
-        engineLerpValue = _num;
-    }
-    private void forceEngineLerp()
-    {
-        if(redLine)
-        {
-            //curEngineTorque = 0f;
-            currentEngineRPM = Mathf.Lerp(currentEngineRPM,engineLerpValue,20 * Runner.DeltaTime);
-            redLine = currentEngineRPM <= engineLerpValue + 100 ? false : true;
-        }
-    }
+    //바퀴에 전달되는 토크를 적용하는 함수
     private void TorqueToWheel()
     {
         baseTorquePerWheel = (driveWheelsNum > 0) ? currentWheelTorque / driveWheelsNum : 0;
@@ -278,6 +271,23 @@ public partial class Car
             { driveWheels[i].brakeTorque = Mathf.Max(driveWheels[i].brakeTorque, tcsBrake); }
         }
     }
+    // 엔진 회전수를 강제로 설정하는 함수
+    protected void SetEngineLerp(float _num)
+    {
+        redLine = true;
+        engineLerpValue = _num;
+    }
+    // 엔진 회전수를 강제로 설정하는 함수
+    private void forceEngineLerp()
+    {
+        if(redLine)
+        {
+            //curEngineTorque = 0f;
+            currentEngineRPM = Mathf.Lerp(currentEngineRPM,engineLerpValue,20 * Runner.DeltaTime);
+            redLine = currentEngineRPM <= engineLerpValue + 100 ? false : true;
+        }
+    }
+    // 엔진 소리 업데이트 함수
     private void EngineSoundUpdate()
     {
         if (engineSound == null)
@@ -291,6 +301,7 @@ public partial class Car
             }
         }
     }
+    // 엔진 소리 강제 재생 함수
     protected void ForcePlayEngineSound()
     {
         if (engineSound == null)

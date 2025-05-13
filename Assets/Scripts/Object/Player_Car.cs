@@ -6,6 +6,13 @@ using UnityEngine.UI;
 using Fusion;
 using TMPro;
 
+//이 클래스는 플레이어 차량을 나타내며, 차량의 물리적 특성과 카메라, UI 등을 관리합니다.
+//Car 클래스를 상속받아 차량의 동작을 정의합니다.
+//이 클래스는 Fusion 네트워킹을 사용하여 멀티플레이어 환경에서 차량의 상태를 동기화합니다.
+//이 클래스는 상속받은 차량의 입력을 처리하고, 카메라를 설정하며, 차량의 물리적 특성을 초기화합니다.
+//이 클래스는 상속받은 차량의 기어, 엔진, 브레이크 등을 관리합니다.
+//이 클래스는 차량의 카메라와 UI를 업데이트하는 코루틴을 포함합니다.
+
 public class Player_Car : Car
 {
     [SerializeField] private int ID;
@@ -50,16 +57,21 @@ public class Player_Car : Car
     [Networked] public NetworkInputManager inputData { get; set; }
     private bool localPlayer = false;
 
+    //스폰시 자동으로 호출되는 함수
+    //상속받은 클래스의 Spawned()를 오버라이드하여 사용합니다.
+    //이 함수는 네트워크에서 오브젝트가 생성될 때 호출됩니다.
+    //이 함수에서 카메라와 UI를 초기화하고, 차량의 물리적 특성을 설정합니다.
+    //플레이어와 NPC의 차량의 동작을 다르게 하기 위해 override합니다.
     public override void Spawned()
     {
-        Runner.SetIsSimulated(Object, true);
+        Runner.SetIsSimulated(Object, true);// 시뮬레이션을 활성화합니다.
         if (HasInputAuthority)
-            SetName(Shared.UserName);
-        gameManager = FindAnyObjectByType<MainGame_Manager>();
-        gameManager.CarInit(this, HasInputAuthority);
-        networkObject = GetComponent<NetworkObject>();
-        playerId = networkObject.Id;
-        rankData.playerId = networkObject.Id;
+            SetName(Shared.UserName);// 플레이어 이름을 설정합니다.
+        gameManager = FindAnyObjectByType<MainGame_Manager>();// 게임 매니저를 찾습니다.
+        gameManager.CarInit(this, HasInputAuthority);// 게임 매니저를 이용해 차량을 초기화합니다.
+        networkObject = GetComponent<NetworkObject>();// 네트워크 오브젝트를 가져옵니다.
+        playerId = networkObject.Id;// 플레이어 ID를 설정합니다.
+        rankData.playerId = networkObject.Id;// 랭크 데이터에 플레이어 ID를 설정합니다.
     }
     public void Init()
     {
@@ -100,19 +112,19 @@ public class Player_Car : Car
         ignition = true;
         braking = false;
         //SetEngineSound(transform.Find("EngineSound").GetComponent<AudioSource[]>());
-        HeadLightSwitch();
-        ForcePlayEngineSound();
-        SetBaseEngineAcceleration(5f);
-        SetAutoGear(false);
-        SetAntiRoll(35000f);
-        SetShiftTiming(0.5f);
-        SetBrakePower(3000f);
-        SetDriveAxel(eCAR_DRIVEAXEL.eRWD);
-        SetFriction();
-        SpawnSmoke();
-        CalculateOptimalShiftPoints();
-        StartCoroutine(Engine());
-        StartCoroutine(UpdateNitro());
+        HeadLightSwitch();// 헤드라이트 스위치
+        ForcePlayEngineSound();// 엔진 사운드 강제 재생
+        SetBaseEngineAcceleration(5f);// 기본 엔진 가속도 설정
+        SetAutoGear(false);// 자동 기어 설정
+        SetAntiRoll(35000f);// 안티롤 설정
+        SetShiftTiming(0.5f);// 기어 변속 타이밍 설정
+        SetBrakePower(3000f);// 브레이크 파워 설정
+        SetDriveAxel(eCAR_DRIVEAXEL.eRWD);// 구동축 설정
+        SetFriction();// 마찰력 설정
+        SpawnSmoke();// 스폰 연기 설정
+        CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
+        StartCoroutine(Engine());// 엔진 코루틴 시작
+        StartCoroutine(UpdateNitro());// 부스트 코루틴 시작
     }
 
     private void Update()
@@ -130,27 +142,14 @@ public class Player_Car : Car
         SetRadialBlur();
     }
 
+    //Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
     public override void FixedUpdateNetwork()
     {
-        //AntiRollBar();
-        //Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
-        if (GetInput(out NetworkInputManager data))
-        {
-            data.direction.Normalize();
-            throttle = data.direction.y;
-            Steering(data.direction.x);
-            sideBraking = data.sideBraking;
-            ActivateNitro(data.boosting);
-            clutching = data.direction.z;
-            forceGear = data.forceGear;
-            gearUp = data.gearUP;
-            gearDown = data.gearDOWN;
-            inputCheck = data.direction;
-        }
+        GetInputData();
         if (gearUp)
-            ChangeGear(true);
+            ChangeGear(true);// 기어 업
         if (gearDown)
-            ChangeGear(false);
+            ChangeGear(false);// 기어 다운
         if (sideBraking)
             SideBrakingDown();
         else
@@ -229,12 +228,29 @@ public class Player_Car : Car
         {
             throttle = 0f;
         }
-        // 슬립 계산 및 입력 처리 후 FixedUpdate에서 Braking() 호출
-        SetSlpingAngle();
-        UpdatingFriction();
-        Braking();
-        ApplyAerodynamicDrag();
-        EffectDrift();
+        SetSlpingAngle();// 슬립 각도를 설정합니다.
+        UpdatingFriction();// 마찰력을 업데이트합니다.
+        Braking();// 브레이크를 적용합니다.
+        ApplyAerodynamicDrag();// 공기 저항력을 적용합니다.
+        EffectDrift();// 드리프트 효과를 적용합니다.
+    }
+    // 플레이어의 입력을 처리하는 함수입니다.
+    // 이 함수는 네트워크 입력을 가져와 차량의 조향, 가속, 기어 변경 등을 처리합니다.
+    // 플레이어가 아닌 NPC의 입력을 받을 수 있기는 함수 이기에 override합니다.
+    protected override void GetInputData()
+    {
+        if (GetInput(out NetworkInputManager data))
+        {
+            data.direction.Normalize();
+            throttle = data.direction.y;
+            Steering(data.direction.x);
+            sideBraking = data.sideBraking;
+            ActivateNitro(data.boosting);
+            clutching = data.direction.z;
+            forceGear = data.forceGear;
+            gearUp = data.gearUP;
+            gearDown = data.gearDOWN;
+        }
     }
     public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
 

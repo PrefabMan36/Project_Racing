@@ -13,29 +13,8 @@ public partial class Car : Object_Movable
     [SerializeField] protected Slider nitroBar;
     [SerializeField] protected RPMGauge rpmGauge;
 
-    protected void SetSlpingAngle(){ slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
     public int GetSpeedNum(){ return (int)speed; }
     public float GetSpeed() { return speed; }
-    
-    protected void EngineForUpdate()
-    {
-        if (ignition)
-        {
-            GearShifting();
-            CalculateTorque();
-            forceEngineLerp();
-            TorqueToWheel();
-            if (autoGear) AutoGear();
-            EngineSoundUpdate();
-        }
-        else
-        {
-            currentEngineRPM = 0f;
-            currentWheelTorque = 0f;
-            if (!engineStartUP)
-                StartCoroutine(IgnitionEngine());
-        }
-    }
     protected IEnumerator Engine()
     {
         WaitForSeconds waitForSecond = new WaitForSeconds(0.01f);
@@ -149,4 +128,7 @@ public partial class Car : Object_Movable
                 break;
         }
     }
+
+    protected virtual void GetInputData()
+    { }
 }

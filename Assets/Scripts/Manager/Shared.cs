@@ -5,7 +5,7 @@ using UnityEngine;
 public static class Shared
 {
     public static Mgr_Music mgr_Music;
-    public static Mgr_Scene mgr_Scene;
+    public static Scene_manager mgr_Scene;
     public static string CarName;
     public static string UserID;
     public static string UserName;

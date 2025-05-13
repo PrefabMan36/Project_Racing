@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public partial class Mgr_Scene : MonoBehaviour
+public partial class Scene_manager : MonoBehaviour
 {
     public eSCENE curScene = eSCENE.eSCENE_TITLE;
     [SerializeField] private string nextScene;

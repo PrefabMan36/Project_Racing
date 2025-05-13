@@ -33,6 +33,7 @@ public partial class Car
     [SerializeField] private float dragMagnitude;
     [SerializeField] private Vector3 dragForce;
 
+    protected void SetSlpingAngle() { slipingAngle = Vector3.Angle(transform.forward, carRB.velocity - transform.forward); }
     public void SetDragCoefficient(float _Cd) { dragCoefficient = _Cd; }
     protected void ApplyAerodynamicDrag()
     {

@@ -36,4 +36,9 @@ public class Title_Manager : MonoBehaviour
             return true;
         return false;
     }
+
+    public void RaceStart(eSCENE targetMap)
+    {
+        Debug.Log("Load Scene: " + targetMap);
+    }
 }
