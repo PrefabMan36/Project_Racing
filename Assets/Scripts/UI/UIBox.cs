@@ -16,5 +16,11 @@ public class UIBox : MonoBehaviour
     [SerializeField] Image forColorSettig;
     private void Awake()
     {
+        
+    }
+
+    public void SetPanelSize()
+    {
+
     }
 }

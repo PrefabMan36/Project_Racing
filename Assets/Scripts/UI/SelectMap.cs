@@ -55,7 +55,7 @@ public class SelectMap : UIBox
     //버튼 클릭시 맵이미지를 변경합니다(오른쪽).
     public void OnClickMapRight()
     {
-        if (selectedMapIndex < maps.Length)
+        if (selectedMapIndex < maps.Length-1)
             selectedMapIndex++;
         else
             selectedMapIndex = 0;
@@ -73,7 +73,7 @@ public class SelectMap : UIBox
     //버튼 클릭시 차량을 이미지를 변경합니다(오른쪽).
     public void OnClickCarRight()
     {
-        if (selectedCarIndex < cars.Length)
+        if (selectedCarIndex < cars.Length-1)
             selectedCarIndex++;
         else
             selectedCarIndex = 0;
