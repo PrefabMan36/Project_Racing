@@ -38,3 +38,17 @@ public enum eCAR_DRIVEAXEL
     eRWD,
     e4WD
 }
+
+public enum eUI_TYPE
+{
+    YES,
+    NO,
+    EXIT,
+    PREVIOUS,
+    SETTING,
+    HOST,
+    JOIN,
+    TOPBAR,
+    BOTTOMBAR,
+    NULL
+}

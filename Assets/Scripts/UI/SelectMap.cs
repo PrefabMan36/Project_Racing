@@ -82,7 +82,7 @@ public class SelectMap : UIBox
     //버튼 클릭시 저장해둔 맵의 레이스 시작을 위해 로딩 씬으로 이동합니다.
     public void StartRace()
     {
-        Shared.mgr_Scene.ChangeScene(eSCENE.eSCENE_LOADING);
+        Shared.scene_Manager.ChangeScene(eSCENE.eSCENE_LOADING);
         Debug.Log("Load Scene: " + targetMap);
     }
 }

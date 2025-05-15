@@ -22,7 +22,7 @@ public class Mgr_MainMenu : MonoBehaviour
     public void OnClick_NextScene()
     {
         Shared.CarName = carName.text;
-        Shared.mgr_Scene.ChangeScene(eSCENE.eSCENE_MAINGAME);
+        Shared.scene_Manager.ChangeScene(eSCENE.eSCENE_MAINGAME);
     }
     public void OnClick_Change_Car()
     {

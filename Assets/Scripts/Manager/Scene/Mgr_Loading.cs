@@ -12,7 +12,7 @@ public class Mgr_Loading : MonoBehaviour
     [SerializeField] Slider progressBar;
     void Start()
     {
-        nextScene = Shared.mgr_Scene.GetNextScene();
+        nextScene = Shared.scene_Manager.GetNextScene();
         StartCoroutine("LoadScene");
     }
     IEnumerator LoadScene()

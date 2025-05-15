@@ -4,8 +4,13 @@ using UnityEngine;
 
 public static class Shared
 {
-    public static Mgr_Music mgr_Music;
-    public static Scene_manager mgr_Scene;
+    public static float frame60 = 0.01f;
+    public static float frame30 = 0.02f;
+    public static float frame15 = 0.04f;
+
+    public static Music_Manager music_Manager;
+    public static Scene_manager scene_Manager;
+    public static UI_Manager ui_Manager;
     public static string CarName;
     public static string UserID;
     public static string UserName;

@@ -4,7 +4,7 @@ public partial class Scene_manager : MonoBehaviour
 {
     private void Awake()
     {
-        Shared.mgr_Scene = this;
+        Shared.scene_Manager = this;
 
         DontDestroyOnLoad(this);
     }
