@@ -48,7 +48,7 @@ public enum eUI_TYPE
     SETTING,
     HOST,
     JOIN,
-    TOPBAR,
+    MAINBAR,
     BOTTOMBAR,
     NULL
 }

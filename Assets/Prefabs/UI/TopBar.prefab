@@ -133,7 +133,7 @@ MonoBehaviour:
     Name: 
     Description: 
   uiType: 0
-  uiPosition: {fileID: 6697441083105105930}
+  uiTransform: {fileID: 6697441083105105930}
   icon: {fileID: 1967610000430407816}
   uiName: {fileID: 55360125361108655}
   uiDescription: {fileID: 441652946142236229}

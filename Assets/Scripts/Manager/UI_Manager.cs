@@ -7,6 +7,19 @@ using UnityEngine.Networking;
 
 public class UI_Manager : MonoBehaviour
 {
+    [SerializeField] private Canvas mainCanvas;
+    [SerializeField] private MenuPanel mainMenu_Prefab;
+    [SerializeField] private MenuPanel mainMenu;
+    [SerializeField] private MenuPanel settingMenu_Prefab;
+    [SerializeField] private MenuPanel settingMenu;
+    [SerializeField] private Stack<MenuPanel> menus = new Stack<MenuPanel>();
+    [SerializeField] private GameObject panel_Prefab;
+    [SerializeField] private GameObject panel;
+    [SerializeField] private MenuPanel tempMenu;
+    [SerializeField] private GameObject tempMenuObject;
+    [SerializeField] private bool isPushMenu = false;
+    [SerializeField] private bool isInGame = false;
+
     private Dictionary<eUI_TYPE, ButtonData> buttons = new Dictionary<eUI_TYPE, ButtonData>();
     private Dictionary<string, Sprite> icons = new Dictionary<string, Sprite>();
     private void Awake()
@@ -14,14 +27,19 @@ public class UI_Manager : MonoBehaviour
         Shared.ui_Manager = this;
 
         DontDestroyOnLoad(this);
-    }
-    private void Start()
-    {
+
         StartCoroutine(LoadIconsCoroutine());
+
+        mainCanvas = new GameObject("MainCanvas").AddComponent<Canvas>();
+        mainCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        mainCanvas.gameObject.AddComponent<CanvasScaler>();
+        mainCanvas.gameObject.AddComponent<GraphicRaycaster>();
+        panel = Instantiate(panel_Prefab, mainCanvas.transform);
+
     }
     private IEnumerator LoadIconsCoroutine()
     {
-        string iconsFolderPath = Path.Combine(Application.streamingAssetsPath, "icon");
+        string iconsFolderPath = Path.Combine(Application.streamingAssetsPath, "icons");
         string[] iconFilenames = {
             "RacingGameTitleIcon.png",
             "White Gear 2.png",
@@ -56,6 +74,18 @@ public class UI_Manager : MonoBehaviour
         }
         Debug.Log("모든 아이콘 로딩 시도 완료.");
         InitializeButtons();
+    }
+
+    private void FixedUpdate()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            onClickClose();
+        }
+        if (Input.GetKey(KeyCode.Backspace))
+        {
+            OnClickOption();
+        }
     }
 
     private void InitializeButtons()
@@ -95,7 +125,17 @@ public class UI_Manager : MonoBehaviour
         buttonData.Description = "아니오를 선택합니다.";
         buttonData.Icon = GetLoadedIcon("White Close 2.png");
         buttons.Add(eUI_TYPE.NO, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "메인 메뉴";
+        buttonData.Description = "원하는 메뉴를 선택하세요.";
+        buttonData.Icon = GetLoadedIcon("RacingGameTitleIcon.png");
+        buttons.Add(eUI_TYPE.MAINBAR, buttonData);
 
+        mainMenu = Instantiate(mainMenu, mainCanvas.transform);
+        mainMenu.SetButtonS_HorizontalSizeUP(50f);
+        mainMenu.SetDistribute();
+        mainMenu.StartAllFadeIn();
+        menus.Push(mainMenu);
     }
     public Sprite GetLoadedIcon(string filename)
     {
@@ -115,8 +155,75 @@ public class UI_Manager : MonoBehaviour
         Debug.LogWarning($"'{BUTTON_TYPE}' 타입의 ButtonData를 찾을 수 없습니다.");
         return new ButtonData();
     }
-    private void LoadIconsFromStreamingAssets()
+
+    public void OnClickOption()
     {
-        icons.Clear();
+        Debug.Log("옵션 버튼 클릭됨");
+        if(settingMenu == null)
+        {
+            settingMenu = Instantiate(settingMenu_Prefab, mainCanvas.transform);
+            settingMenu.SetButtonS_HorizontalSizeUP(50f);
+            settingMenu.ChangeTopBar(eUI_TYPE.SETTING);
+        }
+        if(!isPushMenu)
+        {
+            settingMenu.gameObject.SetActive(false);
+            StartCoroutine(PushMenu(settingMenu));
+        }
+    }
+
+    public void OnClickExit()
+    {
+
+    }
+    public void OnClickPrevious()
+    {
+        if (menus.Count > 0)
+        {
+            MenuPanel previousMenu = menus.Pop();
+            previousMenu.StartAllFadeOut();
+            menus.Peek().gameObject.SetActive(true);
+            menus.Peek().StartAllFadeIn();
+        }
+        else
+        {
+            Debug.LogWarning("메뉴 스택이 비어있습니다.");
+        }
+    }
+    public void onClickClose()
+    {
+        Debug.Log("게임 종료 버튼 클릭됨");
+        int count = menus.Count;
+        MenuPanel menu;
+        for (int i = 0; i < count; i++)
+        {
+            menu = menus.Pop();
+            menu.ForceOut();
+        }
+        if(isInGame)
+            panel.SetActive(false);
+    }
+    public void OnClickHost()
+    {
+        Debug.Log("방 만들기 버튼 클릭됨");
+    }
+
+    IEnumerator PushMenu(MenuPanel nextMenu)
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        isPushMenu = true;
+        if (menus.Count > 0)
+        {
+            tempMenu = menus.Peek();
+            tempMenuObject = tempMenu.gameObject;
+            tempMenu.StartAllFadeOut();
+        }
+
+        while (tempMenuObject.activeSelf)
+            yield return waitForSeconds;
+
+        menus.Push(nextMenu);
+        nextMenu.gameObject.SetActive(true);
+        nextMenu.StartAllFadeIn();
     }
 }
