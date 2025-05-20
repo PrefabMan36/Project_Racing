@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UIBox : MonoBehaviour
@@ -22,12 +23,47 @@ public class UIBox : MonoBehaviour
 
     [SerializeField] private Button thisButton;
 
-    public void SetButtonType(eUI_TYPE _type)
+    private void Awake()
+    {
+        thisButton = GetComponent<Button>();
+    }
+
+    public void SetOnClickAction()
+    {
+        if (thisButton != null)
+        {
+            thisButton.onClick.RemoveAllListeners();
+            switch(uiType)
+            {
+                case eUI_TYPE.SETTING:
+                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickOption);
+                    break;
+                case eUI_TYPE.PROFILESETTING:
+                    thisButton.onClick.AddListener(Shared.setting_Manager.OnClickProfileChange);
+                    break;
+            }
+        }
+        else
+            Debug.LogWarning("버튼이 없습니다.");
+    }
+    public void SetOnClickAction(UnityAction action)
+    {
+        if (thisButton != null)
+        {
+            thisButton.onClick.RemoveAllListeners();
+            thisButton.onClick.AddListener(action);
+        }
+        else
+            Debug.LogWarning("버튼이 없습니다.");
+    }
+
+    public void SetUIType(eUI_TYPE _type)
     {
         uiType = _type;
-        SetButton();
+        SetUI();
+        SetOnClickAction();
     }
-    private void SetButton()
+    private void SetUI()
     {
         data = Shared.ui_Manager.GetButtonData(uiType);
         if (data.Icon != null)
@@ -52,7 +88,7 @@ public class UIBox : MonoBehaviour
     public void SetTopBar()
     {
         uiType = eUI_TYPE.MAINBAR;
-        icon.sprite = Shared.ui_Manager.GetLoadedIcon("RacingGameTitleIcon");
+        icon.sprite = Shared.ui_Manager.GetLoadedIcon("RacingGameTitleIcon.png");
     }
 
     public void SetPosition(Vector2 positon)
@@ -71,7 +107,7 @@ public class UIBox : MonoBehaviour
             uiTransform = this.GetComponent<RectTransform>();
         if (Vertical)
         {
-            if (uiTransform.anchoredPosition.y < 0)
+            if (uiTransform.localPosition.y < 0)
                 uiTransform.anchoredPosition = new Vector2(uiTransform.anchoredPosition.x, -Screen.height);
             else
                 uiTransform.anchoredPosition = new Vector2(uiTransform.anchoredPosition.x, Screen.height);
@@ -91,9 +127,7 @@ public class UIBox : MonoBehaviour
             uiTransform = this.GetComponent<RectTransform>();
         if (uiTransform != null)
         {
-            Debug.Log($"이전 사이즈 {uiTransform.sizeDelta}");
             uiTransform.sizeDelta = new Vector2(uiTransform.sizeDelta.x + size, uiTransform.sizeDelta.y);
-            Debug.Log($"바뀐 사이즈 {uiTransform.sizeDelta}");
         }
     }
 
@@ -127,14 +161,14 @@ public class UIBox : MonoBehaviour
         {
             if(Vertical)
             {
-                if (uiTransform.anchoredPosition.y < 0)
+                if (uiTransform.position.y < 0)
                     endPositon = new Vector2(uiTransform.anchoredPosition.x, -Screen.height);
                 else
                     endPositon = new Vector2(uiTransform.anchoredPosition.x, Screen.height);
             }
             else
             {
-                if (uiTransform.anchoredPosition.x < 0)
+                if (uiTransform.position.x < 0)
                     endPositon = new Vector2(-Screen.width, uiTransform.anchoredPosition.y);
                 else
                     endPositon = new Vector2(Screen.width, uiTransform.anchoredPosition.y);
@@ -156,14 +190,5 @@ public class UIBox : MonoBehaviour
         fading = false;
         fadeFinish = true;
         fadeTime = 0f;
-        Debug.Log($"fade complete {fadeOutOrIn}");
-    }
-
-    public void OnClickButton()
-    {
-        if (thisButton != null)
-        {
-
-        }
     }
 }

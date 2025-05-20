@@ -50,5 +50,6 @@ public enum eUI_TYPE
     JOIN,
     MAINBAR,
     BOTTOMBAR,
+    PROFILESETTING,
     NULL
 }

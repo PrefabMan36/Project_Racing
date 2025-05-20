@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MenuPanel : MonoBehaviour
 {
@@ -20,17 +21,19 @@ public class MenuPanel : MonoBehaviour
     private bool fadeStarted = false;
     private bool fadeCheck = false;
 
+    private bool PopStarted = false;
+
     private void Awake()
     {
         uiTransform = GetComponent<RectTransform>();
         if (topBar != null)
         {
-            topBar.SetButtonType(eUI_TYPE.MAINBAR);
+            topBar.SetUIType(eUI_TYPE.MAINBAR);
             topBar.SetPosition(Vector2.zero);
         }
         if (bottomBar != null)
         {
-            bottomBar.SetButtonType(eUI_TYPE.BOTTOMBAR);
+            bottomBar.SetUIType(eUI_TYPE.BOTTOMBAR);
             bottomBar.SetPosition(Vector2.zero);
         }
         for (int i = 0; i < buttonL.Length; i++)
@@ -38,17 +41,25 @@ public class MenuPanel : MonoBehaviour
             if (buttonL[i] != null)
             {
                 buttonL[i].SetPosition(buttonL_Positon[i]);
-                buttonL[i].SetButtonType(buttonLType[i]);
+                buttonL[i].SetUIType(buttonLType[i]);
             }
         }
         for (int i = 0; i < buttonSType.Length; i++)
         {
             if (buttonS_Prefab != null)
             {
-                UIBox newButton = Instantiate(buttonS_Prefab, transform);
-                newButton.SetPosition(buttonS_Positon[i]);
-                newButton.SetButtonType(buttonSType[i]);
-                buttonS.Add(newButton);
+                if(buttonS.Count < i+1)
+                {
+                    UIBox newButton = Instantiate(buttonS_Prefab, transform);
+                    newButton.SetPosition(buttonS_Positon[i]);
+                    newButton.SetUIType(buttonSType[i]);
+                    buttonS.Add(newButton);
+                }
+                else
+                {
+                    buttonS[i].SetPosition(buttonS_Positon[i]);
+                    buttonS[i].SetUIType(buttonSType[i]);
+                }
             }
         }
     }
@@ -67,7 +78,7 @@ public class MenuPanel : MonoBehaviour
     {
         if (topBar != null)
         {
-            topBar.SetButtonType(uiType);
+            topBar.SetUIType(uiType);
             topBar.SetTopBar();
         }
     }
@@ -102,6 +113,18 @@ public class MenuPanel : MonoBehaviour
         fadeCount = 2;
         if (!fadeStarted)
             StartCoroutine(Fade(true));
+    }
+    
+    public void StartPopUp()
+    {
+        if (!PopStarted)
+            StartCoroutine(Poping(true));
+    }
+
+    public void StartPopDown()
+    {
+        if (!PopStarted)
+            StartCoroutine(Poping(false));
     }
 
     private IEnumerator Fade(bool fadeOutOrIn)
@@ -190,7 +213,52 @@ public class MenuPanel : MonoBehaviour
         }
         Debug.Log("Fade Complete");
     }
-
+    private IEnumerator Poping(bool UpOrDown)
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame30);
+        PopStarted = true;
+        if (UpOrDown)
+        {
+            if (topBar != null)
+                topBar.StartFadeIn();
+            if (bottomBar != null)
+                bottomBar.StartFadeIn();
+            for (int i = 0; i < buttonL.Length; i++)
+            {
+                if (buttonL[i] != null)
+                    buttonL[i].StartFadeIn();
+            }
+            for (int i = 0; i < buttonS.Count; i++)
+            {
+                if (buttonS[i] != null)
+                    buttonS[i].StartFadeIn();
+            }
+        }
+        else
+        {
+            if (topBar != null)
+                topBar.StartFadeOut();
+            if (bottomBar != null)
+                bottomBar.StartFadeOut();
+            for (int i = 0; i < buttonL.Length; i++)
+            {
+                if (buttonL[i] != null)
+                    buttonL[i].StartFadeOut();
+            }
+            for (int i = 0; i < buttonS.Count; i++)
+            {
+                if (buttonS[i] != null)
+                    buttonS[i].StartFadeOut();
+            }
+        }
+        if (!UpOrDown)
+        {
+            while (!topBar.fadeFinish)
+                yield return waitForSeconds;
+            gameObject.SetActive(false);
+        }
+        PopStarted = false;
+    }
     public void ForceOut()
     {
         if (topBar != null)

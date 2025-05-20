@@ -17,6 +17,8 @@ public class UI_Manager : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private MenuPanel tempMenu;
     [SerializeField] private GameObject tempMenuObject;
+
+    [SerializeField] private bool isPopMenu = false;
     [SerializeField] private bool isPushMenu = false;
     [SerializeField] private bool isInGame = false;
 
@@ -47,6 +49,7 @@ public class UI_Manager : MonoBehaviour
             "White Check.png",
             "White Close 2.png",
             "White Backward 2.png",
+            "White Person 2.png",
             "Free Flat People 1 Icon.png",
             "Free Flat Move In Icon.png"
         };
@@ -80,7 +83,7 @@ public class UI_Manager : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            onClickClose();
+            OnClickPrevious();
         }
         if (Input.GetKey(KeyCode.Backspace))
         {
@@ -130,6 +133,11 @@ public class UI_Manager : MonoBehaviour
         buttonData.Description = "원하는 메뉴를 선택하세요.";
         buttonData.Icon = GetLoadedIcon("RacingGameTitleIcon.png");
         buttons.Add(eUI_TYPE.MAINBAR, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "프로필 설정";
+        buttonData.Description = "이곳에서 닉네임, 아바타 등 나만의 프로필을 설정해 보세요.";
+        buttonData.Icon = GetLoadedIcon("White Person 2.png");
+        buttons.Add(eUI_TYPE.PROFILESETTING, buttonData);
 
         mainMenu = Instantiate(mainMenu, mainCanvas.transform);
         mainMenu.SetButtonS_HorizontalSizeUP(50f);
@@ -164,11 +172,12 @@ public class UI_Manager : MonoBehaviour
             settingMenu = Instantiate(settingMenu_Prefab, mainCanvas.transform);
             settingMenu.SetButtonS_HorizontalSizeUP(50f);
             settingMenu.ChangeTopBar(eUI_TYPE.SETTING);
+            Shared.setting_Manager.SetSettingMenu(settingMenu.gameObject);
         }
         if(!isPushMenu)
         {
             settingMenu.gameObject.SetActive(false);
-            StartCoroutine(PushMenu(settingMenu));
+            StartCoroutine(PopMenu(settingMenu));
         }
     }
 
@@ -178,12 +187,12 @@ public class UI_Manager : MonoBehaviour
     }
     public void OnClickPrevious()
     {
-        if (menus.Count > 0)
+        if (menus.Count > 1)
         {
             MenuPanel previousMenu = menus.Pop();
-            previousMenu.StartAllFadeOut();
+            previousMenu.StartPopDown();
             menus.Peek().gameObject.SetActive(true);
-            menus.Peek().StartAllFadeIn();
+            menus.Peek().StartPopUp();
         }
         else
         {
@@ -225,5 +234,28 @@ public class UI_Manager : MonoBehaviour
         menus.Push(nextMenu);
         nextMenu.gameObject.SetActive(true);
         nextMenu.StartAllFadeIn();
+    }
+
+    IEnumerator PopMenu(MenuPanel nextMenu)
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        isPopMenu = true;
+
+        if (menus.Count > 0)
+        {
+            tempMenu = menus.Peek();
+            tempMenuObject = tempMenu.gameObject;
+            tempMenu.StartPopDown();
+        }
+
+        //while (tempMenuObject.activeSelf)
+        //    yield return waitForSeconds;
+
+        menus.Push(nextMenu);
+        nextMenu.gameObject.SetActive(true);
+        nextMenu.StartPopUp();
+
+        while (tempMenuObject.activeSelf)
+            yield return waitForSeconds;
     }
 }

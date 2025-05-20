@@ -3404,6 +3404,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 719323812}
   m_CullTransparentMesh: 1
+--- !u!1 &732052749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 732052750}
+  - component: {fileID: 732052751}
+  m_Layer: 0
+  m_Name: Setting_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &732052750
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732052749}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &732052751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732052749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f877b03be88854f8ab939b4f40d231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panels: []
+  panelIndex: 0
+  ProfilePanel: {fileID: 0}
+  ProfilePanelIndex: 0
+  ProfilePanel_Prefab: {fileID: 1792927925959786754, guid: 971b095815698e14486bd478a07eebb9, type: 3}
+  profileChange_Check: {fileID: 0}
+  profileChange_Check_Prefab: {fileID: 3893933223357819436, guid: e65b0dda698478e4b9451f851a310345, type: 3}
+  setting_Menu: {fileID: 0}
 --- !u!1 &791313403
 GameObject:
   m_ObjectHideFlags: 0
@@ -6388,6 +6440,7 @@ MonoBehaviour:
   panel: {fileID: 0}
   tempMenu: {fileID: 0}
   tempMenuObject: {fileID: 0}
+  isPopMenu: 0
   isPushMenu: 0
   isInGame: 0
 --- !u!4 &1710152510
@@ -6474,6 +6527,7 @@ MonoBehaviour:
   endPositon: {x: 0, y: 0}
   originX: 0
   originY: 0
+  thisButton: {fileID: 0}
   maps:
   - {fileID: 2800000, guid: 14d294016dff8e241a100d8747973a23, type: 3}
   - {fileID: 2800000, guid: 4753cd6fe59997842a447010ac3405c5, type: 3}
@@ -7187,6 +7241,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1381099503}
   - {fileID: 1710152510}
+  - {fileID: 732052750}
   - {fileID: 571482921}
   - {fileID: 1738993702}
   - {fileID: 1918588636}

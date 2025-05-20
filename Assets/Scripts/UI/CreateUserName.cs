@@ -4,7 +4,6 @@ using UnityEngine;
 public class CreateUserName : MonoBehaviour
 {
     [SerializeField] private TMP_InputField userNameInputField;
-    //[SerializeField]
     public void OnClickYes()
     {
         PlayerPrefs.SetString("userName", userNameInputField.text);
