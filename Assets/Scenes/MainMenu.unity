@@ -3451,11 +3451,18 @@ MonoBehaviour:
   panels: []
   panelIndex: 0
   ProfilePanel: {fileID: 0}
-  ProfilePanelIndex: 0
+  profilePanelIndex: 0
   ProfilePanel_Prefab: {fileID: 1792927925959786754, guid: 971b095815698e14486bd478a07eebb9, type: 3}
   profileChange_Check: {fileID: 0}
   profileChange_Check_Prefab: {fileID: 3893933223357819436, guid: e65b0dda698478e4b9451f851a310345, type: 3}
   setting_Menu: {fileID: 0}
+  audioSettingPanel: {fileID: 0}
+  audioPanelIndex: 0
+  audioSettingPanel_Prefab: {fileID: 1792927925959786754, guid: a21aafa5dff28ce4ca46005f8c2914a7, type: 3}
+  volume: 0
+  buttons_TYPE: 090000000a000000
+  size: 0
+  buttonTypeIndex: 0
 --- !u!1 &791313403
 GameObject:
   m_ObjectHideFlags: 0
@@ -6402,6 +6409,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1679728614}
   m_CullTransparentMesh: 1
+--- !u!1 &1692034835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1692034837}
+  - component: {fileID: 1692034836}
+  m_Layer: 0
+  m_Name: TrackData_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1692034836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692034835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f240ba121739a84c8bec23b3208fab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  csvFileName: Tracks.csv
+--- !u!4 &1692034837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692034835}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1710152508
 GameObject:
   m_ObjectHideFlags: 0
@@ -6436,10 +6488,13 @@ MonoBehaviour:
   mainMenu: {fileID: 1962608333857117833, guid: 71cb4fd5df12f7944bb7f1c75bb15fe2, type: 3}
   settingMenu_Prefab: {fileID: 6642815644143083063, guid: 0c962a3b02d415f43961169ab8deb2dc, type: 3}
   settingMenu: {fileID: 0}
+  hostingMenu_Prefab: {fileID: 6642815644143083063, guid: 55528f99588dc0946b7eedff68f5f16d, type: 3}
+  hostingMenu: {fileID: 0}
   panel_Prefab: {fileID: 8215817661971195848, guid: 4331e8f86bc62f4409dbfb475d359dfd, type: 3}
   panel: {fileID: 0}
   tempMenu: {fileID: 0}
   tempMenuObject: {fileID: 0}
+  EXITPopUp_Prefab: {fileID: 1829223542862491745, guid: 0f7be77488549874a83cf90540ecdb6a, type: 3}
   isPopMenu: 0
   isPushMenu: 0
   isInGame: 0
@@ -6527,6 +6582,7 @@ MonoBehaviour:
   endPositon: {x: 0, y: 0}
   originX: 0
   originY: 0
+  UISetting: 0
   thisButton: {fileID: 0}
   maps:
   - {fileID: 2800000, guid: 14d294016dff8e241a100d8747973a23, type: 3}
@@ -7239,9 +7295,10 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1381099503}
+  - {fileID: 1692034837}
   - {fileID: 1710152510}
   - {fileID: 732052750}
+  - {fileID: 1381099503}
   - {fileID: 571482921}
   - {fileID: 1738993702}
   - {fileID: 1918588636}

@@ -8,15 +8,26 @@ using UnityEngine.Networking;
 public class UI_Manager : MonoBehaviour
 {
     [SerializeField] private Canvas mainCanvas;
+
+    [SerializeField] private Stack<MenuPanel> menus = new Stack<MenuPanel>();
+    [SerializeField] private Stack<GameObject> UIs = new Stack<GameObject>();
+    
     [SerializeField] private MenuPanel mainMenu_Prefab;
     [SerializeField] private MenuPanel mainMenu;
+
     [SerializeField] private MenuPanel settingMenu_Prefab;
     [SerializeField] private MenuPanel settingMenu;
-    [SerializeField] private Stack<MenuPanel> menus = new Stack<MenuPanel>();
+
+    [SerializeField] private MenuPanel hostingMenu_Prefab;
+    [SerializeField] private MenuPanel hostingMenu;
+
     [SerializeField] private GameObject panel_Prefab;
     [SerializeField] private GameObject panel;
+
     [SerializeField] private MenuPanel tempMenu;
     [SerializeField] private GameObject tempMenuObject;
+
+    [SerializeField] private GameObject EXITPopUp_Prefab;
 
     [SerializeField] private bool isPopMenu = false;
     [SerializeField] private bool isPushMenu = false;
@@ -51,7 +62,8 @@ public class UI_Manager : MonoBehaviour
             "White Backward 2.png",
             "White Person 2.png",
             "Free Flat People 1 Icon.png",
-            "Free Flat Move In Icon.png"
+            "Free Flat Move In Icon.png",
+            "Free Flat Volume 3 Icon.png"
         };
         foreach (string filename in iconFilenames)
         {
@@ -138,12 +150,27 @@ public class UI_Manager : MonoBehaviour
         buttonData.Description = "이곳에서 닉네임, 아바타 등 나만의 프로필을 설정해 보세요.";
         buttonData.Icon = GetLoadedIcon("White Person 2.png");
         buttons.Add(eUI_TYPE.PROFILESETTING, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "오디오 설정";
+        buttonData.Description = "게임 내 모든 소리를 조절할 수 있습니다.";
+        buttonData.Icon = GetLoadedIcon("Free Flat Volume 3 Icon.png");
+        buttons.Add(eUI_TYPE.AUDIOSETTING, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "생성";
+        buttonData.Description = "다른 플레이어가 참여할 수 있는 게임 세션을 만듭니다.";
+        buttonData.Icon = GetLoadedIcon("White Check.png");
+        buttons.Add(eUI_TYPE.CREATEROOM, buttonData);
 
         mainMenu = Instantiate(mainMenu, mainCanvas.transform);
         mainMenu.SetButtonS_HorizontalSizeUP(50f);
         mainMenu.SetDistribute();
         mainMenu.StartAllFadeIn();
         menus.Push(mainMenu);
+
+        buttonData = new ButtonData();
+        buttonData.Name = "";
+        buttonData.Description = "";
+        buttons.Add(eUI_TYPE.NULL, buttonData);
     }
     public Sprite GetLoadedIcon(string filename)
     {
@@ -174,7 +201,7 @@ public class UI_Manager : MonoBehaviour
             settingMenu.ChangeTopBar(eUI_TYPE.SETTING);
             Shared.setting_Manager.SetSettingMenu(settingMenu.gameObject);
         }
-        if(!isPushMenu)
+        if(!isPopMenu)
         {
             settingMenu.gameObject.SetActive(false);
             StartCoroutine(PopMenu(settingMenu));
@@ -183,14 +210,24 @@ public class UI_Manager : MonoBehaviour
 
     public void OnClickExit()
     {
-
+        GameObject exitPopup = Instantiate(EXITPopUp_Prefab, mainCanvas.transform);
+        UIs.Push(exitPopup.gameObject);
     }
+
+    public void OnClickNo()
+    {
+        GameObject closePopup = UIs.Pop();
+        Destroy(closePopup.gameObject);
+    }
+
     public void OnClickPrevious()
     {
         if (menus.Count > 1)
         {
             MenuPanel previousMenu = menus.Pop();
             previousMenu.StartPopDown();
+            if(previousMenu == settingMenu)
+                Shared.setting_Manager.CloseSetting();
             menus.Peek().gameObject.SetActive(true);
             menus.Peek().StartPopUp();
         }
@@ -201,7 +238,7 @@ public class UI_Manager : MonoBehaviour
     }
     public void onClickClose()
     {
-        Debug.Log("게임 종료 버튼 클릭됨");
+        Debug.Log("메뉴 닫기 버튼 클릭됨");
         int count = menus.Count;
         MenuPanel menu;
         for (int i = 0; i < count; i++)
@@ -213,6 +250,21 @@ public class UI_Manager : MonoBehaviour
             panel.SetActive(false);
     }
     public void OnClickHost()
+    {
+        Debug.Log("방 호스팅 버튼 클릭됨");
+        if (hostingMenu == null)
+        {
+            hostingMenu = Instantiate(hostingMenu_Prefab, mainCanvas.transform);
+            hostingMenu.SetButtonS_HorizontalSizeUP(50f);
+            hostingMenu.ChangeTopBar(eUI_TYPE.HOST);
+        }
+        if (!isPopMenu)
+        {
+            hostingMenu.gameObject.SetActive(false);
+            StartCoroutine(PopMenu(hostingMenu));
+        }
+    }
+    public void OnClickCreateRoom()
     {
         Debug.Log("방 만들기 버튼 클릭됨");
     }

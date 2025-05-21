@@ -192,6 +192,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4248848590295050778}
     m_Modifications:
+    - target: {fileID: 932707967609574797, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4776038124018939487, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
       propertyPath: m_Name
       value: TopBar

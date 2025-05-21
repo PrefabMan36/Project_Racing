@@ -21,11 +21,21 @@ public class UIBox : MonoBehaviour
     [SerializeField] private float originX;
     [SerializeField] private float originY;
 
+    [SerializeField] private bool UISetting = false;
+
     [SerializeField] private Button thisButton;
 
     private void Awake()
     {
         thisButton = GetComponent<Button>();
+        if (uiTransform == null)
+            uiTransform = this.GetComponent<RectTransform>();
+    }
+
+    private void Start()
+    {
+        if(!UISetting)
+            SetUIType(uiType);
     }
 
     public void SetOnClickAction()
@@ -40,6 +50,21 @@ public class UIBox : MonoBehaviour
                     break;
                 case eUI_TYPE.PROFILESETTING:
                     thisButton.onClick.AddListener(Shared.setting_Manager.OnClickProfileChange);
+                    break;
+                case eUI_TYPE.AUDIOSETTING:
+                    thisButton.onClick.AddListener(Shared.setting_Manager.OnClickAudioSetting);
+                    break;
+                case eUI_TYPE.PREVIOUS:
+                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickPrevious);
+                    break;
+                case eUI_TYPE.EXIT:
+                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickExit);
+                    break;
+                case eUI_TYPE.NO:
+                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickNo);
+                    break;
+                case eUI_TYPE.HOST:
+                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickHost);
                     break;
             }
         }
@@ -60,6 +85,7 @@ public class UIBox : MonoBehaviour
     public void SetUIType(eUI_TYPE _type)
     {
         uiType = _type;
+        UISetting = true;
         SetUI();
         SetOnClickAction();
     }
@@ -131,7 +157,6 @@ public class UIBox : MonoBehaviour
         }
     }
 
-
     public void StartFadeIn()
     {
         if(!fading)
@@ -161,14 +186,14 @@ public class UIBox : MonoBehaviour
         {
             if(Vertical)
             {
-                if (uiTransform.position.y < 0)
+                if (uiTransform.localPosition.y < 0)
                     endPositon = new Vector2(uiTransform.anchoredPosition.x, -Screen.height);
                 else
                     endPositon = new Vector2(uiTransform.anchoredPosition.x, Screen.height);
             }
             else
             {
-                if (uiTransform.position.x < 0)
+                if (uiTransform.localPosition.x < 0)
                     endPositon = new Vector2(-Screen.width, uiTransform.anchoredPosition.y);
                 else
                     endPositon = new Vector2(Screen.width, uiTransform.anchoredPosition.y);

@@ -51,5 +51,12 @@ public enum eUI_TYPE
     MAINBAR,
     BOTTOMBAR,
     PROFILESETTING,
+    AUDIOSETTING,
+    CREATEROOM,
     NULL
+}
+
+public enum ePOPUP_TYPE
+{
+    EXIT
 }
