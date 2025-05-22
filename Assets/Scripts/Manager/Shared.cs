@@ -12,6 +12,7 @@ public static class Shared
     public static Scene_manager scene_Manager;
     public static UI_Manager ui_Manager;
     public static Setting_Manager setting_Manager;
+    public static Room_Manager room_Manager;
 
     public static float audioVolume;
 

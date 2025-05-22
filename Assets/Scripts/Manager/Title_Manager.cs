@@ -20,6 +20,7 @@ public class Title_Manager : MonoBehaviour
         if (PlayerPrefs.HasKey("userName"))
         {
             Debug.Log("Profile exist: ");
+            Shared.UserName = PlayerPrefs.GetString("userName");
             //if (Check_ID(LoginID.text))
             //    Shared.mgr_Scene.ChangeScene(eSCENE.eSCENE_MAINMENU);
         }

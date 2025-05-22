@@ -255,7 +255,7 @@ public class UI_Manager : MonoBehaviour
         if (hostingMenu == null)
         {
             hostingMenu = Instantiate(hostingMenu_Prefab, mainCanvas.transform);
-            hostingMenu.SetButtonS_HorizontalSizeUP(50f);
+            //hostingMenu.SetButtonS_HorizontalSizeUP(50f);
             hostingMenu.ChangeTopBar(eUI_TYPE.HOST);
         }
         if (!isPopMenu)
@@ -309,5 +309,6 @@ public class UI_Manager : MonoBehaviour
 
         while (tempMenuObject.activeSelf)
             yield return waitForSeconds;
+        isPopMenu = false;
     }
 }

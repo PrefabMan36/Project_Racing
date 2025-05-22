@@ -6,8 +6,9 @@ public enum eSCENE
     eSCENE_MAINGAME = 3,
     eSCENE_RESULT = 4,
     eSCENE_CITY_NIGHT = 5,
-    eSCENE_MOUNT_TRACK = 6,
+    eSCENE_MOUNT_TRACK = 6
 }
+
 public enum eCAR_COLOR
 {
     Black,
