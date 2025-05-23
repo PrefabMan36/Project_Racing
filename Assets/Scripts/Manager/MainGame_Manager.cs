@@ -295,23 +295,27 @@ public class MainGame_Manager : NetworkBehaviour
 
     IEnumerator UpdatingRankings()
     {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(0.1f);
+        //코루틴 갱신 간격 설정(초당60프레임 정도로)
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
         while(true)
         {
+            yield return waitForSeconds;
+            //랭크데이터 초기화
             rankData.Clear();
             for (int i = 0; i < playerCars.Length; i++)
             {
                 if (playerCars[i] != null)
                     rankData.Add(playerCars[i].GetRankData());
             }
+            //초기화된 랭크데이터를 바퀴수,체크포인트상황,체크포인트와의 거리 순으로 정렬
             sortedRankData = rankData.OrderByDescending(carData => carData.lap)
                 .ThenByDescending(carData => carData.currentCheckpointIndex)
                 .ThenBy(carData => carData.distanceToCheckPoint)
                 .ToList();
+            //정렬된 랭크데이터에 따라 랭크가 표시될 위치와 색 변경
             for (int i = 0; i < sortedRankData.Count; i++)
             {
                 tempRank = (byte)(i + 1);
-                //Debug.Log("sortedRankData[" + i + "] : " + sortedRankData[i].playerId + " " + sortedRankData[i].lap + " " + sortedRankData[i].currentCheckpointIndex + " " + sortedRankData[i].distanceToCheckPoint);
                 rank.Set(sortedRankData[i].playerId, tempRank);
                 if(tempRank - 1 < 4)
                 {
@@ -336,7 +340,6 @@ public class MainGame_Manager : NetworkBehaviour
                     }
                 }
             }
-            yield return waitForSeconds;
         }
     }
 
@@ -344,11 +347,13 @@ public class MainGame_Manager : NetworkBehaviour
     {
         _playerCar.SetNextCheckPointPosition(firstCheckPoint);
     }
-
+    //체크포인트에 기록된 최고기록을 받아와서 코루틴 실행
     IEnumerator ShowLapTimeDifference(float _diffTime)
     {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(0.04f);
+        //코루틴 갱신 간격 설정(초당 15프레임정도)
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
         Debug.Log("start diff timer");
+        //표시될 시간의 초기화와 오브젝트 활성화
         isLapTimeDiffShowing = true;
         lapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
         lapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
@@ -358,6 +363,7 @@ public class MainGame_Manager : NetworkBehaviour
         {
             yield return waitForSeconds;
             lapTimeDiffTimer += 0.04f;
+            //3초뒤 비활성화 코루틴 종료
             if (lapTimeDiffTimer > 3f)
             {
                 lapTimeDiffImage.gameObject.SetActive(false);
@@ -365,6 +371,7 @@ public class MainGame_Manager : NetworkBehaviour
                 isLapTimeDiffShowing = false;
                 yield break;
             }
+            //2초뒤 3초갈 될떄까지 천천히 사라지기 시작
             else if (lapTimeDiffTimer > 2f)
             {
                 lapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
@@ -372,16 +379,20 @@ public class MainGame_Manager : NetworkBehaviour
             }
         }
     }
+    //체크포인트에 기록된 개인최고기록을 받아와서 코루틴 실행
     IEnumerator ShowLocalLapTimeDifference(float _diffTime)
     {
+        //개인 최고기록이 없을경우(초기값이 1000000이 넘음) 표시되지 않음
         if (Mathf.Abs(_diffTime) > 1000000)
         {
             isLocalLapTimeDiffShowing = false;
             yield break;
         }
-        WaitForSeconds waitForSeconds = new WaitForSeconds(0.04f);
+        //코루틴 갱신 간격 설정(초당 15프레임정도)
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
         Debug.Log("start diff timer");
         isLocalLapTimeDiffShowing = true;
+        //표시될 시간의 배경과 텍스트 색 초기화, 비교후 느리면 붉은색 빠르면 초록색
         localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
         if(_diffTime < 0)
             localLapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
@@ -393,6 +404,7 @@ public class MainGame_Manager : NetworkBehaviour
         {
             yield return waitForSeconds;
             localLapTimeDiffTimer += 0.04f;
+            //이하 내용은 최고기록 비교와 같음
             if (localLapTimeDiffTimer > 3f)
             {
                 localLapTimeDiffImage.gameObject.SetActive(false);

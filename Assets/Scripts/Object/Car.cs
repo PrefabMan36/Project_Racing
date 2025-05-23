@@ -81,7 +81,7 @@ public partial class Car : Object_Movable
     }
     protected IEnumerator UIUpdating()
     {
-        WaitForSeconds waitForSecond = new WaitForSeconds(0.04f);
+        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame15);
         while(true)
         {
             yield return waitForSecond;
@@ -90,6 +90,7 @@ public partial class Car : Object_Movable
     }
     public void SetUI()
     {
+        //RPM게이지가 있는지 체크 후 속도와 RPM 갱신
         if(rpmGauge != null)
         {
             speedInt = (int)speed;
@@ -98,8 +99,10 @@ public partial class Car : Object_Movable
         }
         else
             Debug.LogWarning("RPM Gauge is not assigned in the inspector");
+        //부스트 게이지 체크 후 부스트 잔량 갱신
         if (nitroBar != null)
             nitroBar.value = currentNitroAmount / maxNitroCapacity;
+        //현재 기어를 확인하고 기어를 나타내는 텍스트 변경
         switch (currentGear)
         {
             case eGEAR.eGEAR_NEUTURAL:

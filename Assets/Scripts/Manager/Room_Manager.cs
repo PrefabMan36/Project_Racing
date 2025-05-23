@@ -8,6 +8,7 @@ public class Room_Manager : MonoBehaviour
     [SerializeField] Dictionary<int, TrackSelect> trackList = new Dictionary<int, TrackSelect>();
     [SerializeField] int[] mapEnum;
     [SerializeField] Sprite[] mapImages;
+    [SerializeField] string sessionID;
 
     private void Awake()
     {
@@ -52,7 +53,7 @@ public class Room_Manager : MonoBehaviour
 
     public TrackSelect GetTrackSelect(int _trackNum)
     {
-        return trackList[_trackNum];
+        return trackList[mapEnum[_trackNum]];
     }
 
     public bool CheckTrack(int _trackNum)

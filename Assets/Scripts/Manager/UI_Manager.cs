@@ -47,6 +47,8 @@ public class UI_Manager : MonoBehaviour
         mainCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         mainCanvas.gameObject.AddComponent<CanvasScaler>();
         mainCanvas.gameObject.AddComponent<GraphicRaycaster>();
+        DontDestroyOnLoad (mainCanvas);
+
         panel = Instantiate(panel_Prefab, mainCanvas.transform);
 
     }
@@ -131,8 +133,8 @@ public class UI_Manager : MonoBehaviour
         buttonData.Icon = GetLoadedIcon("Free Flat Move In Icon.png");
         buttons.Add(eUI_TYPE.JOIN, buttonData);
         buttonData = new ButtonData();
-        buttonData.Name = "예";
-        buttonData.Description = "예를 선택합니다.";
+        buttonData.Name = "확인";
+        buttonData.Description = "확인를 선택합니다.";
         buttonData.Icon = GetLoadedIcon("White Check.png");
         buttons.Add(eUI_TYPE.YES, buttonData);
         buttonData = new ButtonData();
@@ -181,6 +183,10 @@ public class UI_Manager : MonoBehaviour
         Debug.LogWarning($"'{filename}' 이름을 가진 아이콘 스프라이트가 로드되지 않았습니다.");
         return null;
     }
+    public Canvas GetMainCanvas()
+    {
+        return mainCanvas;
+    }
     public ButtonData GetButtonData(eUI_TYPE BUTTON_TYPE)
     {
         if(buttons.ContainsKey(BUTTON_TYPE))
@@ -218,6 +224,11 @@ public class UI_Manager : MonoBehaviour
     {
         GameObject closePopup = UIs.Pop();
         Destroy(closePopup.gameObject);
+    }
+
+    public void RecivePopup(GameObject popup)
+    {
+        UIs.Push(popup.gameObject);
     }
 
     public void OnClickPrevious()
