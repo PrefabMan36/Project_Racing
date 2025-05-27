@@ -14,8 +14,4 @@ public class CineMachine_Car_Manager : MonoBehaviour
         carCamera.Follow = GameObject.FindGameObjectWithTag("Player").transform;
         carCamera.LookAt = carCamera.Follow.transform.Find("FocusPoint").transform;
     }
-
-    private void Update()
-    {
-    }
 }

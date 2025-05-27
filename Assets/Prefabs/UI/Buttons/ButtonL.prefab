@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: description
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 586e9d58966edb04ab62336de216c493, type: 2}
-  m_sharedMaterial: {fileID: -5045439243360496500, guid: 586e9d58966edb04ab62336de216c493, type: 2}
+  m_sharedMaterial: {fileID: 1992259895154663583, guid: 586e9d58966edb04ab62336de216c493, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -446,7 +446,7 @@ MonoBehaviour:
   m_text: Name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 586e9d58966edb04ab62336de216c493, type: 2}
-  m_sharedMaterial: {fileID: -5045439243360496500, guid: 586e9d58966edb04ab62336de216c493, type: 2}
+  m_sharedMaterial: {fileID: 1992259895154663583, guid: 586e9d58966edb04ab62336de216c493, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -470,8 +470,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -488,7 +488,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 3
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1

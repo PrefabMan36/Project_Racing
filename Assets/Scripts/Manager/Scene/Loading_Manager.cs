@@ -3,10 +3,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Mgr_Loading : MonoBehaviour
+public class Loading_Manager : MonoBehaviour
 {
     private float timer;
-    private string nextScene;
+    private int nextScene;
     [SerializeField] AsyncOperation op;
     [SerializeField] Slider progressBar;
     void Start()

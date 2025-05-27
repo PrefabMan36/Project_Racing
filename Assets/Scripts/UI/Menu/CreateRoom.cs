@@ -12,13 +12,13 @@ public class CreateRoom : MonoBehaviour
     [SerializeField] GameObject scrollContent;
     [SerializeField] MapButton mapButtonPrefab;
 
-    [SerializeField]
-
-
     private void Awake()
     {
         CreateButtons();
         SelectMap(currentMapIndex);
+        sessionInput.text = Server_Data.LobbyName = "session" + Random.Range(0,1000);
+        Server_Data.trackIndex = currentMapIndex;
+        Server_Data.UserCapacity = 4;
     }
 
     private void CreateButtons()
@@ -45,8 +45,18 @@ public class CreateRoom : MonoBehaviour
         currentMapImage.sprite = Shared.room_Manager.GetSprite(currentMapIndex);
     }
 
-    public void OnClickCreate()
+    private bool _lobbyIsValid;
+    public void ValidateLobby()
+    { _lobbyIsValid = string.IsNullOrEmpty(Server_Data.LobbyName) == false; }
+
+    public void OnClickCreate(Lobby_Network_Manager lobby_Network)
     {
-        
+        if (_lobbyIsValid)
+        {
+            Server_Data.LobbyID = Random.Range(0, 100000);
+            Server_Data.serverTrack = Shared.room_Manager.GetTrackSelect(currentMapIndex);
+            //lobby_Network.CreateLobby()
+            _lobbyIsValid = false;
+        }
     }
 }

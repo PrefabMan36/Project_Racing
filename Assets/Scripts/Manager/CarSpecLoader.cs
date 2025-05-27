@@ -6,7 +6,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 
-// CarSpecRecord 클래스 정의는 동일 ...
 public class CarSpecRecord
 {
     public int Num { get; set; }
@@ -49,8 +48,6 @@ public class CarSpecRecord
     public float gearSpeedLimit_eGEAR_SIXTH { get; set; }
 }
 
-
-// *** 클래스 이름 변경: CarSpecLoader ***
 public class CarSpecLoader : MonoBehaviour
 {
     // StreamingAssets 폴더 사용 권장
@@ -70,7 +67,6 @@ public class CarSpecLoader : MonoBehaviour
         try
         {
             using (var reader = new StreamReader(filePath))
-            // 클래스 이름이 다르므로 CsvHelper. 명시 불필요 (해도 무방)
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 records = new List<CarSpecRecord>(csv.GetRecords<CarSpecRecord>());

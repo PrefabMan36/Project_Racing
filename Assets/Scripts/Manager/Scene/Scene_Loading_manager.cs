@@ -6,35 +6,18 @@ using UnityEngine.SceneManagement;
 public partial class Scene_manager : MonoBehaviour
 {
     public eSCENE curScene = eSCENE.eSCENE_TITLE;
-    [SerializeField] private string nextScene;
+    [SerializeField] private int nextScene;
     private bool loading;
 
-    public void ChangeScene(eSCENE _e)
+    public void ChangeScene(eSCENE _nextScene)
     {
-        if (curScene == _e)
+        if (curScene == _nextScene)
             return;
-        switch (_e)
-        {
-            case eSCENE.eSCENE_TITLE:
-                nextScene = "TitleMenu";
-                curScene = eSCENE.eSCENE_TITLE;
-                break;
-            case eSCENE.eSCENE_MAINMENU:
-                nextScene = "MainMenu";
-                curScene = eSCENE.eSCENE_MAINMENU;
-                break;
-            case eSCENE.eSCENE_MAINGAME:
-                nextScene = "MainGame";
-                curScene = eSCENE.eSCENE_MAINGAME;
-                break;
-            case eSCENE.eSCENE_RESULT:
-                nextScene = "Result";
-                curScene = eSCENE.eSCENE_RESULT;
-                break;
-        }
+        curScene = _nextScene;
+        nextScene = (int)_nextScene;
         SceneManager.LoadScene("Loading");
     }
-    public string GetNextScene()
+    public int GetNextScene()
     {
         return nextScene;
     }

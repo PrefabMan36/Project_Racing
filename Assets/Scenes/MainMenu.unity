@@ -807,10 +807,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70deaf7acc4d28341ae9bb68af6d4be1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapEnum: 0500000006000000
+  mapEnum: 0600000007000000
   mapImages:
   - {fileID: 21300000, guid: 14d294016dff8e241a100d8747973a23, type: 3}
   - {fileID: 21300000, guid: 4753cd6fe59997842a447010ac3405c5, type: 3}
+  sessionID: 
 --- !u!1 &510294081
 GameObject:
   m_ObjectHideFlags: 0

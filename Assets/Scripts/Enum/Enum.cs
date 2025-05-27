@@ -5,8 +5,9 @@ public enum eSCENE
     eSCENE_MAINMENU = 2,
     eSCENE_MAINGAME = 3,
     eSCENE_RESULT = 4,
-    eSCENE_CITY_NIGHT = 5,
-    eSCENE_MOUNT_TRACK = 6
+    eSCENE_LOBBY = 5,
+    eSCENE_CITY_NIGHT = 6,
+    eSCENE_MOUNT_TRACK = 7
 }
 
 public enum eCAR_COLOR
@@ -60,4 +61,19 @@ public enum eUI_TYPE
 public enum ePOPUP_TYPE
 {
     EXIT
+}
+
+public enum eCONNECTIONSTATUS
+{
+    DISCONNECTED,
+    CONNECTING,
+    FAILED,
+    CONNECTED
+}
+
+public enum eGAMESTATE
+{
+    LOBBY,
+    GAMECUTSCENE,
+    GAMEREADY
 }

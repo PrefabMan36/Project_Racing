@@ -55,6 +55,10 @@ public class Room_Manager : MonoBehaviour
     {
         return trackList[mapEnum[_trackNum]];
     }
+    public eSCENE GetTrackEnum(int _trackNum)
+    {
+        return trackList[_trackNum].mapEnum;
+    }
 
     public bool CheckTrack(int _trackNum)
     {

@@ -1,26 +1,25 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 
-public class Lobby_Manager : NetworkBehaviour
+public class Lobby_Manager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI lobbyNameText;
+    [SerializeField] private TextMeshProUGUI lobbyNumberText;
     [SerializeField] private Canvas mainCanvas;
 
     [Header("Map Info")]
     [SerializeField] private Image trackImage;
     [SerializeField] private TextMeshProUGUI trackName;
-    //[Networked, OnChanged = nameof(OnMapChanged)] // 맵 인덱스 네트워크 동기화 및 변경 감지
     private int currentMapIndex;
     private TrackSelect selectedTrack;
 
     [Header("Player List")]
     [SerializeField] private Transform scrollContent;
-    [SerializeField] private LobbyUserBox lobbyUser_Prefab;
+    [SerializeField] private GameObject lobbyUser_Prefab;
 
     [Header("Popups")]
     [SerializeField] private GameObject quitPopup;
@@ -29,30 +28,109 @@ public class Lobby_Manager : NetworkBehaviour
     [SerializeField] private GameObject changeCarPopup;
 
     [Header("Buttons")]
-    [SerializeField] private GameObject StartButton;
-    [SerializeField] private GameObject readyButton;
-    [SerializeField] private GameObject changeTrackButton;
+    [SerializeField] private Button StartButton;
+    [SerializeField] private Button readyButton;
+    [SerializeField] private Button changeTrackButton;
+
+    [SerializeField] private static readonly Dictionary<LobbyPlayer, LobbyItem> playerList = new Dictionary<LobbyPlayer, LobbyItem>();
+    [SerializeField] private static bool isSubscrribed;
+
+    private void Awake()
+    {
+        Game_Manager.OnLobbyUpdated += OnLobbyUpdate;
+
+        LobbyPlayer.PlayerChanged += (player) =>
+        {
+            var isHost = LobbyPlayer.localPlayer.isHost;
+            StartButton.gameObject.SetActive(isHost);
+            changeTrackButton.gameObject.SetActive(isHost);
+        };
+    }
+
+    private void OnLobbyUpdate(Game_Manager manager)
+    {
+        lobbyNameText.text = "방 이름 : " + manager.lobbyName.Value;
+        lobbyNumberText.text = "방 번호 : " + manager.lobbyID.ToString();
+        SetMapInfoUI(manager.trackIndex);
+    }
 
     public void SetLobby(string _lobbyName, int _mapIndex)
     {
+        if (isSubscrribed) return;
         lobbyNameText.text = _lobbyName;
         mainCanvas = Shared.ui_Manager.GetMainCanvas();
         SetMapInfoUI(_mapIndex);
-        if (!Runner.IsServer)
+        
+        LobbyPlayer.playerJoined += OnPlayerJoined;
+        LobbyPlayer.playerLeft += OnPlayerLeft;
+        LobbyPlayer.PlayerChanged += OnPlayerReadyChanged;
+
+        readyButton.onClick.AddListener(ReadyListener);
+
+        isSubscrribed = true;
+    }
+
+    private void OnDestroy()
+    {
+        if(!isSubscrribed) return;
+
+        LobbyPlayer.playerJoined -= OnPlayerJoined;
+        LobbyPlayer.playerLeft -= OnPlayerLeft;
+
+        readyButton.onClick.RemoveListener(ReadyListener);
+        isSubscrribed = false;
+    }
+
+    private void OnPlayerJoined(LobbyPlayer player)
+    {
+        if(playerList.ContainsKey(player))
         {
-            currentMapIndex = _mapIndex;
-            StartButton.SetActive(true);
-            changeTrackButton.SetActive(true);
+            var removePlayer = playerList[player];
+            Destroy(removePlayer.gameObject);
+            playerList.Remove(player);
         }
-        else
+
+        var playerInLobby = Instantiate(lobbyUser_Prefab, scrollContent).GetComponent<LobbyItem>();
+        playerInLobby.SetPlayer(player);
+        playerList.Add(player, playerInLobby);
+        OnLobbyUpdate(Shared.game_Manager);
+    }
+
+    private void OnPlayerLeft(LobbyPlayer player)
+    {
+        if (!playerList.ContainsKey(player)) return;
+        
+        var playerInLobby = playerList[player];
+        if(playerInLobby != null)
         {
-            StartButton.SetActive(false);
-            changeTrackButton.SetActive(false);
+            Destroy(playerInLobby.gameObject);
+            playerList.Remove(player);
         }
     }
 
-    private void OnMapChanged()
+    private void ReadyListener()
     {
+        var localPlayer = LobbyPlayer.localPlayer;
+        if(localPlayer && localPlayer.Object && localPlayer.Object.IsValid)
+            localPlayer.RPC_ChangeReadyState(!localPlayer.isReady);
+    }
+
+    private void OnPlayerReadyChanged(LobbyPlayer lobbyPlayer)
+    {
+        if (!LobbyPlayer.localPlayer.isHost) return;
+
+        if(IsAllReady())
+        {
+            Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex));
+        }
+    }
+
+    private static bool IsAllReady()
+    {
+        if (LobbyPlayer.players.Count > 0 && LobbyPlayer.players.All(player => player.isReady))
+            return true;
+        else
+            return false;
     }
 
     private void SetMapInfoUI(int _mapIndex)
@@ -61,93 +139,17 @@ public class Lobby_Manager : NetworkBehaviour
         trackImage.sprite = selectedTrack.mapImage;
         trackName.text = selectedTrack.mapName;
     }
-
-    public override void Spawned()
-    {
-        base.Spawned();
-
-        UpdatePlayerList();
-    }
-
-    private void UpdatePlayerList()
-    {
-        //foreach (var entry in playerListEntries.Values)
-        //{
-        //    Destroy(entry.gameObject);
-        //}
-        //playerListEntries.Clear();
-
-        //if (Runner != null && Runner.ActivePlayers != null)
-        //{
-        //    foreach(PlayerRef player in Runner.ActivePlayers)
-        //    {
-        //        AddPlayerToList(player);
-        //    }
-        //}
-    }
-
-    //private void AddPlayerToList(PlayerRef player)
-    //{
-    //    if (!playerListEntries.ContainsKey(player))
-    //    {
-    //        LobbyUserBox entry = Instantiate(lobbyUser_Prefab, scrollContent);
-    //        entry.gameObject.SetActive(true);
-    //        playerListEntries.Add(player, entry);
-    //    }
-    //}
-    //private void RemovePlayerFromList(PlayerRef player)
-    //{
-    //    if (playerListEntries.TryGetValue(player, out LobbyUserBox entry))
-    //    {
-    //        Destroy(entry.gameObject);
-    //        playerListEntries.Remove(player);
-    //    }
-    //}
-    //public override void OnPlayerJoined(PlayerRef player)
-    //{
-    //    base.OnPlayerJoined(player);
-    //    AddPlayerToList(player);
-    //}
-    //public override void OnPlayerLeft(PlayerRef player)
-    //{
-    //    base.OnPlayerLeft(player);
-    //    RemovePlayerFromList(player);
-    //}
-
     public void OnClickLeaveSession()
     { Shared.ui_Manager.RecivePopup(Instantiate(quitPopup, mainCanvas.transform)); }
     public void ForceStart()
     { Shared.ui_Manager.RecivePopup(Instantiate(forceStartPopup, mainCanvas.transform)); }
     public void OnClickReady()
     {
-        if (Runner.IsServer)
-            Shared.ui_Manager.RecivePopup(Instantiate(changeTrackPopup, mainCanvas.transform));
-        else
-            Debug.LogWarning("오직 호스트만 트랙을 변경할 수 있습니다.");
+        
     }
     public void OnClickChangeCar()
     { Shared.ui_Manager.RecivePopup(Instantiate(changeCarPopup, mainCanvas.transform)); }
-    //public void OnClickStart()
-    //{
-    //    if (!Runner.IsServer) return;
-    //    bool allReady = true;
-    //    foreach (PlayerRef playerRef in Runner.ActivePlayers)
-    //    {
-    //        NetworkObject playerObj = Runner.GetPlayerObject(playerRef);
-    //        if (playerObj != null && playerObj.TryGetBehaviour<PlayerLobbyData>(out var playerData))
-    //        {
-    //            if (!playerData.IsReady)
-    //            {
-    //                allReady = false;
-    //                break;
-    //            }
-    //        }
-    //    }
-    //    if (!allReady && showForceStartPopupIfNeeded)
-    //    { // 강제 시작 팝업 로직 [cite: 9]
-    //        Shared.ui_Manager.RecivePopup(Instantiate(forceStartPopup, mainCanvas.transform)); [cite: 9]
-    //          return;
-    //    }
-    //    Runner.SetActiveScene(selectedTrack.sceneBuildIndex);
-    //}
+    public void OnClickStart()
+    {
+    }
 }
