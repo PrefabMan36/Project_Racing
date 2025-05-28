@@ -7,6 +7,7 @@ public class ExitYesButton : MonoBehaviour
     {
         UIBox box = GetComponent<UIBox>();
         box.SetUIType(eUI_TYPE.YES);
+        gameObject.AddComponent<Button>();
         Button button = GetComponent<Button>();
         button.onClick.AddListener(OnClickQuit);
     }

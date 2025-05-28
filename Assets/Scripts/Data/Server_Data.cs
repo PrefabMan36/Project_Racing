@@ -7,10 +7,10 @@ public static class Server_Data
     public static int UserCapacity = 4;
     public static string LobbyName;
     public static int LobbyID;
-    public static TrackSelect serverTrack = Shared.room_Manager.GetTrackSelect(trackIndex);
+    public static TrackSelect serverTrack;// = Shared.room_Manager.GetTrackByIndex(trackIndex);
     public static int trackIndex
     { 
-        get => PlayerPrefs.GetInt("TrackIndex", 5);
+        get => PlayerPrefs.GetInt("TrackIndex", 6);
         set => PlayerPrefs.SetInt("TrackIndex", value); 
     }
 }

@@ -7,13 +7,16 @@ public class ProfileChange : MonoBehaviour
     [SerializeField] private TMP_InputField inputBox;
     [SerializeField] private Button confirmButton;
 
-    void Awake()
+    void Start()
     {
-        if (inputBox == null)
+        if (inputBox != null)
         {
             inputBox = GetComponentInChildren<TMP_InputField>();
-            if(Shared.UserID != null)
-                inputBox.text = Shared.UserID;
+            if (PlayerPrefs.HasKey("Client_Username"))
+                Client_Data.Username = PlayerPrefs.GetString("Client_Username");
+            if (Client_Data.Username != string.Empty)
+                inputBox.text = Client_Data.Username;
+            Debug.Log("profile change" + GetUserName());
         }
         if(confirmButton == null)
         {

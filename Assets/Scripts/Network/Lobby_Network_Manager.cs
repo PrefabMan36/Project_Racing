@@ -17,17 +17,20 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
     public static eCONNECTIONSTATUS connectionstatus = eCONNECTIONSTATUS.DISCONNECTED;
 
     private NetworkRunner networkRunner;
-    private Scene_manager sceneManager;
+
+    private void Awake()
+    {
+        Shared.lobby_Network_Manager = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start()
     {
         Application.runInBackground = true;
         Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
         QualitySettings.vSyncCount = 1;
-
-        DontDestroyOnLoad(this);
-        int lobbySceneIndex = (int)eSCENE.eSCENE_LOBBY;
-        SceneManager.LoadScene(lobbySceneIndex);
+        //int lobbySceneIndex = (int)eSCENE.eSCENE_LOBBY;
+        //SceneManager.LoadScene(lobbySceneIndex);
     }
 
     public void SetCreateLobby() => gameMode = GameMode.Host;
@@ -54,10 +57,11 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
         networkRunner.StartGame(new StartGameArgs
         {
             GameMode = gameMode,
-            SessionName = gameMode == GameMode.Host ? Server_Data.LobbyID.ToString() : Server_Data.LobbyID.ToString(),
+            SessionName = gameMode == GameMode.Host ? Server_Data.LobbyID.ToString() : Client_Data.LobbyID.ToString(),
             PlayerCount = Server_Data.UserCapacity,
             EnableClientSessionCreation = false
         });
+        
     }
 
     private void SetConnectionStatus(eCONNECTIONSTATUS status)
@@ -68,7 +72,7 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
             return;
         if(status == eCONNECTIONSTATUS.DISCONNECTED || status == eCONNECTIONSTATUS.FAILED)
         {
-            SceneManager.LoadScene((int)eSCENE.eSCENE_LOBBY);
+            //SceneManager.LoadScene((int)eSCENE.eSCENE_LOBBY);
         }
     }
 

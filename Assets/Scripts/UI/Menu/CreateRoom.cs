@@ -7,7 +7,7 @@ public class CreateRoom : MonoBehaviour
 {
     [SerializeField] Image currentMapImage;
     [SerializeField] TMP_InputField sessionInput;
-    [SerializeField] int currentMapIndex = 5;
+    [SerializeField] int currentMapIndex = 6;
 
     [SerializeField] GameObject scrollContent;
     [SerializeField] MapButton mapButtonPrefab;
@@ -26,9 +26,10 @@ public class CreateRoom : MonoBehaviour
         MapButton tempButton;
         TrackSelect tempTrack;
         int mapNum = Shared.room_Manager.GetMapNum();
+        Debug.Log(mapNum);
         for(int i = 0; i < mapNum; i++)
         {
-            tempTrack = Shared.room_Manager.GetTrackSelect(i);
+            tempTrack = Shared.room_Manager.GetTrackByNum(i);
             tempButton = Instantiate(mapButtonPrefab, scrollContent.transform);
             tempButton.SetMapButton(this, tempTrack.mapID , tempTrack.mapName);
         }
@@ -38,24 +39,27 @@ public class CreateRoom : MonoBehaviour
     {
         if (!Shared.room_Manager.CheckTrack(_num))
         {
-            Debug.LogError("해당하는 맵이 존재 하지 않습니다");
+            Debug.LogError($"해당하는 맵이 존재 하지 않습니다 {_num}");
             return;
         }
+        Server_Data.LobbyID = Random.Range(10000000, 99999999);
         currentMapIndex = _num;
         currentMapImage.sprite = Shared.room_Manager.GetSprite(currentMapIndex);
+        Server_Data.serverTrack = Shared.room_Manager.GetTrackByIndex(currentMapIndex);
     }
 
     private bool _lobbyIsValid;
     public void ValidateLobby()
-    { _lobbyIsValid = string.IsNullOrEmpty(Server_Data.LobbyName) == false; }
+    {
+        _lobbyIsValid = string.IsNullOrEmpty(Server_Data.LobbyName) == false;
+        Debug.Log(_lobbyIsValid);
+    }
 
-    public void OnClickCreate(Lobby_Network_Manager lobby_Network)
+    public void OnClickCreate()
     {
         if (_lobbyIsValid)
         {
-            Server_Data.LobbyID = Random.Range(0, 100000);
-            Server_Data.serverTrack = Shared.room_Manager.GetTrackSelect(currentMapIndex);
-            //lobby_Network.CreateLobby()
+            Shared.lobby_Network_Manager.JoinOrCreateLobby();
             _lobbyIsValid = false;
         }
     }

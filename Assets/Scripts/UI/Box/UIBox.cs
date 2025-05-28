@@ -34,7 +34,7 @@ public class UIBox : MonoBehaviour
 
     private void Start()
     {
-        if(!UISetting)
+        if (!UISetting)
             SetUIType(uiType);
     }
 
@@ -42,34 +42,12 @@ public class UIBox : MonoBehaviour
     {
         if (thisButton != null)
         {
-            thisButton.onClick.RemoveAllListeners();
-            switch(uiType)
-            {
-                case eUI_TYPE.SETTING:
-                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickOption);
-                    break;
-                case eUI_TYPE.PROFILESETTING:
-                    thisButton.onClick.AddListener(Shared.setting_Manager.OnClickProfileChange);
-                    break;
-                case eUI_TYPE.AUDIOSETTING:
-                    thisButton.onClick.AddListener(Shared.setting_Manager.OnClickAudioSetting);
-                    break;
-                case eUI_TYPE.PREVIOUS:
-                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickPrevious);
-                    break;
-                case eUI_TYPE.EXIT:
-                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickExit);
-                    break;
-                case eUI_TYPE.NO:
-                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickNo);
-                    break;
-                case eUI_TYPE.HOST:
-                    thisButton.onClick.AddListener(Shared.ui_Manager.OnClickHost);
-                    break;
-            }
+            //thisButton.onClick.RemoveAllListeners();
+            thisButton.onClick.AddListener(Shared.ui_Manager.SetButtonListener(uiType));
+            Debug.Log($"{uiType} 의 버튼이 설정되었습니다.");
         }
         else
-            Debug.LogWarning("버튼이 없습니다.");
+            Debug.LogWarning($"버튼이 없습니다. UI타입: {uiType}");
     }
     public void SetOnClickAction(UnityAction action)
     {
@@ -133,7 +111,7 @@ public class UIBox : MonoBehaviour
             uiTransform = this.GetComponent<RectTransform>();
         if (Vertical)
         {
-            if (uiTransform.localPosition.y < 0)
+            if (uiType == eUI_TYPE.BOTTOMBAR)
                 uiTransform.anchoredPosition = new Vector2(uiTransform.anchoredPosition.x, -Screen.height);
             else
                 uiTransform.anchoredPosition = new Vector2(uiTransform.anchoredPosition.x, Screen.height);
@@ -164,7 +142,7 @@ public class UIBox : MonoBehaviour
             fading = true;
             StartCoroutine(Fade(false));
         }
-        Debug.Log("startIn");
+        //Debug.Log("startIn");
     }
 
     public void StartFadeOut()
@@ -174,7 +152,7 @@ public class UIBox : MonoBehaviour
             fading = true;
             StartCoroutine(Fade(true));
         }
-        Debug.Log("startOut");
+        //Debug.Log("startOut");
     }
 
     private IEnumerator Fade(bool fadeOutOrIn)
@@ -186,7 +164,7 @@ public class UIBox : MonoBehaviour
         {
             if(Vertical)
             {
-                if (uiTransform.localPosition.y < 0)
+                if (uiType == eUI_TYPE.BOTTOMBAR)
                     endPositon = new Vector2(uiTransform.anchoredPosition.x, -Screen.height);
                 else
                     endPositon = new Vector2(uiTransform.anchoredPosition.x, Screen.height);

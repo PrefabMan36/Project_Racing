@@ -14,7 +14,7 @@ public class Room_Manager : MonoBehaviour
     {
         Shared.room_Manager = this;
         DontDestroyOnLoad(this);
-
+        //PlayerPrefs.GetInt("TrackIndex", 6);
         InitailzeTrackList();
     }
 
@@ -42,6 +42,7 @@ public class Room_Manager : MonoBehaviour
             tempTrack.mapID = mapEnum[i];
             tempTrack.mapImage = mapImages[i];
             tempTrack.mapName = mapImages[i].name;
+            Debug.Log(tempTrack.mapEnum + tempTrack.mapID + tempTrack.mapImage.name);
             trackList.Add(mapEnum[i], tempTrack);
         }
     }
@@ -51,14 +52,12 @@ public class Room_Manager : MonoBehaviour
         return trackList.Count;
     }
 
-    public TrackSelect GetTrackSelect(int _trackNum)
-    {
-        return trackList[mapEnum[_trackNum]];
-    }
+    public TrackSelect GetTrackByNum(int _trackNum)
+    { return trackList[mapEnum[_trackNum]]; }
+    public TrackSelect GetTrackByIndex(int _trackIndex)
+    { return trackList[_trackIndex]; }
     public eSCENE GetTrackEnum(int _trackNum)
-    {
-        return trackList[_trackNum].mapEnum;
-    }
+    { return trackList[_trackNum].mapEnum; }
 
     public bool CheckTrack(int _trackNum)
     {

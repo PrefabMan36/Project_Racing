@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Setting_Manager : MonoBehaviour
 {
@@ -40,6 +41,7 @@ public class Setting_Manager : MonoBehaviour
         Shared.audioVolume = volume;
         AudioListener.volume = volume;
     }
+
     public void SetSettingMenu(GameObject menu)
     {
         setting_Menu = menu;

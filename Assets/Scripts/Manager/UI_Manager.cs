@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.Events;
 
 public class UI_Manager : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class UI_Manager : MonoBehaviour
 
     [SerializeField] private MenuPanel hostingMenu_Prefab;
     [SerializeField] private MenuPanel hostingMenu;
+
+    [SerializeField] private MenuPanel lobbyMenu_Prefab;
+    [SerializeField] private MenuPanel lobbyMenu;
 
     [SerializeField] private GameObject panel_Prefab;
     [SerializeField] private GameObject panel;
@@ -97,11 +101,11 @@ public class UI_Manager : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            OnClickPrevious();
+            onClickClose();
         }
         if (Input.GetKey(KeyCode.Backspace))
         {
-            OnClickOption();
+            OnClickPrevious();
         }
     }
 
@@ -187,6 +191,45 @@ public class UI_Manager : MonoBehaviour
     {
         return mainCanvas;
     }
+    public UnityAction SetButtonListener(eUI_TYPE buttonType)
+    {
+        UnityAction action = null;
+        switch (buttonType)
+        {
+            case eUI_TYPE.SETTING:
+                action = OnClickOption;
+                break;
+            case eUI_TYPE.PROFILESETTING:
+                action = Shared.setting_Manager.OnClickProfileChange;
+                break;
+            case eUI_TYPE.AUDIOSETTING:
+                action = Shared.setting_Manager.OnClickAudioSetting;
+                break;
+            case eUI_TYPE.PREVIOUS:
+                action = OnClickPrevious;
+                break;
+            case eUI_TYPE.EXIT:
+                action = OnClickExit;
+                break;
+            case eUI_TYPE.NO:
+                action = OnClickNo;
+                break;
+            case eUI_TYPE.HOST:
+                action = OnClickHost;
+                break;
+            case eUI_TYPE.CREATEROOM:
+                action = OnClickCreateRoom;
+                break;
+        }
+        if(action != null)
+            return action;
+        else
+        {
+            Debug.Log($"{buttonType}에 해당하는 버튼 메소드가 없습니다.");
+            return null;
+        }
+    }
+
     public ButtonData GetButtonData(eUI_TYPE BUTTON_TYPE)
     {
         if(buttons.ContainsKey(BUTTON_TYPE))
@@ -263,6 +306,7 @@ public class UI_Manager : MonoBehaviour
     public void OnClickHost()
     {
         Debug.Log("방 호스팅 버튼 클릭됨");
+        Shared.lobby_Network_Manager.SetCreateLobby();
         if (hostingMenu == null)
         {
             hostingMenu = Instantiate(hostingMenu_Prefab, mainCanvas.transform);
@@ -278,6 +322,18 @@ public class UI_Manager : MonoBehaviour
     public void OnClickCreateRoom()
     {
         Debug.Log("방 만들기 버튼 클릭됨");
+        if(lobbyMenu == null)
+        {
+            Lobby_Manager lobby_Manager;
+            lobbyMenu = Instantiate(lobbyMenu_Prefab, mainCanvas.transform);
+            lobby_Manager = lobbyMenu.GetComponent<Lobby_Manager>();
+            lobby_Manager.SetLobby(Server_Data.LobbyName, Server_Data.LobbyID, Server_Data.trackIndex);
+        }
+        if(!isPushMenu)
+        {
+            lobbyMenu.gameObject.SetActive(false);
+            StartCoroutine(PushMenu(lobbyMenu));
+        }
     }
 
     IEnumerator PushMenu(MenuPanel nextMenu)

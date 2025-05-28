@@ -10,6 +10,8 @@ public class Title_Manager : MonoBehaviour
     [SerializeField] private Canvas mainCanvas;
     [SerializeField] private Text LoginID;
 
+    [SerializeField] private GameObject fadeOut;
+
     private void Awake()
     {
         mainCanvas = FindAnyObjectByType<Canvas>();
@@ -17,17 +19,20 @@ public class Title_Manager : MonoBehaviour
 
     public void OnClickLogin()
     {
-        if (PlayerPrefs.HasKey("userName"))
+        if (PlayerPrefs.HasKey("Client_Username"))
         {
             Debug.Log("Profile exist: ");
-            Shared.UserName = PlayerPrefs.GetString("userName");
+            Client_Data.Username = PlayerPrefs.GetString("Client_Username");
+            CreateUserName createUserName = Instantiate(CreateUserMenu, mainCanvas.transform).GetComponent<CreateUserName>();
+            createUserName.SetTitleManager(this);
             //if (Check_ID(LoginID.text))
             //    Shared.mgr_Scene.ChangeScene(eSCENE.eSCENE_MAINMENU);
         }
         else
         {
             Debug.Log("Profile not exist: ");
-            Instantiate(CreateUserMenu, mainCanvas.transform);
+            CreateUserName createUserName = Instantiate(CreateUserMenu, mainCanvas.transform).GetComponent<CreateUserName>();
+            createUserName.SetTitleManager(this);
         }
     }
 
@@ -41,5 +46,10 @@ public class Title_Manager : MonoBehaviour
     public void RaceStart(eSCENE targetMap)
     {
         Debug.Log("Load Scene: " + targetMap);
+    }
+
+    public void OnClickStart()
+    {
+        fadeOut.SetActive(true);
     }
 }

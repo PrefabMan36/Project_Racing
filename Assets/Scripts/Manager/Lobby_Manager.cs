@@ -54,10 +54,11 @@ public class Lobby_Manager : MonoBehaviour
         SetMapInfoUI(manager.trackIndex);
     }
 
-    public void SetLobby(string _lobbyName, int _mapIndex)
+    public void SetLobby(string _lobbyName, int _lobbyID , int _mapIndex)
     {
         if (isSubscrribed) return;
         lobbyNameText.text = _lobbyName;
+        lobbyNumberText.text = _lobbyID.ToString();
         mainCanvas = Shared.ui_Manager.GetMainCanvas();
         SetMapInfoUI(_mapIndex);
         
@@ -135,7 +136,7 @@ public class Lobby_Manager : MonoBehaviour
 
     private void SetMapInfoUI(int _mapIndex)
     {
-        selectedTrack = Shared.room_Manager.GetTrackSelect(currentMapIndex);
+        selectedTrack = Shared.room_Manager.GetTrackByNum(currentMapIndex);
         trackImage.sprite = selectedTrack.mapImage;
         trackName.text = selectedTrack.mapName;
     }

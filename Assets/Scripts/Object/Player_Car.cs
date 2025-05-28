@@ -66,7 +66,7 @@ public class Player_Car : Car
     {
         Runner.SetIsSimulated(Object, true);// 시뮬레이션을 활성화합니다.
         if (HasInputAuthority)
-            SetName(Shared.UserName);// 플레이어 이름을 설정합니다.
+            SetName(Client_Data.Username);// 플레이어 이름을 설정합니다.
         gameManager = FindAnyObjectByType<MainGame_Manager>();// 게임 매니저를 찾습니다.
         gameManager.CarInit(this, HasInputAuthority);// 게임 매니저를 이용해 차량을 초기화합니다.
         networkObject = GetComponent<NetworkObject>();// 네트워크 오브젝트를 가져옵니다.

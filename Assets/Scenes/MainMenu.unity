@@ -290,6 +290,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 85530335}
   m_CullTransparentMesh: 1
+--- !u!1 &93996755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 93996756}
+  - component: {fileID: 93996757}
+  m_Layer: 0
+  m_Name: Network_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &93996756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93996755}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &93996757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93996755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 502d677b285467d4db0fc896d91d73db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager_Prefab: {fileID: 9215592636895891928, guid: 86064875e1334884ba578670f1e79571, type: 3}
+  playerPrefab: {fileID: 5549287013853622554, guid: aa2905dfe1e7e2a45a91377d1e8ba57a, type: 3}
+  gameMode: 0
 --- !u!1 &154508654
 GameObject:
   m_ObjectHideFlags: 0
@@ -2721,6 +2768,8 @@ MonoBehaviour:
   settingMenu: {fileID: 0}
   hostingMenu_Prefab: {fileID: 6642815644143083063, guid: 55528f99588dc0946b7eedff68f5f16d, type: 3}
   hostingMenu: {fileID: 0}
+  lobbyMenu_Prefab: {fileID: 6642815644143083063, guid: 224a393daf157e445bf1f1eb73d0618b, type: 3}
+  lobbyMenu: {fileID: 0}
   panel_Prefab: {fileID: 8215817661971195848, guid: 4331e8f86bc62f4409dbfb475d359dfd, type: 3}
   panel: {fileID: 0}
   tempMenu: {fileID: 0}
@@ -3418,6 +3467,7 @@ SceneRoots:
   - {fileID: 1710152510}
   - {fileID: 472920664}
   - {fileID: 732052750}
+  - {fileID: 93996756}
   - {fileID: 1381099503}
   - {fileID: 571482921}
   - {fileID: 1738993702}
