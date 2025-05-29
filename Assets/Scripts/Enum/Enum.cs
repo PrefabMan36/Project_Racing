@@ -55,6 +55,8 @@ public enum eUI_TYPE
     PROFILESETTING,
     AUDIOSETTING,
     CREATEROOM,
+    READY,
+    LEAVESESSION,
     NULL
 }
 

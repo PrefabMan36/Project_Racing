@@ -9,7 +9,7 @@ public class ProfileChange_CheckBox : MonoBehaviour
     public void SetUserName(string _userName)
     {
         userName = _userName;
-        boxText.text = $"이름을 **{userName}**(으)로 변경하시겠습니까?";
+        boxText.text = $"*{userName}*(으)로 변경하시겠습니까?";
     }
 
     public void OnClickYes()

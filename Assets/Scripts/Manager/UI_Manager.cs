@@ -12,7 +12,10 @@ public class UI_Manager : MonoBehaviour
 
     [SerializeField] private Stack<MenuPanel> menus = new Stack<MenuPanel>();
     [SerializeField] private Stack<GameObject> UIs = new Stack<GameObject>();
-    
+
+    [SerializeField] private GameObject clickBlocker_prefab;
+    [SerializeField] private GameObject clickBlocker;
+
     [SerializeField] private MenuPanel mainMenu_Prefab;
     [SerializeField] private MenuPanel mainMenu;
 
@@ -67,6 +70,7 @@ public class UI_Manager : MonoBehaviour
             "White Close 2.png",
             "White Backward 2.png",
             "White Person 2.png",
+            "White Flag.png",
             "Free Flat People 1 Icon.png",
             "Free Flat Move In Icon.png",
             "Free Flat Volume 3 Icon.png"
@@ -101,10 +105,7 @@ public class UI_Manager : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            onClickClose();
-        }
-        if (Input.GetKey(KeyCode.Backspace))
-        {
+            //OnClickClose();
             OnClickPrevious();
         }
     }
@@ -166,12 +167,22 @@ public class UI_Manager : MonoBehaviour
         buttonData.Description = "다른 플레이어가 참여할 수 있는 게임 세션을 만듭니다.";
         buttonData.Icon = GetLoadedIcon("White Check.png");
         buttons.Add(eUI_TYPE.CREATEROOM, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "준비";
+        buttonData.Description = "버튼을 눌러 준비 상태로 전환하세요.";
+        buttonData.Icon = GetLoadedIcon("White Flag.png");
+        buttons.Add(eUI_TYPE.READY, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "나가기";
+        buttonData.Description = "메인메뉴로 돌아갑니다.";
+        buttonData.Icon = GetLoadedIcon("White Backward 2.png");
+        buttons.Add(eUI_TYPE.LEAVESESSION, buttonData);
+
 
         mainMenu = Instantiate(mainMenu, mainCanvas.transform);
         mainMenu.SetButtonS_HorizontalSizeUP(50f);
         mainMenu.SetDistribute();
-        mainMenu.StartAllFadeIn();
-        menus.Push(mainMenu);
+        StartCoroutine(PushMenu(mainMenu));
 
         buttonData = new ButtonData();
         buttonData.Name = "";
@@ -220,6 +231,9 @@ public class UI_Manager : MonoBehaviour
             case eUI_TYPE.CREATEROOM:
                 action = OnClickCreateRoom;
                 break;
+            case eUI_TYPE.LEAVESESSION:
+                action = OnClickToMain;
+                break;
         }
         if(action != null)
             return action;
@@ -265,32 +279,41 @@ public class UI_Manager : MonoBehaviour
 
     public void OnClickNo()
     {
-        GameObject closePopup = UIs.Pop();
-        Destroy(closePopup.gameObject);
+        GameObject closePopup;
+        if (UIs.Count > 0)
+        {
+            closePopup = UIs.Pop();
+            Destroy(closePopup.gameObject);
+        }
+        else
+        {
+            Debug.LogError($"팝업 스택이 비어있습니다. Popup Count: {UIs.Count}");
+        }
     }
 
     public void RecivePopup(GameObject popup)
     {
-        UIs.Push(popup.gameObject);
+        UIs.Push(popup);
     }
 
     public void OnClickPrevious()
     {
         if (menus.Count > 1)
         {
-            MenuPanel previousMenu = menus.Pop();
-            previousMenu.StartPopDown();
-            if(previousMenu == settingMenu)
-                Shared.setting_Manager.CloseSetting();
-            menus.Peek().gameObject.SetActive(true);
-            menus.Peek().StartPopUp();
+            //MenuPanel previousMenu = menus.Pop();
+            //previousMenu.StartPopDown();
+            //if(previousMenu == settingMenu)
+            //    Shared.setting_Manager.CloseSetting();
+            //menus.Peek().gameObject.SetActive(true);
+            //menus.Peek().StartPopUp();
+            StartCoroutine(PopOut());
         }
         else
         {
             Debug.LogWarning("메뉴 스택이 비어있습니다.");
         }
     }
-    public void onClickClose()
+    public void OnClickClose()
     {
         Debug.Log("메뉴 닫기 버튼 클릭됨");
         int count = menus.Count;
@@ -303,6 +326,13 @@ public class UI_Manager : MonoBehaviour
         if(isInGame)
             panel.SetActive(false);
     }
+
+    public void OnClickToMain()
+    {
+        if (!isPushMenu)
+            StartCoroutine(FadeToMain());
+    }
+
     public void OnClickHost()
     {
         Debug.Log("방 호스팅 버튼 클릭됨");
@@ -339,7 +369,10 @@ public class UI_Manager : MonoBehaviour
     IEnumerator PushMenu(MenuPanel nextMenu)
     {
         WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        MenuPanel tempNextMenu = nextMenu;
         isPushMenu = true;
+        clickBlocker = Instantiate(clickBlocker_prefab, mainCanvas.transform);
+
         if (menus.Count > 0)
         {
             tempMenu = menus.Peek();
@@ -347,18 +380,29 @@ public class UI_Manager : MonoBehaviour
             tempMenu.StartAllFadeOut();
         }
 
-        while (tempMenuObject.activeSelf)
+        if(tempMenuObject != null)
+        {
+            while (tempMenuObject.activeSelf)
+                yield return waitForSeconds;
+        }
+
+        while (tempNextMenu.GetFading())
             yield return waitForSeconds;
 
+        Destroy(clickBlocker);
+        clickBlocker = null;
         menus.Push(nextMenu);
         nextMenu.gameObject.SetActive(true);
         nextMenu.StartAllFadeIn();
+        isPushMenu = false;
     }
 
     IEnumerator PopMenu(MenuPanel nextMenu)
     {
         WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        MenuPanel tempNextMenu = nextMenu;
         isPopMenu = true;
+        clickBlocker = Instantiate(clickBlocker_prefab, mainCanvas.transform);
 
         if (menus.Count > 0)
         {
@@ -367,15 +411,80 @@ public class UI_Manager : MonoBehaviour
             tempMenu.StartPopDown();
         }
 
-        //while (tempMenuObject.activeSelf)
-        //    yield return waitForSeconds;
+        if (tempMenuObject != null)
+        {
+            while (tempMenuObject.activeSelf)
+                yield return waitForSeconds;
+        }
+
+        while (tempNextMenu.GetFading())
+            yield return waitForSeconds;
+
+        Destroy(clickBlocker);
+        clickBlocker = null;
 
         menus.Push(nextMenu);
         nextMenu.gameObject.SetActive(true);
         nextMenu.StartPopUp();
 
+        isPopMenu = false;
+    }
+
+    IEnumerator PopOut()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        isPopMenu = true;
+        clickBlocker = Instantiate(clickBlocker_prefab, mainCanvas.transform);
+
+        if (menus.Count > 0)
+        {
+            tempMenu = menus.Pop();
+            tempMenuObject = tempMenu.gameObject;
+            tempMenu.StartPopDown();
+        }
+
         while (tempMenuObject.activeSelf)
             yield return waitForSeconds;
+
+        tempMenu = menus.Peek();
+        tempMenu.gameObject.SetActive(true);
+        tempMenu.StartPopUp();
+
+        while (tempMenu.GetPoping())
+            yield return waitForSeconds;
+
+        Destroy(clickBlocker);
+        clickBlocker = null;
         isPopMenu = false;
+    }
+
+    IEnumerator FadeToMain()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        clickBlocker = Instantiate(clickBlocker_prefab, mainCanvas.transform);
+        isPushMenu = true;
+        tempMenu = menus.Pop();
+        tempMenuObject = tempMenu.gameObject;
+        tempMenu.StartAllFadeOut();
+
+        while (tempMenuObject.activeSelf)
+            yield return waitForSeconds;
+        if (tempMenu == lobbyMenu)
+            Destroy(tempMenu);
+
+        while(menus.Peek() != mainMenu)
+            menus.Pop();
+
+        tempMenu = menus.Peek();
+        tempMenuObject = tempMenu.gameObject;
+        tempMenuObject.SetActive(true);
+        tempMenu.StartAllFadeIn();
+
+        while (tempMenu.GetFading())
+            yield return waitForSeconds;
+        Destroy(clickBlocker);
+        clickBlocker = null;
+
+        isPushMenu = false;
     }
 }

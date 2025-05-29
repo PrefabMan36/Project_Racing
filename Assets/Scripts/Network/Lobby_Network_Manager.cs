@@ -12,6 +12,7 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private Game_Manager gameManager_Prefab;
     [SerializeField] private LobbyPlayer playerPrefab;
+    [SerializeField] private GameObject networkObject;
     [SerializeField] private GameMode gameMode;
 
     public static eCONNECTIONSTATUS connectionstatus = eCONNECTIONSTATUS.DISCONNECTED;
@@ -53,6 +54,7 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 
         networkRunner.ProvideInput = gameMode != GameMode.Server;
         networkRunner.AddCallbacks(this);
+        networkObject = sessionObject;
         Debug.Log($"Created gameobject {sessionObject.name} - starting game");
         networkRunner.StartGame(new StartGameArgs
         {
@@ -146,6 +148,8 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
         if(networkRunner)
             Destroy(networkRunner.gameObject);
 
+        Destroy(networkObject);
+        networkObject = null;
         networkRunner = null;
     }
 

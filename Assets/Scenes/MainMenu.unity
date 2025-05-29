@@ -336,6 +336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager_Prefab: {fileID: 9215592636895891928, guid: 86064875e1334884ba578670f1e79571, type: 3}
   playerPrefab: {fileID: 5549287013853622554, guid: aa2905dfe1e7e2a45a91377d1e8ba57a, type: 3}
+  networkObject: {fileID: 0}
   gameMode: 0
 --- !u!1 &154508654
 GameObject:
@@ -2762,6 +2763,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCanvas: {fileID: 0}
+  clickBlocker_prefab: {fileID: 9012855813553188690, guid: d51bc51992dfd0541ac6138066093233, type: 3}
+  clickBlocker: {fileID: 0}
   mainMenu_Prefab: {fileID: 0}
   mainMenu: {fileID: 1962608333857117833, guid: 71cb4fd5df12f7944bb7f1c75bb15fe2, type: 3}
   settingMenu_Prefab: {fileID: 6642815644143083063, guid: 0c962a3b02d415f43961169ab8deb2dc, type: 3}
@@ -2770,7 +2773,7 @@ MonoBehaviour:
   hostingMenu: {fileID: 0}
   lobbyMenu_Prefab: {fileID: 6642815644143083063, guid: 224a393daf157e445bf1f1eb73d0618b, type: 3}
   lobbyMenu: {fileID: 0}
-  panel_Prefab: {fileID: 8215817661971195848, guid: 4331e8f86bc62f4409dbfb475d359dfd, type: 3}
+  panel_Prefab: {fileID: 9012855813553188690, guid: 666360a911146094d9483ed0c1d10903, type: 3}
   panel: {fileID: 0}
   tempMenu: {fileID: 0}
   tempMenuObject: {fileID: 0}

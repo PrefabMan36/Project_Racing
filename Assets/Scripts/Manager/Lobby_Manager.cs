@@ -31,6 +31,7 @@ public class Lobby_Manager : MonoBehaviour
     [SerializeField] private Button StartButton;
     [SerializeField] private Button readyButton;
     [SerializeField] private Button changeTrackButton;
+    [SerializeField] private Button quitButton;
 
     [SerializeField] private static readonly Dictionary<LobbyPlayer, LobbyItem> playerList = new Dictionary<LobbyPlayer, LobbyItem>();
     [SerializeField] private static bool isSubscrribed;
@@ -44,7 +45,13 @@ public class Lobby_Manager : MonoBehaviour
             var isHost = LobbyPlayer.localPlayer.isHost;
             StartButton.gameObject.SetActive(isHost);
             changeTrackButton.gameObject.SetActive(isHost);
+            changeTrackButton.onClick.AddListener(OnClickChangeTrack);
         };
+    }
+
+    private void Start()
+    {
+        quitButton.onClick.AddListener(Shared.lobby_Network_Manager.QuitSession);
     }
 
     private void OnLobbyUpdate(Game_Manager manager)
@@ -66,7 +73,7 @@ public class Lobby_Manager : MonoBehaviour
         LobbyPlayer.playerLeft += OnPlayerLeft;
         LobbyPlayer.PlayerChanged += OnPlayerReadyChanged;
 
-        readyButton.onClick.AddListener(ReadyListener);
+        readyButton.onClick.AddListener(OnClickReady);
 
         isSubscrribed = true;
     }
@@ -78,7 +85,7 @@ public class Lobby_Manager : MonoBehaviour
         LobbyPlayer.playerJoined -= OnPlayerJoined;
         LobbyPlayer.playerLeft -= OnPlayerLeft;
 
-        readyButton.onClick.RemoveListener(ReadyListener);
+        readyButton.onClick.RemoveListener(OnClickReady);
         isSubscrribed = false;
     }
 
@@ -109,7 +116,7 @@ public class Lobby_Manager : MonoBehaviour
         }
     }
 
-    private void ReadyListener()
+    private void OnClickReady()
     {
         var localPlayer = LobbyPlayer.localPlayer;
         if(localPlayer && localPlayer.Object && localPlayer.Object.IsValid)
@@ -136,7 +143,8 @@ public class Lobby_Manager : MonoBehaviour
 
     private void SetMapInfoUI(int _mapIndex)
     {
-        selectedTrack = Shared.room_Manager.GetTrackByNum(currentMapIndex);
+        currentMapIndex = _mapIndex;
+        selectedTrack = Shared.room_Manager.GetTrackByIndex(currentMapIndex);
         trackImage.sprite = selectedTrack.mapImage;
         trackName.text = selectedTrack.mapName;
     }
@@ -144,12 +152,10 @@ public class Lobby_Manager : MonoBehaviour
     { Shared.ui_Manager.RecivePopup(Instantiate(quitPopup, mainCanvas.transform)); }
     public void ForceStart()
     { Shared.ui_Manager.RecivePopup(Instantiate(forceStartPopup, mainCanvas.transform)); }
-    public void OnClickReady()
-    {
-        
-    }
     public void OnClickChangeCar()
     { Shared.ui_Manager.RecivePopup(Instantiate(changeCarPopup, mainCanvas.transform)); }
+    public void OnClickChangeTrack()
+    { Shared.ui_Manager.RecivePopup(Instantiate(changeTrackPopup, mainCanvas.transform)); }
     public void OnClickStart()
     {
     }

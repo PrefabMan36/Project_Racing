@@ -40,7 +40,7 @@ public class UIBox : MonoBehaviour
 
     public void SetOnClickAction()
     {
-        if (thisButton != null)
+        if (thisButton != null && uiType != eUI_TYPE.NULL)
         {
             //thisButton.onClick.RemoveAllListeners();
             thisButton.onClick.AddListener(Shared.ui_Manager.SetButtonListener(uiType));
@@ -118,7 +118,7 @@ public class UIBox : MonoBehaviour
         }
         else
         {
-            if (uiTransform.anchoredPosition.x < 0)
+            if (uiTransform.localPosition.x < 0)
                 uiTransform.anchoredPosition = new Vector2(-Screen.width, uiTransform.anchoredPosition.y);
             else
                 uiTransform.anchoredPosition = new Vector2(Screen.width, uiTransform.anchoredPosition.y);
@@ -180,14 +180,14 @@ public class UIBox : MonoBehaviour
         else
         {
             if (Vertical)
-                endPositon = new Vector2(uiTransform.anchoredPosition.x, originY);
+                endPositon = new Vector2(uiTransform.anchoredPosition.x, originY - 5);
             else
                 endPositon = new Vector2(originX, uiTransform.anchoredPosition.y);
         }
-        while (fadeTime < 0.45f)
+        while (fadeTime < 0.25f)
         {
             yield return waitForSeconds;
-            uiTransform.anchoredPosition = Vector2.Lerp(startPositon, endPositon, fadeTime / 0.45f);
+            uiTransform.anchoredPosition = Vector2.Lerp(startPositon, endPositon, fadeTime / 0.25f);
             fadeTime += Shared.frame30;
         }
         fading = false;

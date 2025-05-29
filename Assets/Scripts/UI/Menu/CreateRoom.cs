@@ -15,10 +15,10 @@ public class CreateRoom : MonoBehaviour
     private void Awake()
     {
         CreateButtons();
-        SelectMap(currentMapIndex);
         sessionInput.text = Server_Data.LobbyName = "session" + Random.Range(0,1000);
         Server_Data.trackIndex = currentMapIndex;
         Server_Data.UserCapacity = 4;
+        SelectMap(currentMapIndex);
     }
 
     private void CreateButtons()
@@ -46,6 +46,7 @@ public class CreateRoom : MonoBehaviour
         currentMapIndex = _num;
         currentMapImage.sprite = Shared.room_Manager.GetSprite(currentMapIndex);
         Server_Data.serverTrack = Shared.room_Manager.GetTrackByIndex(currentMapIndex);
+        Server_Data.trackIndex = _num;
     }
 
     private bool _lobbyIsValid;
@@ -59,6 +60,7 @@ public class CreateRoom : MonoBehaviour
     {
         if (_lobbyIsValid)
         {
+            Server_Data.LobbyName = sessionInput.text;
             Shared.lobby_Network_Manager.JoinOrCreateLobby();
             _lobbyIsValid = false;
         }

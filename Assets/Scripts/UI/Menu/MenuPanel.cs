@@ -203,13 +203,19 @@ public class MenuPanel : MonoBehaviour
                 yield return waitForSeconds;
             }
         }
-        fadeStarted = false;
-        if(fadeOutOrIn)
+        
+        if (fadeOutOrIn)
         {
-            while(!topBar.fadeFinish)
+            while (!topBar.fadeFinish)
                 yield return waitForSeconds;
             gameObject.SetActive(false);
         }
+        else
+        {
+            while (!topBar.fadeFinish)
+                yield return waitForSeconds;
+        }
+        fadeStarted = false;
         Debug.Log("Fade Complete");
     }
     private IEnumerator Poping(bool UpOrDown)
@@ -250,11 +256,17 @@ public class MenuPanel : MonoBehaviour
                     buttonS[i].StartFadeOut();
             }
         }
+        
         if (!UpOrDown)
         {
             while (!topBar.fadeFinish)
                 yield return waitForSeconds;
             gameObject.SetActive(false);
+        }
+        else
+        {
+            while (topBar.fadeFinish)
+                yield return waitForSeconds;
         }
         PopStarted = false;
     }
@@ -275,5 +287,14 @@ public class MenuPanel : MonoBehaviour
                 buttonS[i].ForceOut();
         }
         gameObject.SetActive(false);
+    }
+
+    public bool GetFading()
+    {
+        return fadeStarted;
+    }
+    public bool GetPoping()
+    {
+        return PopStarted;
     }
 }
