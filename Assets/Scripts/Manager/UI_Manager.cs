@@ -38,7 +38,7 @@ public class UI_Manager : MonoBehaviour
 
     [SerializeField] private bool isPopMenu = false;
     [SerializeField] private bool isPushMenu = false;
-    [SerializeField] private bool isInGame = false;
+    [SerializeField] public bool isInGame = false;
 
     private Dictionary<eUI_TYPE, ButtonData> buttons = new Dictionary<eUI_TYPE, ButtonData>();
     private Dictionary<string, Sprite> icons = new Dictionary<string, Sprite>();
@@ -73,7 +73,8 @@ public class UI_Manager : MonoBehaviour
             "White Flag.png",
             "Free Flat People 1 Icon.png",
             "Free Flat Move In Icon.png",
-            "Free Flat Volume 3 Icon.png"
+            "Free Flat Volume 3 Icon.png",
+            "icon_achievement.png"
         };
         foreach (string filename in iconFilenames)
         {
@@ -177,6 +178,11 @@ public class UI_Manager : MonoBehaviour
         buttonData.Description = "메인메뉴로 돌아갑니다.";
         buttonData.Icon = GetLoadedIcon("White Backward 2.png");
         buttons.Add(eUI_TYPE.LEAVESESSION, buttonData);
+        buttonData = new ButtonData();
+        buttonData.Name = "레이스 시작";
+        buttonData.Description = "지금 바로 레이스를 시작합니다.";
+        buttonData.Icon = GetLoadedIcon("icon_achievement.png");
+        buttons.Add(eUI_TYPE.RACESTART, buttonData);
 
 
         mainMenu = Instantiate(mainMenu, mainCanvas.transform);
@@ -316,14 +322,28 @@ public class UI_Manager : MonoBehaviour
     public void OnClickClose()
     {
         Debug.Log("메뉴 닫기 버튼 클릭됨");
-        int count = menus.Count;
-        MenuPanel menu;
-        for (int i = 0; i < count; i++)
+        int count;
+        if(menus.Count > 0)
         {
-            menu = menus.Pop();
-            menu.ForceOut();
+            count = menus.Count;
+            MenuPanel menu;
+            for (int i = 0; i < count; i++)
+            {
+                menu = menus.Pop();
+                menu.ForceOut();
+            }
         }
-        if(isInGame)
+        if(UIs.Count > 0)
+        {
+            count = UIs.Count;
+            GameObject popUp;
+            for (int i = 0; i < count; i++)
+            {
+                popUp = UIs.Pop();
+                Destroy(popUp);
+            }
+        }
+        if (isInGame)
             panel.SetActive(false);
     }
 
@@ -469,8 +489,11 @@ public class UI_Manager : MonoBehaviour
 
         while (tempMenuObject.activeSelf)
             yield return waitForSeconds;
-        if (tempMenu == lobbyMenu)
-            Destroy(tempMenu);
+        if(lobbyMenu != null)
+        {
+            Destroy(lobbyMenu.gameObject);
+            lobbyMenu = null;
+        }
 
         while(menus.Peek() != mainMenu)
             menus.Pop();

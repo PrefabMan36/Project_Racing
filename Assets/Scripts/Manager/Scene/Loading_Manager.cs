@@ -12,7 +12,7 @@ public class Loading_Manager : MonoBehaviour
     void Start()
     {
         nextScene = Shared.scene_Manager.GetNextScene();
-        StartCoroutine("LoadScene");
+        StartCoroutine(LoadScene());
     }
     IEnumerator LoadScene()
     {

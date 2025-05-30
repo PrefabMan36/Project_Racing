@@ -15,9 +15,9 @@ public class CreateRoom : MonoBehaviour
     private void Awake()
     {
         CreateButtons();
-        sessionInput.text = Server_Data.LobbyName = "session" + Random.Range(0,1000);
         Server_Data.trackIndex = currentMapIndex;
         Server_Data.UserCapacity = 4;
+        RandomizeSession();
         SelectMap(currentMapIndex);
     }
 
@@ -35,6 +35,15 @@ public class CreateRoom : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        RandomizeSession();
+    }
+    private void OnDisable()
+    {
+        sessionInput.text = string.Empty;
+    }
+
     public void SelectMap(int _num)
     {
         if (!Shared.room_Manager.CheckTrack(_num))
@@ -42,7 +51,6 @@ public class CreateRoom : MonoBehaviour
             Debug.LogError($"해당하는 맵이 존재 하지 않습니다 {_num}");
             return;
         }
-        Server_Data.LobbyID = Random.Range(10000000, 99999999);
         currentMapIndex = _num;
         currentMapImage.sprite = Shared.room_Manager.GetSprite(currentMapIndex);
         Server_Data.serverTrack = Shared.room_Manager.GetTrackByIndex(currentMapIndex);
@@ -64,5 +72,11 @@ public class CreateRoom : MonoBehaviour
             Shared.lobby_Network_Manager.JoinOrCreateLobby();
             _lobbyIsValid = false;
         }
+    }
+    private void RandomizeSession()
+    {
+        if(sessionInput.text == string.Empty)
+            sessionInput.text = Server_Data.LobbyName = "session" + Random.Range(0, 1000);
+        Server_Data.LobbyID = Random.Range(10000000, 99999999);
     }
 }

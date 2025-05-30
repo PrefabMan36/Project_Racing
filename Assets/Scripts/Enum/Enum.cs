@@ -57,6 +57,7 @@ public enum eUI_TYPE
     CREATEROOM,
     READY,
     LEAVESESSION,
+    RACESTART,
     NULL
 }
 

@@ -18,6 +18,7 @@ public class Player_Car : Car
     [SerializeField] private int ID;
     [SerializeField] private NetworkId playerId;
     [SerializeField] private string playerName;
+    [SerializeField] public LobbyPlayer lobbyUser;
 
     public Vector3 inputCheck;
 

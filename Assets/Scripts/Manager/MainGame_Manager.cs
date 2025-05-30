@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainGame_Manager : NetworkBehaviour
 {
     [SerializeField] private bool gameStart = false;
+    [SerializeField] NetworkRunner networkRunner;
 
     [SerializeField] private Player_Car playerCar;
     [SerializeField] private Player_Car[] playerCars = new Player_Car[4];
@@ -17,7 +19,10 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private Dictionary<int, NetworkId> playersID = new Dictionary<int, NetworkId>();
     [SerializeField] private byte playerNumber = 0;
 
-    [Networked, SerializeField] private float gameTimer { get; set; } = 0;
+    [SerializeField] private Transform[] spawnPosition;
+    [SerializeField] private Player_Car[] playerCarPrefab;
+
+    [Networked, SerializeField] private float gameTimer { get; set; }
     [SerializeField] private TimeSpan gameTimeSpan;
     [SerializeField] private DateTime gameTime;
 
@@ -77,36 +82,83 @@ public class MainGame_Manager : NetworkBehaviour
     private Color thirdPlaceColor = new Color(0.815f, 0.486f, 0.222f, 0.7f); // 3등 색상 (브론즈)
     private Color defaultColor = new Color(0.65f, 0.65f, 0.65f, 0.8f); // 그 외 등수 색상 또는 기본 색상
 
-    [SerializeField]private bool GameStart = false;
-
     private void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.Escape))
         {
             ExitGame();
         }
-        if(gameStart)
-        {
-            gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
-            gameTime = DateTime.Today.Add(gameTimeSpan);
-            timerText.text = gameTime.ToString("mm':'ss'.'ff");
-            //timerText.text = string.Format("{0:0.00}", gameTimer);
-        }
+        //if(gameTimer.IsRunning)
+        //{
+        //    gameTimeSpan = TimeSpan.FromSeconds(gameTimer.RemainingTime());
+        //    gameTime = DateTime.Today.Add(gameTimeSpan);
+        //    timerText.text = gameTime.ToString("mm':'ss'.'ff");
+        //}
+        //if(Input.GetKey(KeyCode.Return))
+        //{
+        //    if (Runner.GameMode == GameMode.Host)
+        //    {
+        //        foreach (LobbyPlayer player in LobbyPlayer.players)
+        //            SpawnPlayer(Runner, player);
+        //    }
+        //}
     }
 
-    private void Start()
+    private void Awake()
     {
         for (int i = 0; i < rankPositons.Length; i++)
         {
             rankTargetPositions[i] = rankPositons[i].position;
         }
         LoadAndSetupTrack();
+        if (networkRunner == null)
+            networkRunner = GameObject.Find("Session").GetComponent<NetworkRunner>();
     }
 
+    private void Start()
+    {
+        if (networkRunner.GameMode == GameMode.Host)
+        {
+            foreach (LobbyPlayer player in LobbyPlayer.players)
+                SpawnPlayer(networkRunner, player);
+        }
+    }
 
+    public override void Spawned()
+    {
+        base.Spawned();
+        var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+        var sceneInfo = new NetworkSceneInfo();
+        if (scene.IsValid)
+            sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+        //if (LobbyPlayer.localPlayer.isHost)
+        //    gameTimer = TickTimer.CreateFromSeconds(networkRunner, 0f);
+    }
+
+    public void SpawnPlayer(NetworkRunner runner, LobbyPlayer player)
+    {
+        var index = LobbyPlayer.players.IndexOf(player);
+        var point = spawnPosition[index];
+
+        var profabID = player.carIndex;
+        var prefab = playerCarPrefab[index];
+
+        var entity = runner.Spawn(
+            prefab,
+            point.position,
+            point.rotation,
+            player.Object.InputAuthority
+            );
+
+        entity.lobbyUser = player;
+        player.gameState = eGAMESTATE.GAMEREADY;
+        player.car = entity;
+        entity.transform.name = player.playerName.Value;
+    }
+    
     public override void FixedUpdateNetwork()
     {
-        if (Runner.IsServer)
+        if (gameStart)
         {
             gameTimer += Runner.DeltaTime;
         }
@@ -139,7 +191,7 @@ public class MainGame_Manager : NetworkBehaviour
 
     public void CarInit(Player_Car spawnedCar, bool localPlayer)
     {
-        if(!GameStart) gameStart = true;
+        if(!gameStart) gameStart = true;
         playerCar = spawnedCar;
         if (localPlayer)
         {
@@ -237,7 +289,6 @@ public class MainGame_Manager : NetworkBehaviour
         }
         playerCar.Init();
     }
-
     public void OnJoinPlayer(NetworkObject networkPlayerObject)
     {
         playersID[playerNumber] = networkPlayerObject.Id;

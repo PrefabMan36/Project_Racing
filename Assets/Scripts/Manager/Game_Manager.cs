@@ -19,7 +19,7 @@ public class Game_Manager : NetworkBehaviour
 
     [Networked] public NetworkString<_32> lobbyName { get; set; }
     [Networked] public int lobbyID { get; set; }
-    [Networked] public int trackIndex { get; set; }
+    [Networked, SerializeField] public int trackIndex { get; set; }
     [Networked] public int MaxUsers { get; set; }
 
     private static void OnLobbyChangedCallback(Game_Manager manager)

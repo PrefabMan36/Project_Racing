@@ -721,7 +721,7 @@ MonoBehaviour:
   - {fileID: 8529696343038306706}
   - {fileID: 648499886237708000}
   - {fileID: 5617902250898127254}
-  buttonSType: 0d0000000c0000000d000000
+  buttonSType: 0e0000000c0000000f000000
   buttonS_Positon:
   - {x: 0, y: 0}
   - {x: 0, y: 0}

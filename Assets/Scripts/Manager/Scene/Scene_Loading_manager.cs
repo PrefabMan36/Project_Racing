@@ -13,9 +13,10 @@ public partial class Scene_manager : MonoBehaviour
     {
         if (curScene == _nextScene)
             return;
+        Shared.ui_Manager.OnClickClose();
         curScene = _nextScene;
         nextScene = (int)_nextScene;
-        SceneManager.LoadScene("Loading");
+        SceneManager.LoadScene(1);
     }
     public int GetNextScene()
     {

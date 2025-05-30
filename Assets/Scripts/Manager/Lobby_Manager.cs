@@ -44,6 +44,7 @@ public class Lobby_Manager : MonoBehaviour
         {
             var isHost = LobbyPlayer.localPlayer.isHost;
             StartButton.gameObject.SetActive(isHost);
+            StartButton.onClick.AddListener(OnClickStart);
             changeTrackButton.gameObject.SetActive(isHost);
             changeTrackButton.onClick.AddListener(OnClickChangeTrack);
         };
@@ -150,13 +151,25 @@ public class Lobby_Manager : MonoBehaviour
     }
     public void OnClickLeaveSession()
     { Shared.ui_Manager.RecivePopup(Instantiate(quitPopup, mainCanvas.transform)); }
+    //public void ForceStart()
+    //{ Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex)); }
     public void ForceStart()
-    { Shared.ui_Manager.RecivePopup(Instantiate(forceStartPopup, mainCanvas.transform)); }
+    {
+        Shared.ui_Manager.isInGame = true;
+        Shared.ui_Manager.OnClickClose();
+        Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex));
+    }
     public void OnClickChangeCar()
     { Shared.ui_Manager.RecivePopup(Instantiate(changeCarPopup, mainCanvas.transform)); }
     public void OnClickChangeTrack()
     { Shared.ui_Manager.RecivePopup(Instantiate(changeTrackPopup, mainCanvas.transform)); }
     public void OnClickStart()
     {
+        if(!IsAllReady())
+        {
+            Shared.ui_Manager.RecivePopup(Instantiate(forceStartPopup, mainCanvas.transform));
+        }
+        else
+            ForceStart();
     }
 }

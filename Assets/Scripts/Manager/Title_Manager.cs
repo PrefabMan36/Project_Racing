@@ -23,8 +23,9 @@ public class Title_Manager : MonoBehaviour
         {
             Debug.Log("Profile exist: ");
             Client_Data.Username = PlayerPrefs.GetString("Client_Username");
-            CreateUserName createUserName = Instantiate(CreateUserMenu, mainCanvas.transform).GetComponent<CreateUserName>();
-            createUserName.SetTitleManager(this);
+            OnClickStart();
+            //CreateUserName createUserName = Instantiate(CreateUserMenu, mainCanvas.transform).GetComponent<CreateUserName>();
+            //createUserName.SetTitleManager(this);
             //if (Check_ID(LoginID.text))
             //    Shared.mgr_Scene.ChangeScene(eSCENE.eSCENE_MAINMENU);
         }

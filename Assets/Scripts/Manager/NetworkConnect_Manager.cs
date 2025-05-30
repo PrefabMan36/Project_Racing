@@ -40,18 +40,6 @@ public class NetworkConnect_Manager : SimulationBehaviour, INetworkRunnerCallbac
             });
         }
     }
-
-    private void OnGUI()
-    {
-        if (runner == null)
-        {
-            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
-                StartGame(GameMode.Host);
-            if(GUI.Button(new Rect(0,40,200,40), "Join"))
-                StartGame(GameMode.Client);
-        }
-    }
-
     public void OnEnable()
     {
         if(runner != null)

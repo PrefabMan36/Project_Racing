@@ -5,6 +5,7 @@ using System.Data;
 using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -51,6 +52,9 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
         networkRunner = sessionObject.AddComponent<NetworkRunner>();
         var sim3D = sessionObject.AddComponent<RunnerSimulatePhysics3D>();
         sim3D.ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateAlways;
+        //networkRunner.AddComponent<NetworkObject>();
+        //networkRunner.AddComponent<Input_Manager>();
+        networkRunner.ProvideInput = true;
 
         networkRunner.ProvideInput = gameMode != GameMode.Server;
         networkRunner.AddCallbacks(this);
@@ -160,7 +164,33 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
     { }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
-    { }
+    {
+        var inputData = new NetworkInputManager();
+        inputData.direction.x = Input.GetAxis("Horizontal");
+        inputData.direction.y = Input.GetAxis("Vertical");
+        inputData.direction.z = Input.GetAxis("Clutch");
+        inputData.sideBraking = Input.GetAxis("Jump") > 0 ? true : false;
+        inputData.boosting = Input.GetKey(KeyCode.RightShift);
+        inputData.gearUP = Input.GetKey(KeyCode.LeftShift);
+        inputData.gearDOWN = Input.GetKey(KeyCode.LeftControl);
+        inputData.forceGear = 0;
+        if (Input.GetKey(KeyCode.Keypad0))
+            inputData.forceGear = 1;
+        if (Input.GetKey(KeyCode.Keypad1))
+            inputData.forceGear = 2;
+        if (Input.GetKey(KeyCode.Keypad2))
+            inputData.forceGear = 3;
+        if (Input.GetKey(KeyCode.Keypad3))
+            inputData.forceGear = 4;
+        if (Input.GetKey(KeyCode.Keypad4))
+            inputData.forceGear = 5;
+        if (Input.GetKey(KeyCode.Keypad5))
+            inputData.forceGear = 6;
+        if (Input.GetKey(KeyCode.Keypad6))
+            inputData.forceGear = 7;
+
+        input.Set(inputData);
+    }
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     { }
