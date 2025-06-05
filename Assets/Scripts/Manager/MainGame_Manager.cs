@@ -19,7 +19,9 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private Dictionary<int, NetworkId> playersID = new Dictionary<int, NetworkId>();
     [SerializeField] private byte playerNumber = 0;
 
-    [SerializeField] private Transform[] spawnPosition;
+    [SerializeField] private Transform[] spawnPosition = new Transform[4];
+    [SerializeField] private float spawnPointSpacing = 2.5f;
+    [SerializeField] private float spawnPointVerticalOffset = 0.5f;
     [SerializeField] private Player_Car[] playerCarPrefab;
 
     [Networked, SerializeField] private float gameTimer { get; set; }
@@ -58,10 +60,11 @@ public class MainGame_Manager : NetworkBehaviour
 
     private string trackName = "City_Night";
     [SerializeField] private TrackData tracksData;
-    [SerializeField] private int lastCheckPoint = 0;
+    [SerializeField] private int lastCheckPointIndex = 0;
     [SerializeField] private CheckPoint checkPoint_Prefab;
     [SerializeField] private CheckPoint tempCheckPoint;
     [SerializeField] private CheckPoint firstCheckPoint;
+    [SerializeField] private CheckPoint lastCheckPoint;
     [SerializeField] private CheckPoint checkPoint;
     [SerializeField] private int maxLaps = 1;
 
@@ -88,9 +91,9 @@ public class MainGame_Manager : NetworkBehaviour
         {
             ExitGame();
         }
-        //if(gameTimer.IsRunning)
+        //if (gameStart)
         //{
-        //    gameTimeSpan = TimeSpan.FromSeconds(gameTimer.RemainingTime());
+        //    gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
         //    gameTime = DateTime.Today.Add(gameTimeSpan);
         //    timerText.text = gameTime.ToString("mm':'ss'.'ff");
         //}
@@ -104,26 +107,6 @@ public class MainGame_Manager : NetworkBehaviour
         //}
     }
 
-    private void Awake()
-    {
-        for (int i = 0; i < rankPositons.Length; i++)
-        {
-            rankTargetPositions[i] = rankPositons[i].position;
-        }
-        LoadAndSetupTrack();
-        if (networkRunner == null)
-            networkRunner = GameObject.Find("Session").GetComponent<NetworkRunner>();
-    }
-
-    private void Start()
-    {
-        if (networkRunner.GameMode == GameMode.Host)
-        {
-            foreach (LobbyPlayer player in LobbyPlayer.players)
-                SpawnPlayer(networkRunner, player);
-        }
-    }
-
     public override void Spawned()
     {
         base.Spawned();
@@ -131,6 +114,19 @@ public class MainGame_Manager : NetworkBehaviour
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+        MainCanvas = Shared.ui_Manager.GetMainCanvas();
+        for (int i = 0; i < rankPositons.Length; i++)
+        {
+            rankTargetPositions[i] = Instantiate(rankPositons[i], MainCanvas.transform).position;
+        }
+        if (networkRunner == null)
+            networkRunner = GameObject.Find("Session").GetComponent<NetworkRunner>();
+        LoadAndSetupTrack();
+        if (networkRunner.GameMode == GameMode.Host)
+        {
+            foreach (LobbyPlayer player in LobbyPlayer.players)
+                SpawnPlayer(networkRunner, player);
+        }
         //if (LobbyPlayer.localPlayer.isHost)
         //    gameTimer = TickTimer.CreateFromSeconds(networkRunner, 0f);
     }
@@ -171,22 +167,53 @@ public class MainGame_Manager : NetworkBehaviour
         {
             for (int i = 0; i < tracksData.Checkpoints.Count; i++)
             {
-                CheckPoint checkPoint = Instantiate(checkPoint_Prefab);
+                CheckPoint checkPoint = networkRunner.Spawn(checkPoint_Prefab);
                 checkPoint.SetCheckPointIndex(this, i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale);
                 if (i > 0)
                 {
                     tempCheckPoint.SetNextCheckPoint(checkPoint);
                 }
                 tempCheckPoint = checkPoint;
-                if(i == 0)
+                if (i == 0)
+                {
                     firstCheckPoint = checkPoint;
-                lastCheckPoint = i + 1;
+                }
+                lastCheckPointIndex = i + 1;
+                lastCheckPoint = checkPoint;
+                GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
             }
         }
         else
         {
             Debug.LogError("Failed to load track data.");
         }
+    }
+
+    private void GenerateSpawnPointsFromCheckpoint(CheckPoint referenceCheckpoint)
+    {
+        if (referenceCheckpoint == null)
+        {
+            Debug.LogError("Cannot generate spawn points: referenceCheckpoint is null.");
+            return;
+        }
+        Transform checkpointTransform = referenceCheckpoint.transform;
+        float initialOffset = -((spawnPosition.Length - 1) * spawnPointSpacing) / 2.0f;
+        for (int i = 0; i < spawnPosition.Length; i++)
+        {
+            Vector3 horizontalOffset = checkpointTransform.right * (initialOffset + (i * spawnPointSpacing));
+            Vector3 verticalOffsetVector = checkpointTransform.up * spawnPointVerticalOffset;
+
+            Vector3 spawnPos = checkpointTransform.position + horizontalOffset + verticalOffsetVector;
+            Quaternion spawnRot = checkpointTransform.rotation;
+
+            GameObject spGO = new GameObject($"DynamicSpawnPoint_{i}");
+            spGO.transform.position = spawnPos;
+            spGO.transform.rotation = spawnRot;
+            spGO.transform.SetParent(this.transform);
+
+            spawnPosition[i] = spGO.transform;
+        }
+        Debug.Log($"Generated {spawnPosition.Length} spawn points from the first checkpoint.");
     }
 
     public void CarInit(Player_Car spawnedCar, bool localPlayer)
@@ -321,7 +348,7 @@ public class MainGame_Manager : NetworkBehaviour
             if (!isLocalLapTimeDiffShowing)
                 StartCoroutine(ShowLocalLapTimeDifference(diffTime2));
         }
-        if (lastCheckPoint == checkPointIndex)
+        if (lastCheckPointIndex == checkPointIndex)
         {
             _playerCar.SetCheckPoint(1);
             short tempLap = _playerCar.GetLap();

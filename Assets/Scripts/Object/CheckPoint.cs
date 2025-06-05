@@ -19,6 +19,15 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private CheckPoint nextCheckPoint;
     [SerializeField] private GameObject[] circles;
 
+    public override void Spawned()
+    {
+        base.Spawned();
+        localCheckPointTime = 9999999f;
+        currentLap = 0;
+        tempTimer = 0;
+        checkPointIndex = 0;
+    }
+
     public void SetCheckPointIndex(MainGame_Manager gameManager, int index, Vector3 position, Vector3 rotation, Vector3 boxSize)
     {
         checkPointCollider = gameObject.GetComponent<BoxCollider>();

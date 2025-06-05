@@ -158,6 +158,7 @@ public class Lobby_Manager : MonoBehaviour
         Shared.ui_Manager.isInGame = true;
         Shared.ui_Manager.OnClickClose();
         Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex));
+        Shared.lobby_Network_Manager.OnStartRace();
     }
     public void OnClickChangeCar()
     { Shared.ui_Manager.RecivePopup(Instantiate(changeCarPopup, mainCanvas.transform)); }

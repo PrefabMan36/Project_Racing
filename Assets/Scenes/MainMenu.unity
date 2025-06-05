@@ -336,6 +336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager_Prefab: {fileID: 9215592636895891928, guid: 86064875e1334884ba578670f1e79571, type: 3}
   playerPrefab: {fileID: 5549287013853622554, guid: aa2905dfe1e7e2a45a91377d1e8ba57a, type: 3}
+  mainGame_Manager_Prefab: {fileID: 4724643925105132534, guid: f56a5a2a70212a947a49b881d42b0137, type: 3}
   networkObject: {fileID: 0}
   gameMode: 0
 --- !u!1 &154508654

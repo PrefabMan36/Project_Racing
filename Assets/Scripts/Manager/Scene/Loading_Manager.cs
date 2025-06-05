@@ -35,6 +35,7 @@ public class Loading_Manager : MonoBehaviour
                 if (progressBar.value >= 1.0f)
                 {
                     op.allowSceneActivation = true;
+                    Shared.scene_Manager.SetCurrentScene((eSCENE)nextScene);
                     yield break;
                 }
             }

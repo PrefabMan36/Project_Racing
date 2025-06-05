@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &570959864215575613
+--- !u!1 &1284401003105587848
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3357794852697075842}
-  - component: {fileID: 3137626006388376962}
-  - component: {fileID: 8716157373942517135}
+  - component: {fileID: 2251936397002014767}
+  - component: {fileID: 4724643925105132534}
+  - component: {fileID: 190380100839616690}
   m_Layer: 0
   m_Name: MainGame_Manager
   m_TagString: Untagged
@@ -18,13 +18,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3357794852697075842
+--- !u!4 &2251936397002014767
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 570959864215575613}
+  m_GameObject: {fileID: 1284401003105587848}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,58 +33,94 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3137626006388376962
+--- !u!114 &4724643925105132534
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 570959864215575613}
+  m_GameObject: {fileID: 1284401003105587848}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 293326dbf00041845b4d1988d486bebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameStart: 0
+  networkRunner: {fileID: 0}
   playerCar: {fileID: 0}
+  playerCars:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   localPlayer: {fileID: 0}
-  playersID:
-  - Raw: 0
-  - Raw: 0
-  - Raw: 0
-  - Raw: 0
   playerNumber: 0
-  gameTimer: 0
+  spawnPosition:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  playerCarPrefab:
+  - {fileID: 1982242415706992608, guid: 7b367dccc659de64b8c4d882ca0505fc, type: 3}
+  _gameTimer: 0
+  _rank:
+    _items: []
   MainCamera_Prefab: {fileID: 7916578112111094242, guid: ead7127616435bd43bcabcaa12a9bcc9, type: 3}
-  MainCamera: {fileID: 0}
-  MainCanvas: {fileID: 0}
-  NitroBar_Prefab: {fileID: 8717058668016222255, guid: e8d2fe6a3cf99304f8de0aa0518435bd, type: 3}
-  NitroBar: {fileID: 0}
   rpmGauge_Prefab: {fileID: 1899898029282573489, guid: 45faa3b313ff9314fa64ee051a2a8ddd, type: 3}
+  NitroBar_Prefab: {fileID: 8717058668016222255, guid: e8d2fe6a3cf99304f8de0aa0518435bd, type: 3}
+  MainCanvas: {fileID: 0}
+  MainCamera: {fileID: 0}
+  NitroBar: {fileID: 0}
   rpmGauge: {fileID: 0}
-  Timer_Prefab: {fileID: 0}
-  lapTimeDiff_Prefab: {fileID: 0}
+  Timer_Prefab: {fileID: 4071485398521214082, guid: 68714215f57b4674eb9f0144ce0408d5, type: 3}
+  lapTimeDiff_Prefab: {fileID: 3605015200353227365, guid: 111ae863470ede0418596bc1fc9c8941, type: 3}
+  localLapTimeDiff_Prefab: {fileID: 3605015200353227365, guid: 6aaf38d137a55c74984eeaef5c0742b5, type: 3}
   timerImage: {fileID: 0}
   timerText: {fileID: 0}
   lapTimeDiffImage: {fileID: 0}
+  localLapTimeDiffImage: {fileID: 0}
   lapTimeDiffText: {fileID: 0}
+  localLapTimeDiffText: {fileID: 0}
   isLapTimeDiffShowing: 0
+  isLocalLapTimeDiffShowing: 0
   lapTimeDiffTimer: 0
---- !u!114 &8716157373942517135
+  localLapTimeDiffTimer: 0
+  diffTime1: 0
+  diffTime2: 0
+  bestLapTime: 0
+  lastCheckPoint: 0
+  checkPoint_Prefab: {fileID: 4090549688898884965, guid: 4dca9df325b93df44b0c5f3594bfa19d, type: 3}
+  tempCheckPoint: {fileID: 0}
+  firstCheckPoint: {fileID: 0}
+  checkPoint: {fileID: 0}
+  maxLaps: 3
+  rank_Prefab: {fileID: 2033209421621909715, guid: 06eff513991954140a2d3deee6d02603, type: 3}
+  rankPositons:
+  - {fileID: 1742558439493240191, guid: aefab049b8e0d7e4cbe48091ac0e5ffd, type: 3}
+  - {fileID: 1810342584930335736, guid: 6a808577113301d4abe84431c2dfd6fe, type: 3}
+  - {fileID: 7271866419783269339, guid: b382b3ac49d365c418a75fe504a2eedf, type: 3}
+  - {fileID: 9211215492772712723, guid: 22763078093a35d4c8c868332cacb1e7, type: 3}
+  rankTargetPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+--- !u!114 &190380100839616690
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 570959864215575613}
+  m_GameObject: {fileID: 1284401003105587848}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 1288189975
+  SortKey: 3161260431
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 3137626006388376962}
+  - {fileID: 4724643925105132534}
   ForceRemoteRenderTimeframe: 0

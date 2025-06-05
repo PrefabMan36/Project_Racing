@@ -13,6 +13,7 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private Game_Manager gameManager_Prefab;
     [SerializeField] private LobbyPlayer playerPrefab;
+    [SerializeField] private MainGame_Manager mainGame_Manager_Prefab;
     [SerializeField] private GameObject networkObject;
     [SerializeField] private GameMode gameMode;
 
@@ -218,4 +219,16 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
     { }
+
+    public void OnStartRace()
+    {
+        StartCoroutine(raceTrackCheck());
+    }
+    IEnumerator raceTrackCheck()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        while (!Shared.scene_Manager.GetSceneChangedCheck())
+            yield return waitForSeconds;
+        networkRunner.Spawn(mainGame_Manager_Prefab);
+    }
 }

@@ -611,7 +611,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40.3
+  m_fontSize: 44
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1072,7 +1072,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 495693189816167361, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 9.6
+      value: 10.1
       objectReference: {fileID: 0}
     - target: {fileID: 495693189816167361, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
@@ -1168,7 +1168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 20.05
+      value: 21.1
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
@@ -1332,7 +1332,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 20.5
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
@@ -1600,7 +1600,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 495693189816167361, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 9.6
+      value: 10.1
       objectReference: {fileID: 0}
     - target: {fileID: 495693189816167361, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
@@ -1696,7 +1696,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 20.05
+      value: 21.1
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
@@ -1741,7 +1741,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 495693189816167361, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 9.6
+      value: 10.1
       objectReference: {fileID: 0}
     - target: {fileID: 495693189816167361, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
@@ -1837,7 +1837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 20.05
+      value: 21.1
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset
