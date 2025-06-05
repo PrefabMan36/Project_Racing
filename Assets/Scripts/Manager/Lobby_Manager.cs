@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
@@ -38,6 +39,20 @@ public class Lobby_Manager : MonoBehaviour
 
     private void Awake()
     {
+        //Game_Manager.OnLobbyUpdated += OnLobbyUpdate;
+
+        //LobbyPlayer.PlayerChanged += (player) =>
+        //{
+        //    var isHost = LobbyPlayer.localPlayer.isHost;
+        //    StartButton.gameObject.SetActive(isHost);
+        //    StartButton.onClick.AddListener(OnClickStart);
+        //    changeTrackButton.gameObject.SetActive(isHost);
+        //    changeTrackButton.onClick.AddListener(OnClickChangeTrack);
+        //};
+    }
+
+    private void Start()
+    {
         Game_Manager.OnLobbyUpdated += OnLobbyUpdate;
 
         LobbyPlayer.PlayerChanged += (player) =>
@@ -48,10 +63,6 @@ public class Lobby_Manager : MonoBehaviour
             changeTrackButton.gameObject.SetActive(isHost);
             changeTrackButton.onClick.AddListener(OnClickChangeTrack);
         };
-    }
-
-    private void Start()
-    {
         quitButton.onClick.AddListener(Shared.lobby_Network_Manager.QuitSession);
     }
 
@@ -59,14 +70,15 @@ public class Lobby_Manager : MonoBehaviour
     {
         lobbyNameText.text = "방 이름 : " + manager.lobbyName.Value;
         lobbyNumberText.text = "방 번호 : " + manager.lobbyID.ToString();
+        readyButton.gameObject.SetActive(true);
         SetMapInfoUI(manager.trackIndex);
     }
 
     public void SetLobby(string _lobbyName, int _lobbyID , int _mapIndex)
     {
         if (isSubscrribed) return;
-        lobbyNameText.text = _lobbyName;
-        lobbyNumberText.text = _lobbyID.ToString();
+        lobbyNameText.text = "방 이름 : " + _lobbyName;
+        lobbyNumberText.text = "방 번호 : " + _lobbyID.ToString();
         mainCanvas = Shared.ui_Manager.GetMainCanvas();
         SetMapInfoUI(_mapIndex);
         
@@ -102,7 +114,7 @@ public class Lobby_Manager : MonoBehaviour
         var playerInLobby = Instantiate(lobbyUser_Prefab, scrollContent).GetComponent<LobbyItem>();
         playerInLobby.SetPlayer(player);
         playerList.Add(player, playerInLobby);
-        OnLobbyUpdate(Shared.game_Manager);
+        StartCoroutine(UpdateLobby());
     }
 
     private void OnPlayerLeft(LobbyPlayer player)
@@ -121,7 +133,12 @@ public class Lobby_Manager : MonoBehaviour
     {
         var localPlayer = LobbyPlayer.localPlayer;
         if(localPlayer && localPlayer.Object && localPlayer.Object.IsValid)
-            localPlayer.RPC_ChangeReadyState(!localPlayer.isReady);
+        {
+            if (localPlayer.HasInputAuthority)
+                localPlayer.RPC_ChangeReadyState(!localPlayer.isReady);
+            else
+                Debug.LogWarning("You don't have input authority to change ready state.");
+        }
     }
 
     private void OnPlayerReadyChanged(LobbyPlayer lobbyPlayer)
@@ -158,7 +175,6 @@ public class Lobby_Manager : MonoBehaviour
         Shared.ui_Manager.isInGame = true;
         Shared.ui_Manager.OnClickClose();
         Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex));
-        Shared.lobby_Network_Manager.OnStartRace();
     }
     public void OnClickChangeCar()
     { Shared.ui_Manager.RecivePopup(Instantiate(changeCarPopup, mainCanvas.transform)); }
@@ -172,5 +188,19 @@ public class Lobby_Manager : MonoBehaviour
         }
         else
             ForceStart();
+    }
+
+    IEnumerator UpdateLobby()
+    {
+        WaitForSeconds wait = new WaitForSeconds(Shared.frame15);
+        while (true)
+        {
+            yield return wait;
+            if (Shared.game_Manager != null && Shared.game_Manager.Object != null && Shared.game_Manager.Object.IsValid)
+            {
+                OnLobbyUpdate(Shared.game_Manager);
+                break;
+            }
+        }
     }
 }

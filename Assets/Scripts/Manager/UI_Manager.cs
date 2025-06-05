@@ -25,6 +25,9 @@ public class UI_Manager : MonoBehaviour
     [SerializeField] private MenuPanel hostingMenu_Prefab;
     [SerializeField] private MenuPanel hostingMenu;
 
+    [SerializeField] private MenuPanel JoinMenu_Prefab;
+    [SerializeField] private MenuPanel JoinMenu;
+
     [SerializeField] private MenuPanel lobbyMenu_Prefab;
     [SerializeField] private MenuPanel lobbyMenu;
 
@@ -169,6 +172,11 @@ public class UI_Manager : MonoBehaviour
         buttonData.Icon = GetLoadedIcon("White Check.png");
         buttons.Add(eUI_TYPE.CREATEROOM, buttonData);
         buttonData = new ButtonData();
+        buttonData.Name = "참가하기";
+        buttonData.Description = "다른 플레이어가 만든 게임에 접속합니다.";
+        buttonData.Icon = GetLoadedIcon("White Check.png");
+        buttons.Add(eUI_TYPE.JOINROOM, buttonData);
+        buttonData = new ButtonData();
         buttonData.Name = "준비";
         buttonData.Description = "버튼을 눌러 준비 상태로 전환하세요.";
         buttonData.Icon = GetLoadedIcon("White Flag.png");
@@ -236,6 +244,12 @@ public class UI_Manager : MonoBehaviour
                 break;
             case eUI_TYPE.CREATEROOM:
                 action = OnClickCreateRoom;
+                break;
+            case eUI_TYPE.JOIN:
+                action = OnClickJoin;
+                break;
+            case eUI_TYPE.JOINROOM:
+                action = OnClickJoinRoom;
                 break;
             case eUI_TYPE.LEAVESESSION:
                 action = OnClickToMain;
@@ -380,6 +394,39 @@ public class UI_Manager : MonoBehaviour
             lobby_Manager.SetLobby(Server_Data.LobbyName, Server_Data.LobbyID, Server_Data.trackIndex);
         }
         if(!isPushMenu)
+        {
+            lobbyMenu.gameObject.SetActive(false);
+            StartCoroutine(PushMenu(lobbyMenu));
+        }
+    }
+
+    public void OnClickJoin()
+    {
+        Debug.Log("방 참여 버튼 클릭됨");
+        Shared.lobby_Network_Manager.SetJoinLobby();
+        if (JoinMenu == null)
+        {
+            JoinMenu = Instantiate(JoinMenu_Prefab, mainCanvas.transform);
+            //hostingMenu.SetButtonS_HorizontalSizeUP(50f);
+            JoinMenu.ChangeTopBar(eUI_TYPE.JOIN);
+        }
+        if (!isPopMenu)
+        {
+            JoinMenu.gameObject.SetActive(false);
+            StartCoroutine(PopMenu(JoinMenu));
+        }
+    }
+    public void OnClickJoinRoom()
+    {
+        Debug.Log("방 참여하기 튼 클릭됨");
+        if (lobbyMenu == null)
+        {
+            Lobby_Manager lobby_Manager;
+            lobbyMenu = Instantiate(lobbyMenu_Prefab, mainCanvas.transform);
+            lobby_Manager = lobbyMenu.GetComponent<Lobby_Manager>();
+            lobby_Manager.SetLobby(Server_Data.LobbyName, Server_Data.LobbyID, Server_Data.trackIndex);
+        }
+        if (!isPushMenu)
         {
             lobbyMenu.gameObject.SetActive(false);
             StartCoroutine(PushMenu(lobbyMenu));

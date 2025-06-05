@@ -43,7 +43,8 @@ public class UIBox : MonoBehaviour
         if (thisButton != null && uiType != eUI_TYPE.NULL)
         {
             //thisButton.onClick.RemoveAllListeners();
-            thisButton.onClick.AddListener(Shared.ui_Manager.SetButtonListener(uiType));
+            if(Shared.ui_Manager.SetButtonListener(uiType) != null)
+                thisButton.onClick.AddListener(Shared.ui_Manager.SetButtonListener(uiType));
             Debug.Log($"{uiType} 의 버튼이 설정되었습니다.");
         }
         else

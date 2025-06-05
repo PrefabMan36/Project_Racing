@@ -7,11 +7,13 @@ public class Loading_Manager : MonoBehaviour
 {
     private float timer;
     private int nextScene;
+    [SerializeField] private Image loadingImage;
     [SerializeField] AsyncOperation op;
     [SerializeField] Slider progressBar;
     void Start()
     {
         nextScene = Shared.scene_Manager.GetNextScene();
+        loadingImage.sprite = Shared.room_Manager.GetSprite(nextScene);
         StartCoroutine(LoadScene());
     }
     IEnumerator LoadScene()

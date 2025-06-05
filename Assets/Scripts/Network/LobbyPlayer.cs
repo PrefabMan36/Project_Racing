@@ -31,7 +31,7 @@ public class LobbyPlayer : NetworkBehaviour
 
         changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 
-        if (Object.HasStateAuthority)
+        if (Object.HasInputAuthority)
         {
             localPlayer = this;
 

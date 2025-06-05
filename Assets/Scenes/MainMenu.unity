@@ -2817,6 +2817,8 @@ MonoBehaviour:
   settingMenu: {fileID: 0}
   hostingMenu_Prefab: {fileID: 6642815644143083063, guid: 55528f99588dc0946b7eedff68f5f16d, type: 3}
   hostingMenu: {fileID: 0}
+  JoinMenu_Prefab: {fileID: 6642815644143083063, guid: 8ef4dcb3df72d1d4594261f5be1f7d3b, type: 3}
+  JoinMenu: {fileID: 0}
   lobbyMenu_Prefab: {fileID: 6642815644143083063, guid: 224a393daf157e445bf1f1eb73d0618b, type: 3}
   lobbyMenu: {fileID: 0}
   panel_Prefab: {fileID: 9012855813553188690, guid: 666360a911146094d9483ed0c1d10903, type: 3}

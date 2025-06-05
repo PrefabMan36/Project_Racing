@@ -91,12 +91,12 @@ public class MainGame_Manager : NetworkBehaviour
         {
             ExitGame();
         }
-        //if (gameStart)
-        //{
-        //    gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
-        //    gameTime = DateTime.Today.Add(gameTimeSpan);
-        //    timerText.text = gameTime.ToString("mm':'ss'.'ff");
-        //}
+        if (gameStart)
+        {
+            gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
+            gameTime = DateTime.Today.Add(gameTimeSpan);
+            timerText.text = gameTime.ToString("mm':'ss'.'ff");
+        }
         //if(Input.GetKey(KeyCode.Return))
         //{
         //    if (Runner.GameMode == GameMode.Host)
@@ -110,6 +110,7 @@ public class MainGame_Manager : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+        trackName = Shared.scene_Manager.curScene.ToString();
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)

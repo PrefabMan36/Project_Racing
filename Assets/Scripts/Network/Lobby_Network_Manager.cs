@@ -68,7 +68,8 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
             PlayerCount = Server_Data.UserCapacity,
             EnableClientSessionCreation = false
         });
-        
+        string sessionName = gameMode == GameMode.Host ? Server_Data.LobbyID.ToString() : Client_Data.LobbyID.ToString();
+        Debug.Log($"NetworkRunner started with mode: {gameMode} and session name: {sessionName}");
     }
 
     private void SetConnectionStatus(eCONNECTIONSTATUS status)
@@ -222,13 +223,11 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnStartRace()
     {
-        StartCoroutine(raceTrackCheck());
-    }
-    IEnumerator raceTrackCheck()
-    {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
-        while (!Shared.scene_Manager.GetSceneChangedCheck())
-            yield return waitForSeconds;
         networkRunner.Spawn(mainGame_Manager_Prefab);
+    }
+
+    public NetworkRunner GetNetRunner()
+    {
+        return networkRunner;
     }
 }
