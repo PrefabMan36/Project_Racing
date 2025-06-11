@@ -58,7 +58,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private float diffTime2;
     [SerializeField] private float bestLapTime;
 
-    private string trackName = "City_Night";
+    private string trackName = "eSCENE_CITY_NIGHT";
     [SerializeField] private TrackData tracksData;
     [SerializeField] private int lastCheckPointIndex = 0;
     [SerializeField] private CheckPoint checkPoint_Prefab;
@@ -110,7 +110,7 @@ public class MainGame_Manager : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
-        trackName = Shared.scene_Manager.curScene.ToString();
+        trackName = SceneManager.GetActiveScene().name;
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
@@ -138,7 +138,7 @@ public class MainGame_Manager : NetworkBehaviour
         var point = spawnPosition[index];
 
         var profabID = player.carIndex;
-        var prefab = playerCarPrefab[index];
+        var prefab = playerCarPrefab[profabID];
 
         var entity = runner.Spawn(
             prefab,
@@ -186,7 +186,7 @@ public class MainGame_Manager : NetworkBehaviour
         }
         else
         {
-            Debug.LogError("Failed to load track data.");
+            Debug.LogError($"Failed to load {trackName} track data.");
         }
     }
 

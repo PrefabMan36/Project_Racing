@@ -21,6 +21,7 @@ public class Game_Manager : NetworkBehaviour
     [Networked] public int lobbyID { get; set; }
     [Networked, SerializeField] public int trackIndex { get; set; }
     [Networked] public int MaxUsers { get; set; }
+    [Networked] public bool gameStart { get; set; }
 
     private static void OnLobbyChangedCallback(Game_Manager manager)
     { OnLobbyUpdated?.Invoke(manager); }
@@ -36,6 +37,7 @@ public class Game_Manager : NetworkBehaviour
         }
         Shared.game_Manager = this;
         DontDestroyOnLoad(gameObject);
+        StartCoroutine(RaceStart());
     }
 
     public override void Spawned()
@@ -49,6 +51,7 @@ public class Game_Manager : NetworkBehaviour
             lobbyID = Server_Data.LobbyID;
             trackIndex = Server_Data.trackIndex;
             MaxUsers = Server_Data.UserCapacity;
+            gameStart = Server_Data.GameStart;
         }
     }
 
@@ -63,6 +66,20 @@ public class Game_Manager : NetworkBehaviour
                 case nameof(MaxUsers):
                     OnLobbyChangedCallback(this);
                     break;
+            }
+        }
+    }
+    IEnumerator RaceStart()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        while (true)
+        {
+            yield return waitForSeconds;
+            Shared.scene_Manager.SetNextScene(trackIndex);
+            if(gameStart)
+            {
+                Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(trackIndex));
+                gameStart = false;
             }
         }
     }

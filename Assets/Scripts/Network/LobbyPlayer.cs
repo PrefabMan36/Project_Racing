@@ -8,6 +8,8 @@ public class LobbyPlayer : NetworkBehaviour
 {
     public static readonly List<LobbyPlayer> players = new List<LobbyPlayer>();
 
+    [SerializeField] public int count;
+
     public static Action<LobbyPlayer> playerJoined;
     public static Action<LobbyPlayer> playerLeft;
     public static Action<LobbyPlayer> PlayerChanged;
@@ -15,6 +17,7 @@ public class LobbyPlayer : NetworkBehaviour
     public static LobbyPlayer localPlayer;
 
     [Networked] public NetworkBool isReady { get; set; }
+    [Networked] public NetworkBool isReadyToPlay { get; set; }
     [Networked] public NetworkString<_16> playerName { get; set; }
     [Networked] public NetworkBool finished { get; set; }
     [Networked] public Player_Car car { get; set; }
@@ -75,6 +78,12 @@ public class LobbyPlayer : NetworkBehaviour
     {
         Debug.Log($"RPC_ChangeReadyState: {ready}");
         isReady = ready;
+    }
+    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+    public void RPC_ChangeLoadingState(NetworkBool readyToPlay)
+    {
+        Debug.Log($"RPC_ChangeReadyState: {readyToPlay}");
+        isReadyToPlay = readyToPlay;
     }
 
     private void OnDisable()

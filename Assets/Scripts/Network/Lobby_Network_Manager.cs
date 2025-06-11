@@ -223,7 +223,7 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnStartRace()
     {
-        networkRunner.Spawn(mainGame_Manager_Prefab);
+        networkRunner.SpawnAsync(mainGame_Manager_Prefab);
     }
 
     public NetworkRunner GetNetRunner()

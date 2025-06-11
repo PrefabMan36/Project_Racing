@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Linq;
+using Fusion;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -37,7 +39,23 @@ public class Loading_Manager : MonoBehaviour
                 if (progressBar.value >= 1.0f)
                 {
                     op.allowSceneActivation = true;
-                    Shared.scene_Manager.SetCurrentScene((eSCENE)nextScene);
+                    if(LobbyPlayer.localPlayer != null)
+                        LobbyPlayer.localPlayer.isReadyToPlay = true;
+                    if (Shared.lobby_Network_Manager.GetNetRunner() != null)
+                    {
+                        if (LobbyPlayer.players.Count > 0 && LobbyPlayer.players.All(player => player.isReadyToPlay))
+                        {
+                            if (Shared.lobby_Network_Manager.GetNetRunner().IsSceneAuthority)
+                            {
+                                NetworkRunner tempNetRunner = Shared.lobby_Network_Manager.GetNetRunner();
+                                tempNetRunner.LoadScene(SceneRef.FromIndex(nextScene));
+                            }
+                        }    
+                    }
+                    else
+                    {
+                        Shared.scene_Manager.SetCurrentScene((eSCENE)nextScene);
+                    }
                     yield break;
                 }
             }

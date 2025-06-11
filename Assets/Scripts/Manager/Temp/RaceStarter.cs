@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RaceStarter : MonoBehaviour
 {
-    private void Awake()
+    private void Start()
     {
         Shared.lobby_Network_Manager.OnStartRace();
         Destroy(gameObject);

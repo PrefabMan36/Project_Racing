@@ -18,8 +18,11 @@ public partial class Scene_manager : MonoBehaviour
         
         if(Shared.lobby_Network_Manager.GetNetRunner() != null)
         {
-            NetworkRunner tempNetRunner = Shared.lobby_Network_Manager.GetNetRunner();
-            tempNetRunner.LoadScene(SceneRef.FromIndex(1));
+            if(Shared.lobby_Network_Manager.GetNetRunner().IsSceneAuthority)
+            {
+                NetworkRunner tempNetRunner = Shared.lobby_Network_Manager.GetNetRunner();
+                tempNetRunner.LoadScene(SceneRef.FromIndex(1));
+            }
         }
         else
             SceneManager.LoadScene(1);
@@ -36,4 +39,7 @@ public partial class Scene_manager : MonoBehaviour
     {
         return curScene == (eSCENE)nextScene ? true : false;
     }
+
+    public void SetNextScene(int index)
+    { nextScene = index; }
 }
