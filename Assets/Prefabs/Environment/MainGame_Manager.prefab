@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 190380100839616690}
   m_Layer: 0
   m_Name: MainGame_Manager
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -60,6 +60,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  spawnPointSpacing: 2.5
+  spawnPointVerticalOffset: 0.5
   playerCarPrefab:
   - {fileID: 1982242415706992608, guid: 7b367dccc659de64b8c4d882ca0505fc, type: 3}
   _gameTimer: 0
@@ -88,10 +90,11 @@ MonoBehaviour:
   diffTime1: 0
   diffTime2: 0
   bestLapTime: 0
-  lastCheckPoint: 0
+  lastCheckPointIndex: 0
   checkPoint_Prefab: {fileID: 4090549688898884965, guid: 4dca9df325b93df44b0c5f3594bfa19d, type: 3}
   tempCheckPoint: {fileID: 0}
   firstCheckPoint: {fileID: 0}
+  lastCheckPoint: {fileID: 0}
   checkPoint: {fileID: 0}
   maxLaps: 3
   rank_Prefab: {fileID: 2033209421621909715, guid: 06eff513991954140a2d3deee6d02603, type: 3}

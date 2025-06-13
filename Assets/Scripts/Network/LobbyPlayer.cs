@@ -8,7 +8,7 @@ public class LobbyPlayer : NetworkBehaviour
 {
     public static readonly List<LobbyPlayer> players = new List<LobbyPlayer>();
 
-    [SerializeField] public int count;
+    [SerializeField] public int playerCount;
 
     public static Action<LobbyPlayer> playerJoined;
     public static Action<LobbyPlayer> playerLeft;
@@ -18,6 +18,7 @@ public class LobbyPlayer : NetworkBehaviour
 
     [Networked] public NetworkBool isReady { get; set; }
     [Networked] public NetworkBool isReadyToPlay { get; set; }
+    [Networked] public NetworkBool isSync { get; set; }
     [Networked] public NetworkString<_16> playerName { get; set; }
     [Networked] public NetworkBool finished { get; set; }
     [Networked] public Player_Car car { get; set; }
@@ -43,7 +44,7 @@ public class LobbyPlayer : NetworkBehaviour
         }
         players.Add(this);
         playerJoined?.Invoke(this);
-
+        localPlayer.playerCount = players.Count;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -85,6 +86,12 @@ public class LobbyPlayer : NetworkBehaviour
         Debug.Log($"RPC_ChangeReadyState: {readyToPlay}");
         isReadyToPlay = readyToPlay;
     }
+    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+    public void RPC_ChangeSyncTrackState(NetworkBool spawnedOver)
+    {
+        Debug.Log($"RPC_ChangeSyncTrackState: {spawnedOver}");
+        isSync = spawnedOver;
+    }
 
     private void OnDisable()
     {
@@ -103,6 +110,7 @@ public class LobbyPlayer : NetworkBehaviour
                 runner.Despawn(lobbyPlayer.car.Object);
             players.Remove(lobbyPlayer);
             runner.Despawn(lobbyPlayer.Object);
+            localPlayer.playerCount = players.Count;
         }
     }
 }

@@ -122,12 +122,9 @@ public class MainGame_Manager : NetworkBehaviour
         }
         if (networkRunner == null)
             networkRunner = GameObject.Find("Session").GetComponent<NetworkRunner>();
-        LoadAndSetupTrack();
-        if (networkRunner.GameMode == GameMode.Host)
-        {
-            foreach (LobbyPlayer player in LobbyPlayer.players)
-                SpawnPlayer(networkRunner, player);
-        }
+        if(HasStateAuthority)
+            LoadAndSetupTrack();
+        StartCoroutine(WaitingForCheckpoint());
         //if (LobbyPlayer.localPlayer.isHost)
         //    gameTimer = TickTimer.CreateFromSeconds(networkRunner, 0f);
     }
@@ -166,29 +163,31 @@ public class MainGame_Manager : NetworkBehaviour
         tracksData = TrackData_Manager.instance.GetTrackDataByName(trackName);
         if (tracksData != null)
         {
+            bool lastcheck = false;
+            lastCheckPointIndex = tracksData.Checkpoints.Count-1;
             for (int i = 0; i < tracksData.Checkpoints.Count; i++)
             {
                 CheckPoint checkPoint = networkRunner.Spawn(checkPoint_Prefab);
-                checkPoint.SetCheckPointIndex(this, i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale);
-                if (i > 0)
-                {
-                    tempCheckPoint.SetNextCheckPoint(checkPoint);
-                }
-                tempCheckPoint = checkPoint;
-                if (i == 0)
-                {
-                    firstCheckPoint = checkPoint;
-                }
-                lastCheckPointIndex = i + 1;
-                lastCheckPoint = checkPoint;
-                GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+
+                if(i == lastCheckPointIndex)
+                { lastcheck = true; }
+                else
+                { lastcheck = false; }
+
+                checkPoint.SetCheckPointIndex(i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale, lastcheck);
             }
+            GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+            LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
         }
         else
         {
             Debug.LogError($"Failed to load {trackName} track data.");
         }
     }
+    public void SetFirstCheckPoint(CheckPoint checkPoint)
+    { firstCheckPoint = checkPoint; }
+    public void SetLastCheckPoint(CheckPoint checkPoint)
+    { lastCheckPoint = checkPoint; }
 
     private void GenerateSpawnPointsFromCheckpoint(CheckPoint referenceCheckpoint)
     {
@@ -336,7 +335,19 @@ public class MainGame_Manager : NetworkBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-
+    IEnumerator WaitingForCheckpoint()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        while (!LobbyPlayer.players.All(player => player.isSync))
+        {
+            yield return waitForSeconds;
+        }
+        if (networkRunner.GameMode == GameMode.Host)
+        {
+            foreach (LobbyPlayer player in LobbyPlayer.players)
+                SpawnPlayer(networkRunner, player);
+        }
+    }
     public float CheckPointChecked(Player_Car _playerCar, float _bestTime, float _localBestTime, int checkPointIndex)
     {
         //체크 포인트의 기록과 비교후 느릴 경우 표시한다, 개인 기록은 항상 표시한다.

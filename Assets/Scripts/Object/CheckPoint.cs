@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CheckPoint : NetworkBehaviour
 {
@@ -14,7 +15,12 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private short currentLap = 0;
     [SerializeField] private float tempTimer;
 
-    [SerializeField] private int checkPointIndex = 0;
+    [Networked] Vector3 position { get; set; }
+    [Networked] Vector3 rotation { get; set; }
+    [Networked] Vector3 boxSize { get; set; }
+    [Networked] float circleSize { get; set; }
+    [Networked] bool last { get; set; } = false;
+    [Networked, SerializeField] private int checkPointIndex { get; set; } = 0;
 
     [SerializeField] private CheckPoint nextCheckPoint;
     [SerializeField] private GameObject[] circles;
@@ -22,28 +28,57 @@ public class CheckPoint : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+        checkPointCollider = gameObject.GetComponent<BoxCollider>();
         localCheckPointTime = 9999999f;
         currentLap = 0;
         tempTimer = 0;
-        checkPointIndex = 0;
+        mainGameManager = GameObject.FindAnyObjectByType<MainGame_Manager>();
+        if(!HasStateAuthority)
+            InitCheckPointForClient();
     }
 
-    public void SetCheckPointIndex(MainGame_Manager gameManager, int index, Vector3 position, Vector3 rotation, Vector3 boxSize)
+    public void SetCheckPointIndex(int index, Vector3 _position, Vector3 _rotation, Vector3 _boxSize, bool _last)
     {
-        checkPointCollider = gameObject.GetComponent<BoxCollider>();
-        mainGameManager = gameManager;
+        last = _last;
         if (checkPointIndex == 0)
             checkPointIndex = index;
+        if (checkPointIndex == 1)
+            mainGameManager.SetFirstCheckPoint(this);
+        else if(last)
+            mainGameManager.SetLastCheckPoint(this);
+        position = _position;
         transform.position = position;
+        rotation = _rotation;
         transform.rotation = Quaternion.Euler(rotation);
+        boxSize = _boxSize;
         checkPointCollider.size = boxSize;
-        float circleSize = boxSize.y > boxSize.x ? boxSize.y : boxSize.x;
+        circleSize = boxSize.y > boxSize.x ? boxSize.y : boxSize.x;
         Vector3 circleSizeVector = new Vector3(circleSize, circleSize, 1);
         for (int i = 0; i < circles.Length; i++)
         {
             circles[i].transform.localScale = circleSizeVector;
         }
     }
+
+    private void InitCheckPointForClient()
+    {
+        if (checkPointIndex == 1)
+            mainGameManager.SetFirstCheckPoint(this);
+        else if (last)
+            mainGameManager.SetLastCheckPoint(this);
+        transform.position = position;
+        transform.rotation = Quaternion.Euler(rotation);
+        checkPointCollider.size = boxSize;
+        circleSize = boxSize.y > boxSize.x ? boxSize.y : boxSize.x;
+        Vector3 circleSizeVector = new Vector3(circleSize, circleSize, 1);
+        for (int i = 0; i < circles.Length; i++)
+        {
+            circles[i].transform.localScale = circleSizeVector;
+        }
+        if(last)
+            LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))

@@ -12,6 +12,7 @@ public class Loading_Manager : MonoBehaviour
     [SerializeField] private Image loadingImage;
     [SerializeField] AsyncOperation op;
     [SerializeField] Slider progressBar;
+    private LobbyPlayer localPlayer;
     void Start()
     {
         nextScene = Shared.scene_Manager.GetNextScene();
@@ -20,45 +21,41 @@ public class Loading_Manager : MonoBehaviour
     }
     IEnumerator LoadScene()
     {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
         op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
-        timer = 0f;
-        while (!op.isDone)
+        Shared.ui_Manager.isInGame = true;
+        Shared.ui_Manager.OnClickClose();
+        while (op.progress < 0.9f)
         {
-            yield return null;
-            timer += Time.deltaTime;
-            if (op.progress < 0.9f)
+            progressBar.value = op.progress;
+            yield return waitForSeconds;
+        }
+        progressBar.value = 1f;
+        localPlayer = LobbyPlayer.localPlayer;
+        if (localPlayer && localPlayer.Object && localPlayer.Object.IsValid && localPlayer.HasInputAuthority)
+        {
+            localPlayer.RPC_ChangeLoadingState(true);
+        }
+        if (Shared.lobby_Network_Manager.GetNetRunner() != null)
+        {
+            while (!LobbyPlayer.players.All(player => player.isReadyToPlay))
             {
-                progressBar.value = Mathf.Lerp(progressBar.value, op.progress, timer);
-                if (progressBar.value >= op.progress)
-                    timer = 0f;
+                yield return waitForSeconds;
             }
-            else
-            {
-                progressBar.value = Mathf.Lerp(progressBar.value, 1f, timer);
-                if (progressBar.value >= 1.0f)
-                {
-                    op.allowSceneActivation = true;
-                    if(LobbyPlayer.localPlayer != null)
-                        LobbyPlayer.localPlayer.isReadyToPlay = true;
-                    if (Shared.lobby_Network_Manager.GetNetRunner() != null)
-                    {
-                        if (LobbyPlayer.players.Count > 0 && LobbyPlayer.players.All(player => player.isReadyToPlay))
-                        {
-                            if (Shared.lobby_Network_Manager.GetNetRunner().IsSceneAuthority)
-                            {
-                                NetworkRunner tempNetRunner = Shared.lobby_Network_Manager.GetNetRunner();
-                                tempNetRunner.LoadScene(SceneRef.FromIndex(nextScene));
-                            }
-                        }    
-                    }
-                    else
-                    {
-                        Shared.scene_Manager.SetCurrentScene((eSCENE)nextScene);
-                    }
-                    yield break;
-                }
-            }
+            op.allowSceneActivation = true;
+
+            //if (Shared.lobby_Network_Manager.GetNetRunner().IsSceneAuthority)
+            //{
+            //    op.allowSceneActivation = true;
+            //    NetworkRunner tempNetRunner = Shared.lobby_Network_Manager.GetNetRunner();
+            //    tempNetRunner.LoadScene(SceneRef.FromIndex(nextScene));
+            //}
+        }
+        else
+        {
+            op.allowSceneActivation = true;
+            Shared.scene_Manager.SetCurrentScene((eSCENE)nextScene);
         }
     }
 }

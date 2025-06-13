@@ -39,6 +39,8 @@ public class Lobby_Manager : MonoBehaviour
 
     private void Awake()
     {
+        if(Shared.lobby_Manager == null)
+            Shared.lobby_Manager = this;
         //Game_Manager.OnLobbyUpdated += OnLobbyUpdate;
 
         //LobbyPlayer.PlayerChanged += (player) =>
@@ -172,8 +174,6 @@ public class Lobby_Manager : MonoBehaviour
     //{ Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex)); }
     public void ForceStart()
     {
-        Shared.ui_Manager.isInGame = true;
-        Shared.ui_Manager.OnClickClose();
         Shared.game_Manager.gameStart = true;
     }
     public void OnClickChangeCar()

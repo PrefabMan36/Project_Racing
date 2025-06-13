@@ -116,7 +116,7 @@ public class Player_Car : Car
         HeadLightSwitch();// 헤드라이트 스위치
         ForcePlayEngineSound();// 엔진 사운드 강제 재생
         SetBaseEngineAcceleration(5f);// 기본 엔진 가속도 설정
-        SetAutoGear(false);// 자동 기어 설정
+        SetAutoGear(true);// 자동 기어 설정
         SetAntiRoll(35000f);// 안티롤 설정
         SetShiftTiming(0.5f);// 기어 변속 타이밍 설정
         SetBrakePower(3000f);// 브레이크 파워 설정
