@@ -107,4 +107,7 @@ public class CheckPoint : NetworkBehaviour
     {
         this.nextCheckPoint = nextCheckPoint;
     }
+
+    public int GetCheckPointIndex()
+    { return checkPointIndex; }
 }

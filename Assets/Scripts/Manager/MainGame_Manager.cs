@@ -24,7 +24,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private float spawnPointVerticalOffset = 0.5f;
     [SerializeField] private Player_Car[] playerCarPrefab;
 
-    [Networked, SerializeField] private float gameTimer { get; set; }
+    [SerializeField] private float gameTimer;
     [SerializeField] private TimeSpan gameTimeSpan;
     [SerializeField] private DateTime gameTime;
 
@@ -60,7 +60,7 @@ public class MainGame_Manager : NetworkBehaviour
 
     private string trackName = "eSCENE_CITY_NIGHT";
     [SerializeField] private TrackData tracksData;
-    [SerializeField] private int lastCheckPointIndex = 0;
+    [Networked, SerializeField] private int lastCheckPointIndex { get; set; } = 0;
     [SerializeField] private CheckPoint checkPoint_Prefab;
     [SerializeField] private CheckPoint tempCheckPoint;
     [SerializeField] private CheckPoint firstCheckPoint;
@@ -144,18 +144,9 @@ public class MainGame_Manager : NetworkBehaviour
             player.Object.InputAuthority
             );
 
-        entity.lobbyUser = player;
         player.gameState = eGAMESTATE.GAMEREADY;
         player.car = entity;
-        entity.transform.name = player.playerName.Value;
-    }
-    
-    public override void FixedUpdateNetwork()
-    {
-        if (gameStart)
-        {
-            gameTimer += Runner.DeltaTime;
-        }
+        entity.GetComponent<Player_Car>().SetName(player.playerName.Value);
     }
 
     private void LoadAndSetupTrack()
@@ -177,6 +168,7 @@ public class MainGame_Manager : NetworkBehaviour
                 checkPoint.SetCheckPointIndex(i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale, lastcheck);
             }
             GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+            lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();
             LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
         }
         else
@@ -232,24 +224,24 @@ public class MainGame_Manager : NetworkBehaviour
             localLapTimeDiffImage = Instantiate(localLapTimeDiff_Prefab, MainCanvas.transform).GetComponent<Image>();
             localLapTimeDiffText = localLapTimeDiffImage.GetComponentInChildren<TextMeshProUGUI>();
             localLapTimeDiffImage.gameObject.SetActive(false);
-            playerCar.SetName("YOU");
+            if (MainCamera == null)
+            {
+                MainCamera = Instantiate(MainCamera_Prefab);
+                playerCar.SetCamera(MainCamera);
+            }
+            if (NitroBar == null)
+            {
+                NitroBar = Instantiate(NitroBar_Prefab, MainCanvas.transform);
+                playerCar.SetNitroBar(NitroBar);
+            }
+            if (rpmGauge == null)
+            {
+                rpmGauge = Instantiate(rpmGauge_Prefab, MainCanvas.transform);
+                playerCar.SetRPMGauge(rpmGauge);
+            }
         }
+        //playerCar.SetName();
         carData = CarData_Manager.instance.GetCarDataByName("Super2000");
-        if (MainCamera == null)
-        {
-            MainCamera = Instantiate(MainCamera_Prefab);
-            playerCar.SetCamera(MainCamera);
-        }
-        if (NitroBar == null)
-        {
-            NitroBar = Instantiate(NitroBar_Prefab, MainCanvas.transform);
-            playerCar.SetNitroBar(NitroBar);
-        }
-        if (rpmGauge == null)
-        {
-            rpmGauge = Instantiate(rpmGauge_Prefab, MainCanvas.transform);
-            playerCar.SetRPMGauge(rpmGauge);
-        }
         playerCar.SetCarMass(carData.Mass);
         playerCar.SetDragCoefficient(carData.dragCoefficient);
         playerCar.SetBaseEngineAcceleration(carData.baseEngineAcceleration);
@@ -300,13 +292,7 @@ public class MainGame_Manager : NetworkBehaviour
             playersID[playerNumber] = playerCar.GetComponent<NetworkObject>().Id;
         else
             playersID.Add(playerNumber, playerCar.GetComponent<NetworkObject>().Id);
-        rankList.Add(playersID[playerNumber], Instantiate(rank_Prefab, MainCanvas.transform));
-        if (localPlayer == playerCar.GetComponent<NetworkObject>())
-            rankList[playersID[playerNumber]].SetPlay(null, "YOU");
-        else
-            rankList[playersID[playerNumber]].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString());
-        rankList[playersID[playerNumber]].SetTargets(rankTargetPositions);
-        rankList[playersID[playerNumber]].Rpc_SetPosition(playerNumber, defaultColor);
+        
         playerCars[playerNumber++] = playerCar;
         SetFirstCheckPoint(playerCar);
         if (!isRankingStart && playerNumber > 1)
@@ -315,6 +301,14 @@ public class MainGame_Manager : NetworkBehaviour
             StartCoroutine(UpdatingRankings());
         }
         playerCar.Init();
+    }
+    public void SetRank(NetworkId _id)
+    {
+        if(!rankList.ContainsKey(_id))
+            rankList.Add(_id, Runner.Spawn(rank_Prefab, MainCanvas.transform.position));
+        rankList[_id].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString());
+        rankList[_id].SetTargets(rankTargetPositions);
+        rankList[_id].Rpc_SetPosition(playerNumber, defaultColor);
     }
     public void OnJoinPlayer(NetworkObject networkPlayerObject)
     {
@@ -348,6 +342,8 @@ public class MainGame_Manager : NetworkBehaviour
                 SpawnPlayer(networkRunner, player);
         }
     }
+    public void SetTimer(float _timer)
+    { gameTimer = _timer; }
     public float CheckPointChecked(Player_Car _playerCar, float _bestTime, float _localBestTime, int checkPointIndex)
     {
         //체크 포인트의 기록과 비교후 느릴 경우 표시한다, 개인 기록은 항상 표시한다.
@@ -368,7 +364,7 @@ public class MainGame_Manager : NetworkBehaviour
             _playerCar.SetLap(tempLap);
             Debug.Log("Lap " + tempLap + " CheckPoint " + checkPointIndex + " Entered by " + _playerCar.name);
             bestLapTime = gameTimer;
-            gameTimer = 0f;
+            _playerCar.ResetTimer();
             if (_playerCar.GetLap() >= maxLaps)
             {
                 bestLapTime = gameTimer;
@@ -461,7 +457,7 @@ public class MainGame_Manager : NetworkBehaviour
                 isLapTimeDiffShowing = false;
                 yield break;
             }
-            //2초뒤 3초갈 될떄까지 천천히 사라지기 시작
+            //2초뒤 3초 천천히 사라지기 시작
             else if (lapTimeDiffTimer > 2f)
             {
                 lapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));

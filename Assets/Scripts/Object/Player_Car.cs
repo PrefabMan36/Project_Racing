@@ -17,8 +17,8 @@ public class Player_Car : Car
 {
     [SerializeField] private int ID;
     [SerializeField] private NetworkId playerId;
-    [SerializeField] private string playerName;
-    [SerializeField] public LobbyPlayer lobbyUser;
+    [Networked] public NetworkString<_16> playerName { get; set; }
+    [SerializeField] private bool nameChanged = false;
 
     public Vector3 inputCheck;
 
@@ -43,6 +43,8 @@ public class Player_Car : Car
     [Networked, SerializeField] private short lap { get; set; } = 0;
     [Networked, SerializeField] private float distanceToCheckPoint { get; set; }
     [SerializeField]private Transform nextCheckPoint;
+    [SerializeField] private float gameTimer = 0;
+    [SerializeField] private bool raceStarted = true;
 
     private bool firstPersonCameraCheck;
 
@@ -65,15 +67,16 @@ public class Player_Car : Car
     //플레이어와 NPC의 차량의 동작을 다르게 하기 위해 override합니다.
     public override void Spawned()
     {
+        if(playerName.Value != "")
+        { gameObject.name = playerName.Value; }
         Runner.SetIsSimulated(Object, true);// 시뮬레이션을 활성화합니다.
-        if (HasInputAuthority)
-            SetName(Client_Data.Username);// 플레이어 이름을 설정합니다.
         gameManager = FindAnyObjectByType<MainGame_Manager>();// 게임 매니저를 찾습니다.
         gameManager.CarInit(this, HasInputAuthority);// 게임 매니저를 이용해 차량을 초기화합니다.
         networkObject = GetComponent<NetworkObject>();// 네트워크 오브젝트를 가져옵니다.
         playerId = networkObject.Id;// 플레이어 ID를 설정합니다.
         rankData.playerId = networkObject.Id;// 랭크 데이터에 플레이어 ID를 설정합니다.
     }
+
     public void Init()
     {
         if (HasInputAuthority)
@@ -126,6 +129,10 @@ public class Player_Car : Car
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
         StartCoroutine(Engine());// 엔진 코루틴 시작
         StartCoroutine(UpdateNitro());// 부스트 코루틴 시작
+        if(!nameChanged)
+        {
+            NameChanged();
+        }
     }
 
     private void Update()
@@ -141,6 +148,11 @@ public class Player_Car : Car
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
         SetRadialBlur();
+        if (localPlayer && raceStarted)
+        {
+            gameTimer += Time.deltaTime;
+            gameManager.SetTimer(gameTimer);
+        }
     }
 
     //Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
@@ -253,6 +265,10 @@ public class Player_Car : Car
             gearDown = data.gearDOWN;
         }
     }
+
+    public void ResetTimer()
+    { gameTimer = 0f; }
+
     public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
 
     public void SetCamera(Camera _camera)
@@ -365,9 +381,17 @@ public class Player_Car : Car
     public void SetName(string _name)
     {
         playerName = _name;
-        gameObject.name = playerName;
+        NameChanged();
     }
-    public string GetName() { return playerName; }
+
+    private void NameChanged()
+    {
+        gameObject.name = playerName.Value;
+        gameManager.SetRank(playerId);
+        nameChanged = true;
+    }
+
+    public string GetName() { return playerName.Value; }
 
     public Rank_Data GetRankData()
     {

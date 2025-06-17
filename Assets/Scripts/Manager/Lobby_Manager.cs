@@ -41,16 +41,6 @@ public class Lobby_Manager : MonoBehaviour
     {
         if(Shared.lobby_Manager == null)
             Shared.lobby_Manager = this;
-        //Game_Manager.OnLobbyUpdated += OnLobbyUpdate;
-
-        //LobbyPlayer.PlayerChanged += (player) =>
-        //{
-        //    var isHost = LobbyPlayer.localPlayer.isHost;
-        //    StartButton.gameObject.SetActive(isHost);
-        //    StartButton.onClick.AddListener(OnClickStart);
-        //    changeTrackButton.gameObject.SetActive(isHost);
-        //    changeTrackButton.onClick.AddListener(OnClickChangeTrack);
-        //};
     }
 
     private void Start()
