@@ -54,4 +54,17 @@ public class CarData_Manager : MonoBehaviour
         Debug.LogWarning($"CarData with name '{carName}' not found.");
         return null;
     }
+
+    public CarData GetCarDataByNumber(int carNumber)
+    {
+        foreach (var data in carDatas)
+        {
+            if (data.Num == carNumber)
+            {
+                return data;
+            }
+        }
+        Debug.LogWarning($"CarData with name '{carNumber}' not found.");
+        return null;
+    }
 }

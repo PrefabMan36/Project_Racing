@@ -57,6 +57,7 @@ public enum eUI_TYPE
     CREATEROOM,
     JOINROOM,
     READY,
+    CARSELECT,
     LEAVESESSION,
     RACESTART,
     NULL

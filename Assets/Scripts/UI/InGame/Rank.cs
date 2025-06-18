@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Rank : NetworkBehaviour
+public class Rank : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI playerID;
     [SerializeField] private Image playerIcon;
@@ -17,10 +17,15 @@ public class Rank : NetworkBehaviour
     [SerializeField] public int targetNum = 0;
     [SerializeField] private float time = 0f;
 
-    public void SetPlay(Image _playerIcon, string _playerID)
+    public void SetPlay(Image _playerIcon, string _playerID, MainGame_Manager _gameManager, NetworkId _id)
     {
+        if (_playerID.ToString().Length < 1)
+        {
+            _gameManager.RemoveRank(_id);
+            return;
+        }
         backGround = gameObject.GetComponent<Image>();
-        playerID.text = _playerID;
+        playerID.text = _playerID.ToString();
         if(_playerIcon != null)
             playerIcon.sprite = _playerIcon.sprite;
     }
@@ -36,7 +41,6 @@ public class Rank : NetworkBehaviour
     public void Rpc_SetPosition(int _targetNum, Color _placeColor)
     {
         startPosition = transform.position;
-        time = 0f;
         targetNum = _targetNum;
         if(backGround != null)
             backGround.color = _placeColor;
@@ -44,6 +48,7 @@ public class Rank : NetworkBehaviour
             targetPosition = targets[_targetNum];
         if (!PositionChanging)
         {
+            time = 0f;
             PositionChanging = true;
             StartCoroutine(ChangePosition());
         }
@@ -55,7 +60,7 @@ public class Rank : NetworkBehaviour
         while(true)
         {
             transform.position = Vector3.Lerp(startPosition, targetPosition, time);
-            time += 0.16f;
+            time += 0.04f;
             if (time >= 1f)
             {
                 PositionChanging = false;

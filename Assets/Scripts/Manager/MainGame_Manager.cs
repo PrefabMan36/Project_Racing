@@ -23,6 +23,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private float spawnPointSpacing = 2.5f;
     [SerializeField] private float spawnPointVerticalOffset = 0.5f;
     [SerializeField] private Player_Car[] playerCarPrefab;
+    [SerializeField] private string[] playerCarPrefabNames;
 
     [SerializeField] private float gameTimer;
     [SerializeField] private TimeSpan gameTimeSpan;
@@ -241,7 +242,7 @@ public class MainGame_Manager : NetworkBehaviour
             }
         }
         //playerCar.SetName();
-        carData = CarData_Manager.instance.GetCarDataByName("Super2000");
+        carData = CarData_Manager.instance.GetCarDataByNumber(playerCar.GetCarNumber());
         playerCar.SetCarMass(carData.Mass);
         playerCar.SetDragCoefficient(carData.dragCoefficient);
         playerCar.SetBaseEngineAcceleration(carData.baseEngineAcceleration);
@@ -305,10 +306,18 @@ public class MainGame_Manager : NetworkBehaviour
     public void SetRank(NetworkId _id)
     {
         if(!rankList.ContainsKey(_id))
-            rankList.Add(_id, Runner.Spawn(rank_Prefab, MainCanvas.transform.position));
-        rankList[_id].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString());
+            rankList.Add(_id, Instantiate(rank_Prefab, MainCanvas.transform));
         rankList[_id].SetTargets(rankTargetPositions);
         rankList[_id].Rpc_SetPosition(playerNumber, defaultColor);
+        rankList[_id].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString(), this, _id);
+    }
+    public void RemoveRank(NetworkId _id)
+    {
+        if (rankList.ContainsKey(_id))
+        {
+            Destroy(rankList[_id].gameObject);
+            rankList.Remove(_id);
+        }
     }
     public void OnJoinPlayer(NetworkObject networkPlayerObject)
     {
@@ -319,7 +328,7 @@ public class MainGame_Manager : NetworkBehaviour
     {
         rank.Remove(networkPlayerObject.Id);
         Destroy(rankList[networkPlayerObject.Id].gameObject);
-        rankList.Remove(networkPlayerObject.Id);
+        RemoveRank(networkPlayerObject.Id);
     }
 
     private void ExitGame()

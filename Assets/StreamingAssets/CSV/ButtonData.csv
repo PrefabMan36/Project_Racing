@@ -1,0 +1,17 @@
+ButtonType,Name,IconFileName,Description
+SETTING,설정,White Gear 2.png,게임 환경 및 설정을 조절합니다.
+EXIT,종료,White Power Button.png,게임을 종료합니다.
+PREVIOUS,이전,White Backward 2.png,이전 화면으로 돌아갑니다.
+HOST,방 만들기,Free Flat People 1 Icon.png,다른 플레이어가 참여할 수 있는 새로운 게임을 만듭니다.
+JOIN,방 참여하기,Free Flat Move In Icon.png,다른 플레이어가 만든 게임에 참여합니다.
+YES,확인,White Check.png,확인를 선택합니다.
+NO,아니오,White Close 2.png,아니오를 선택합니다.
+MAINBAR,메인 메뉴,RacingGameTitleIcon.png,원하는 메뉴를 선택하세요.
+PROFILESETTING,프로필 설정,White Person 2.png,"이곳에서 닉네임, 아바타 등 나만의 프로필을 설정해 보세요."
+AUDIOSETTING,오디오 설정,Free Flat Volume 3 Icon.png,게임 내 모든 소리를 조절할 수 있습니다.
+CREATEROOM,생성,White Check.png,다른 플레이어가 참여할 수 있는 게임 세션을 만듭니다.
+JOINROOM,참가하기,White Check.png,다른 플레이어가 만든 게임에 접속합니다.
+READY,준비,White Flag.png,버튼을 눌러 준비 상태로 전환하세요.
+LEAVESESSION,나가기,White Backward 2.png,메인메뉴로 돌아갑니다.
+RACESTART,레이스 시작,icon_achievement.png,지금 바로 레이스를 시작합니다.
+CARSELECT,차량 변경,White Car.png,현재 사용 중인 차량을 다른 차량으로 교체합니다.

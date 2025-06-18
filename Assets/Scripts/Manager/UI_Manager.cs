@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.Events;
+using System.Threading.Tasks;
+using CsvHelper.Configuration;
+using System.Globalization;
 
 public class UI_Manager : MonoBehaviour
 {
@@ -51,7 +54,7 @@ public class UI_Manager : MonoBehaviour
 
         DontDestroyOnLoad(this);
 
-        StartCoroutine(LoadIconsCoroutine());
+        StartCoroutine(CallAsyncMethodAsCoroutine(LoadIconsAsync()));
 
         mainCanvas = new GameObject("MainCanvas").AddComponent<Canvas>();
         mainCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -62,7 +65,7 @@ public class UI_Manager : MonoBehaviour
         panel = Instantiate(panel_Prefab, mainCanvas.transform);
 
     }
-    private IEnumerator LoadIconsCoroutine()
+    private async Task LoadIconsAsync()
     {
         string iconsFolderPath = Path.Combine(Application.streamingAssetsPath, "icons");
         string[] iconFilenames = {
@@ -74,6 +77,7 @@ public class UI_Manager : MonoBehaviour
             "White Backward 2.png",
             "White Person 2.png",
             "White Flag.png",
+            "White Car.png",
             "Free Flat People 1 Icon.png",
             "Free Flat Move In Icon.png",
             "Free Flat Volume 3 Icon.png",
@@ -84,7 +88,7 @@ public class UI_Manager : MonoBehaviour
             string iconFilePath = Path.Combine(iconsFolderPath, filename);
             using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(iconFilePath))
             {
-                yield return webRequest.SendWebRequest();
+                await webRequest.SendWebRequest();
                 if(webRequest.result != UnityWebRequest.Result.Success)
                     Debug.LogError($"아이콘 로드 실패: {filename} - {webRequest.error}");
                 else
@@ -102,7 +106,19 @@ public class UI_Manager : MonoBehaviour
             }
         }
         Debug.Log("모든 아이콘 로딩 시도 완료.");
-        InitializeButtons();
+        await InitializeButtons();
+    }
+    private IEnumerator CallAsyncMethodAsCoroutine(Task task)
+    {
+        while (!task.IsCompleted)
+        {
+            yield return null;
+        }
+
+        if (task.IsFaulted)
+        {
+            Debug.LogError($"비동기 작업 중 오류 발생: {task.Exception}");
+        }
     }
 
     private void FixedUpdate()
@@ -114,94 +130,66 @@ public class UI_Manager : MonoBehaviour
         }
     }
 
-    private void InitializeButtons()
+    private async Task InitializeButtons()
     {
-        ButtonData buttonData = new ButtonData();
-        buttonData.Name = "설정";
-        buttonData.Description = "게임 환경 및 설정을 조절합니다.";
-        buttonData.Icon = GetLoadedIcon("White Gear 2.png");
-        buttons.Add(eUI_TYPE.SETTING, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "종료";
-        buttonData.Description = "게임을 종료합니다.";
-        buttonData.Icon = GetLoadedIcon("White Power Button.png");
-        buttons.Add(eUI_TYPE.EXIT, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "이전";
-        buttonData.Description = "이전 화면으로 돌아갑니다.";
-        buttonData.Icon = GetLoadedIcon("White Backward 2.png");
-        buttons.Add(eUI_TYPE.PREVIOUS, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "방 만들기";
-        buttonData.Description = "다른 플레이어가 참여할 수 있는 새로운 게임을 만듭니다.";
-        buttonData.Icon = GetLoadedIcon("Free Flat People 1 Icon.png");
-        buttons.Add(eUI_TYPE.HOST, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "방 참여하기";
-        buttonData.Description = "다른 플레이어가 만든 게임에 참여합니다.";
-        buttonData.Icon = GetLoadedIcon("Free Flat Move In Icon.png");
-        buttons.Add(eUI_TYPE.JOIN, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "확인";
-        buttonData.Description = "확인를 선택합니다.";
-        buttonData.Icon = GetLoadedIcon("White Check.png");
-        buttons.Add(eUI_TYPE.YES, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "아니오";
-        buttonData.Description = "아니오를 선택합니다.";
-        buttonData.Icon = GetLoadedIcon("White Close 2.png");
-        buttons.Add(eUI_TYPE.NO, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "메인 메뉴";
-        buttonData.Description = "원하는 메뉴를 선택하세요.";
-        buttonData.Icon = GetLoadedIcon("RacingGameTitleIcon.png");
-        buttons.Add(eUI_TYPE.MAINBAR, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "프로필 설정";
-        buttonData.Description = "이곳에서 닉네임, 아바타 등 나만의 프로필을 설정해 보세요.";
-        buttonData.Icon = GetLoadedIcon("White Person 2.png");
-        buttons.Add(eUI_TYPE.PROFILESETTING, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "오디오 설정";
-        buttonData.Description = "게임 내 모든 소리를 조절할 수 있습니다.";
-        buttonData.Icon = GetLoadedIcon("Free Flat Volume 3 Icon.png");
-        buttons.Add(eUI_TYPE.AUDIOSETTING, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "생성";
-        buttonData.Description = "다른 플레이어가 참여할 수 있는 게임 세션을 만듭니다.";
-        buttonData.Icon = GetLoadedIcon("White Check.png");
-        buttons.Add(eUI_TYPE.CREATEROOM, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "참가하기";
-        buttonData.Description = "다른 플레이어가 만든 게임에 접속합니다.";
-        buttonData.Icon = GetLoadedIcon("White Check.png");
-        buttons.Add(eUI_TYPE.JOINROOM, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "준비";
-        buttonData.Description = "버튼을 눌러 준비 상태로 전환하세요.";
-        buttonData.Icon = GetLoadedIcon("White Flag.png");
-        buttons.Add(eUI_TYPE.READY, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "나가기";
-        buttonData.Description = "메인메뉴로 돌아갑니다.";
-        buttonData.Icon = GetLoadedIcon("White Backward 2.png");
-        buttons.Add(eUI_TYPE.LEAVESESSION, buttonData);
-        buttonData = new ButtonData();
-        buttonData.Name = "레이스 시작";
-        buttonData.Description = "지금 바로 레이스를 시작합니다.";
-        buttonData.Icon = GetLoadedIcon("icon_achievement.png");
-        buttons.Add(eUI_TYPE.RACESTART, buttonData);
+        Debug.Log("버튼 데이터 초기화 시작");
+
+        var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+            Delimiter = ",",
+            IgnoreBlankLines = true,
+            TrimOptions = TrimOptions.Trim,
+        };
+
+        List<ButtonDataEntry> buttonEntries = await CSVParser.ParseCSV<ButtonDataEntry>("ButtonData.csv", csvConfig);
+
+        if (buttonEntries == null || buttonEntries.Count == 0)
+        {
+            Debug.LogError("ButtonData.txt 파일에서 버튼 데이터를 로드하는 데 실패했습니다. 파일이 없거나 내용이 비어있습니다.");
+            return;
+        }
+
+        foreach (var entry in buttonEntries)
+        {
+            // string을 eUI_TYPE으로 변환
+            eUI_TYPE buttonType;
+            if (System.Enum.TryParse(entry.ButtonType, out buttonType))
+            {
+                ButtonData buttonData = new ButtonData
+                {
+                    Name = entry.Name,
+                    Description = entry.Description,
+                    Icon = GetLoadedIcon(entry.IconFileName)
+                };
+
+                // 이미 해당 키가 존재하면 경고 메시지를 출력하고 건너뜁니다.
+                if (buttons.ContainsKey(buttonType))
+                {
+                    Debug.LogWarning($"중복된 ButtonType이 감지되었습니다: {buttonType}. 이 항목은 건너뜁니다.");
+                }
+                else
+                {
+                    buttons.Add(buttonType, buttonData);
+                    Debug.Log($"버튼 데이터 추가 성공: {buttonType} - {entry.Name}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"알 수 없는 ButtonType: {entry.ButtonType}. 이 항목은 건너뜁니다.");
+            }
+        }
 
 
         mainMenu = Instantiate(mainMenu, mainCanvas.transform);
-        mainMenu.SetButtonS_HorizontalSizeUP(50f);
+        //mainMenu.SetButtonS_HorizontalSizeUP(50f);
         mainMenu.SetDistribute();
         StartCoroutine(PushMenu(mainMenu));
 
-        buttonData = new ButtonData();
-        buttonData.Name = "";
-        buttonData.Description = "";
-        buttons.Add(eUI_TYPE.NULL, buttonData);
+        ButtonData nullButtonData = new ButtonData();
+        nullButtonData.Name = "";
+        nullButtonData.Description = "";
+        buttons.Add(eUI_TYPE.NULL, nullButtonData);
     }
     public Sprite GetLoadedIcon(string filename)
     {
@@ -253,6 +241,9 @@ public class UI_Manager : MonoBehaviour
                 break;
             case eUI_TYPE.LEAVESESSION:
                 action = OnClickToMain;
+                break;
+            case eUI_TYPE.CARSELECT:
+                action = Shared.lobby_Manager.OnClickChangeCar;
                 break;
         }
         if(action != null)

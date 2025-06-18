@@ -15,6 +15,7 @@ using TMPro;
 
 public class Player_Car : Car
 {
+    [SerializeField] private int carNumber;
     [SerializeField] private int ID;
     [SerializeField] private NetworkId playerId;
     [Networked] public NetworkString<_16> playerName { get; set; }
@@ -44,7 +45,8 @@ public class Player_Car : Car
     [Networked, SerializeField] private float distanceToCheckPoint { get; set; }
     [SerializeField]private Transform nextCheckPoint;
     [SerializeField] private float gameTimer = 0;
-    [SerializeField] private bool raceStarted = true;
+    [SerializeField] private bool raceStarted = false;
+    [SerializeField] private bool calculateDistance = false;
 
     private bool firstPersonCameraCheck;
 
@@ -75,6 +77,8 @@ public class Player_Car : Car
         networkObject = GetComponent<NetworkObject>();// 네트워크 오브젝트를 가져옵니다.
         playerId = networkObject.Id;// 플레이어 ID를 설정합니다.
         rankData.playerId = networkObject.Id;// 랭크 데이터에 플레이어 ID를 설정합니다.
+        if (!nameChanged)
+        { NameChanged(); }
     }
 
     public void Init()
@@ -129,10 +133,6 @@ public class Player_Car : Car
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
         StartCoroutine(Engine());// 엔진 코루틴 시작
         StartCoroutine(UpdateNitro());// 부스트 코루틴 시작
-        if(!nameChanged)
-        {
-            NameChanged();
-        }
     }
 
     private void Update()
@@ -349,6 +349,9 @@ public class Player_Car : Car
                 freeLook = false;
         }
     }
+
+    public int GetCarNumber() { return carNumber; }
+
     private void SetRadialBlur()
     {
         if (radialBlur != null)
@@ -363,12 +366,25 @@ public class Player_Car : Car
     public void SetNextCheckPointPosition(CheckPoint _nextCheckPoint)
     {
         nextCheckPoint = _nextCheckPoint.transform;
+        if (!calculateDistance)
+        {
+            calculateDistance = true;
+            StartCoroutine(CalculateDistanceToCheckPoint());
+        }
     }
-    public float GetDistanceToCheckPoint()
+    IEnumerator CalculateDistanceToCheckPoint()
     {
-        if (nextCheckPoint != null)
+        if (nextCheckPoint == null)
+        {
+            calculateDistance = false;
+            yield break;
+        }
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
+        while(true)
+        {
+            yield return waitForSeconds;
             distanceToCheckPoint = Vector3.Distance(transform.position, nextCheckPoint.position);
-        return distanceToCheckPoint;
+        }
     }
 
     public void SetLap(short _lap) { lap = _lap; }
@@ -387,7 +403,8 @@ public class Player_Car : Car
     private void NameChanged()
     {
         gameObject.name = playerName.Value;
-        gameManager.SetRank(playerId);
+        if(playerId != null)
+            gameManager.SetRank(playerId);
         nameChanged = true;
     }
 

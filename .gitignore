@@ -71,7 +71,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-/Assets/Scenes/Tracks/demo_city_night
+/Assets/Scenes/Tracks/city_night
 /Assets/Audio
 /Assets/Packs
 /Assets/Photon

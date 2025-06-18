@@ -3,7 +3,32 @@ guid: e388ab9a9fb38614a9fcb08189ccb2f2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - body: {instanceID: 0}
+  - steeringHandle: {instanceID: 0}
+  - smokePrefab: {instanceID: 0}
+  - tempWheelColliderForBrake: {instanceID: 0}
+  - speedTextForUI: {instanceID: 0}
+  - gearTextForUI: {instanceID: 0}
+  - nitroBar: {instanceID: 0}
+  - rpmGauge: {instanceID: 0}
+  - centerMass: {instanceID: 0}
+  - carRB: {instanceID: 0}
+  - startUpSoundObject: {instanceID: 0}
+  - nitroSoundEffect: {instanceID: 0}
+  - nitroParticles: {instanceID: 0}
+  - _data: {instanceID: 0}
+  - cameraData: {fileID: 2618143904914634885, guid: 08e00787136b89944b260e2782e6fef9, type: 3}
+  - cameraPositions: {instanceID: 0}
+  - networkObject: {instanceID: 0}
+  - focusPoint: {instanceID: 0}
+  - freeLookCamera: {instanceID: 0}
+  - sideCamera: {instanceID: 0}
+  - firstPersonCamera: {instanceID: 0}
+  - lookBack: {instanceID: 0}
+  - mainCamera: {instanceID: 0}
+  - radialBlur: {instanceID: 0}
+  - nextCheckPoint: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

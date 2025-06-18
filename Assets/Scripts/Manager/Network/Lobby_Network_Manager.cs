@@ -90,6 +90,7 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
             networkRunner.Shutdown();
         else
             SetConnectionStatus(eCONNECTIONSTATUS.DISCONNECTED);
+
     }
 
     public void OnConnectedToServer(NetworkRunner runner)

@@ -64,9 +64,8 @@ MonoBehaviour:
   spawnPointVerticalOffset: 0.5
   playerCarPrefab:
   - {fileID: 1982242415706992608, guid: 7b367dccc659de64b8c4d882ca0505fc, type: 3}
-  _gameTimer: 0
-  _rank:
-    _items: []
+  - {fileID: 2950555046133427952, guid: 1025e749bf4c01943b04668eae326147, type: 3}
+  gameTimer: 0
   MainCamera_Prefab: {fileID: 7916578112111094242, guid: ead7127616435bd43bcabcaa12a9bcc9, type: 3}
   rpmGauge_Prefab: {fileID: 1899898029282573489, guid: 45faa3b313ff9314fa64ee051a2a8ddd, type: 3}
   NitroBar_Prefab: {fileID: 8717058668016222255, guid: e8d2fe6a3cf99304f8de0aa0518435bd, type: 3}
@@ -90,7 +89,9 @@ MonoBehaviour:
   diffTime1: 0
   diffTime2: 0
   bestLapTime: 0
-  lastCheckPointIndex: 0
+  _lastCheckPointIndex: 0
+  _rank:
+    _items: []
   checkPoint_Prefab: {fileID: 4090549688898884965, guid: 4dca9df325b93df44b0c5f3594bfa19d, type: 3}
   tempCheckPoint: {fileID: 0}
   firstCheckPoint: {fileID: 0}

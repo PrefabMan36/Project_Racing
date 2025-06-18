@@ -1225,6 +1225,10 @@ MonoBehaviour:
   isBrakingIntent: 0
   absSlipThreshold: 0.35
   absBrakeReleaseFactor: 0.3
+  speedTextForUI: {fileID: 0}
+  gearTextForUI: {fileID: 0}
+  nitroBar: {fileID: 0}
+  rpmGauge: {fileID: 0}
   centerMass: {fileID: 4880681281052632171}
   carRB: {fileID: 559560253472747298}
   dragCoefficient: 0.4
@@ -1320,10 +1324,20 @@ MonoBehaviour:
   nitroDuration: 1
   nitroPowerReady: 1
   isNitroActive: 0
+  carNumber: 1
+  ID: 0
+  playerId:
+    Raw: 0
+  _playerName:
+    _length: 0
+    _data:
+      Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  nameChanged: 0
   inputCheck: {x: 0, y: 0, z: 0}
   _data: {fileID: 0}
   cameraData: {fileID: 2618143904914634885, guid: 08e00787136b89944b260e2782e6fef9, type: 3}
   cameraPositions: {fileID: 0}
+  networkObject: {fileID: 0}
   focusPoint: {fileID: 6842754537859954166}
   freeLookCamera: {fileID: 0}
   sideCamera: {fileID: 0}
@@ -1331,6 +1345,14 @@ MonoBehaviour:
   lookBack: {fileID: 0}
   mainCamera: {fileID: 0}
   radialBlur: {fileID: 0}
+  _rank: 0
+  _currentCheckpointIndex: 1
+  _lap: 0
+  _distanceToCheckPoint: 0
+  nextCheckPoint: {fileID: 0}
+  gameTimer: 0
+  raceStarted: 0
+  calculateDistance: 0
   braking: 0
   sideBraking: 0
   up: 0

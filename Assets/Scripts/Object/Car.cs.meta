@@ -3,7 +3,20 @@ guid: 8c91e272705bc6d4f9848f7a3e2202c2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - body: {instanceID: 0}
+  - steeringHandle: {instanceID: 0}
+  - smokePrefab: {fileID: 100000, guid: bafe3b28ce202a749a940ce779c3a90d, type: 3}
+  - tempWheelColliderForBrake: {instanceID: 0}
+  - speedTextForUI: {instanceID: 0}
+  - gearTextForUI: {instanceID: 0}
+  - nitroBar: {instanceID: 0}
+  - rpmGauge: {instanceID: 0}
+  - centerMass: {instanceID: 0}
+  - carRB: {instanceID: 0}
+  - startUpSoundObject: {instanceID: 0}
+  - nitroSoundEffect: {instanceID: 0}
+  - nitroParticles: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
