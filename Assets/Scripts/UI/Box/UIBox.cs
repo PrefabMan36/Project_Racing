@@ -105,6 +105,14 @@ public class UIBox : MonoBehaviour
         originY = positon.y;
         ForceOut();
     }
+    public void SetPosition()
+    {
+        if (uiTransform == null)
+            uiTransform = this.GetComponent<RectTransform>();
+        originX = transform.position.x;
+        originY = transform.position.y;
+        ForceOut();
+    }
 
     public void ForceOut()
     {

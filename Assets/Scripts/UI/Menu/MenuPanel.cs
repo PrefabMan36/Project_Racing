@@ -14,6 +14,7 @@ public class MenuPanel : MonoBehaviour
     [SerializeField] private List<UIBox> buttonS = new List<UIBox>();
     [SerializeField] private eUI_TYPE[] buttonSType;
     [SerializeField] private Vector2[] buttonS_Positon;
+    [SerializeField] private Transform buttomArea;
 
     private int fadeCount = 0;
     private float fadeTime = 0f;
@@ -39,7 +40,10 @@ public class MenuPanel : MonoBehaviour
         {
             if (buttonL[i] != null)
             {
-                buttonL[i].SetPosition(buttonL_Positon[i]);
+                if (buttonL_Positon.Length == buttonL.Length)
+                    buttonL[i].SetPosition(buttonL_Positon[i]);
+                else
+                    buttonL[i].SetPosition(Vector2.zero);
                 buttonL[i].SetUIType(buttonLType[i]);
             }
         }
@@ -56,7 +60,10 @@ public class MenuPanel : MonoBehaviour
                 }
                 else
                 {
-                    buttonS[i].SetPosition(buttonS_Positon[i]);
+                    if(buttonS_Positon.Length == buttonS.Count)
+                        buttonS[i].SetPosition(buttonS_Positon[i]);
+                    else
+                        buttonS[i].SetPosition(Vector2.zero);
                     buttonS[i].SetUIType(buttonSType[i]);
                 }
             }
@@ -87,16 +94,32 @@ public class MenuPanel : MonoBehaviour
         float UIWidth = uiTransform.rect.width;
         float spacingL = UIWidth / (buttonL.Length + 1);
         float spacingS = UIWidth / (buttonS.Count + 1);
+
         for (int i = 0; i < buttonL.Length; i++)
         {
             if (buttonL[i] != null)
-                buttonL[i].SetPosition(new Vector2(spacingL * (i + 1) - UIWidth * 0.5f, buttonL_Positon[i].y));
+                buttonL[i].SetPosition
+                    (
+                        new Vector2
+                            (
+                                spacingL * (i + 1) - UIWidth * 0.5f,
+                                buttonL_Positon[i].y
+                            )
+                    );
         }
         for (int i = 0; i < buttonS.Count; i++)
         {
             if (buttonS[i] != null)
-                buttonS[i].SetPosition(new Vector2(spacingS * (i + 1) - UIWidth * 0.5f, buttonS_Positon[i].y));
+                buttonS[i].SetPosition
+                    (
+                        new Vector2
+                        (
+                            spacingS * (i + 1) - UIWidth * 0.5f,
+                            buttonS_Positon[i].y
+                        )
+                    );
         }
+
         Debug.Log($"UI Distribut complete");
     }
 

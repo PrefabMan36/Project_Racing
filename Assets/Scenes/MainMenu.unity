@@ -2809,23 +2809,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCanvas: {fileID: 0}
-  clickBlocker_prefab: {fileID: 9012855813553188690, guid: d51bc51992dfd0541ac6138066093233, type: 3}
   clickBlocker: {fileID: 0}
-  mainMenu_Prefab: {fileID: 0}
   mainMenu: {fileID: 1962608333857117833, guid: 71cb4fd5df12f7944bb7f1c75bb15fe2, type: 3}
-  settingMenu_Prefab: {fileID: 6642815644143083063, guid: 0c962a3b02d415f43961169ab8deb2dc, type: 3}
   settingMenu: {fileID: 0}
-  hostingMenu_Prefab: {fileID: 6642815644143083063, guid: 55528f99588dc0946b7eedff68f5f16d, type: 3}
   hostingMenu: {fileID: 0}
-  JoinMenu_Prefab: {fileID: 6642815644143083063, guid: 8ef4dcb3df72d1d4594261f5be1f7d3b, type: 3}
-  JoinMenu: {fileID: 0}
-  lobbyMenu_Prefab: {fileID: 6642815644143083063, guid: 224a393daf157e445bf1f1eb73d0618b, type: 3}
+  joinMenu: {fileID: 0}
   lobbyMenu: {fileID: 0}
-  panel_Prefab: {fileID: 9012855813553188690, guid: 666360a911146094d9483ed0c1d10903, type: 3}
   panel: {fileID: 0}
+  clickBlocker_prefab: {fileID: 9012855813553188690, guid: d51bc51992dfd0541ac6138066093233, type: 3}
+  mainMenu_Prefab: {fileID: 1962608333857117833, guid: 71cb4fd5df12f7944bb7f1c75bb15fe2, type: 3}
+  settingMenu_Prefab: {fileID: 6642815644143083063, guid: 0c962a3b02d415f43961169ab8deb2dc, type: 3}
+  hostingMenu_Prefab: {fileID: 6642815644143083063, guid: 55528f99588dc0946b7eedff68f5f16d, type: 3}
+  JoinMenu_Prefab: {fileID: 6642815644143083063, guid: 8ef4dcb3df72d1d4594261f5be1f7d3b, type: 3}
+  lobbyMenu_Prefab: {fileID: 6642815644143083063, guid: 224a393daf157e445bf1f1eb73d0618b, type: 3}
+  panel_Prefab: {fileID: 9012855813553188690, guid: 666360a911146094d9483ed0c1d10903, type: 3}
+  EXITPopUp_Prefab: {fileID: 1829223542862491745, guid: 0f7be77488549874a83cf90540ecdb6a, type: 3}
   tempMenu: {fileID: 0}
   tempMenuObject: {fileID: 0}
-  EXITPopUp_Prefab: {fileID: 1829223542862491745, guid: 0f7be77488549874a83cf90540ecdb6a, type: 3}
   isPopMenu: 0
   isPushMenu: 0
   isInGame: 0

@@ -72,7 +72,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 /Assets/Scenes/Tracks/city_night
-/Assets/Audio
 /Assets/Packs/CartoonTracksPack1
-/Assets/Photon
-/Assets/Video

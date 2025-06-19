@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Fusion;
 using TMPro;
 using UnityEngine;
@@ -106,6 +107,7 @@ public class Lobby_Manager : MonoBehaviour
         var playerInLobby = Instantiate(lobbyUser_Prefab, scrollContent).GetComponent<LobbyItem>();
         playerInLobby.SetPlayer(player);
         playerList.Add(player, playerInLobby);
+
         StartCoroutine(UpdateLobby());
     }
 
@@ -159,9 +161,15 @@ public class Lobby_Manager : MonoBehaviour
         trackName.text = selectedTrack.mapName;
     }
     public void OnClickLeaveSession()
-    { Shared.ui_Manager.RecivePopup(Instantiate(quitPopup, mainCanvas.transform)); }
-    //public void ForceStart()
-    //{ Shared.scene_Manager.ChangeScene(Shared.room_Manager.GetTrackEnum(Shared.game_Manager.trackIndex)); }
+    { 
+        Shared.lobby_Manager = null;
+        Game_Manager.OnLobbyUpdated -= OnLobbyUpdate;
+        LobbyPlayer.PlayerChanged = null;
+        StartButton.gameObject.SetActive(false);
+        changeTrackButton.gameObject.SetActive(false);
+        Shared.ui_Manager.RecivePopup(Instantiate(quitPopup, mainCanvas.transform));
+    }
+
     public void ForceStart()
     {
         Shared.game_Manager.gameStart = true;
