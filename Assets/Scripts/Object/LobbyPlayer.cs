@@ -40,7 +40,7 @@ public class LobbyPlayer : NetworkBehaviour
             localPlayer = this;
 
             PlayerChanged?.Invoke(this);
-            RPC_SetPlayerState(Client_Data.Username, Shared.CarIndex);
+            RPC_SetPlayerState(Client_Data.Username, Client_Data.CarID);
         }
         players.Add(this);
         playerJoined?.Invoke(this);

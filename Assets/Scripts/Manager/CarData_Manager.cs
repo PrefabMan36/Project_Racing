@@ -1,11 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO; // 추가
-using System.Globalization; // 추가
-using CsvHelper; // 추가
+using System.IO;
+using System.Globalization;
+using CsvHelper;
 using CsvHelper.Configuration;
-using System.Threading.Tasks; // 추가
-// using CSVToolKit; // 제거
+using System.Threading.Tasks;
 
 public class CarData_Manager : MonoBehaviour
 {

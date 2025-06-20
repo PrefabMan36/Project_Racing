@@ -1091,6 +1091,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4019951310819650}
   - component: {fileID: 64566738488929236}
+  - component: {fileID: 6862203500372116811}
   m_Layer: 6
   m_Name: Super2000
   m_TagString: Untagged
@@ -1142,6 +1143,21 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300006, guid: 8dcf477a4933f764e869d8a1a9b0f6d2, type: 3}
+--- !u!114 &6862203500372116811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948821525999562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d454aa2275314d4fa806d5e1b5cfc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 100
+  initialRotation: {x: 0, y: 0, z: 0, w: 0}
+  rotating: 0
 --- !u!1 &1967885208801384
 GameObject:
   m_ObjectHideFlags: 0
