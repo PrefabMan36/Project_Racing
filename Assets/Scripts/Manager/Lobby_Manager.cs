@@ -30,8 +30,9 @@ public class Lobby_Manager : MonoBehaviour
     [SerializeField] private GameObject changeCarPopup;
 
     [Header("Buttons")]
-    [SerializeField] private Button StartButton;
+    [SerializeField] private Button startButton;
     [SerializeField] private Button readyButton;
+    [SerializeField] private Button selectCarButton;
     [SerializeField] private Button changeTrackButton;
     [SerializeField] private Button quitButton;
 
@@ -51,8 +52,10 @@ public class Lobby_Manager : MonoBehaviour
         LobbyPlayer.PlayerChanged += (player) =>
         {
             var isHost = LobbyPlayer.localPlayer.isHost;
-            StartButton.gameObject.SetActive(isHost);
-            StartButton.onClick.AddListener(OnClickStart);
+            startButton.gameObject.SetActive(isHost);
+            startButton.onClick.AddListener(OnClickStart);
+            selectCarButton.gameObject.SetActive(true);
+            selectCarButton.onClick.AddListener(OnClickChangeCar);
             changeTrackButton.gameObject.SetActive(isHost);
             changeTrackButton.onClick.AddListener(OnClickChangeTrack);
         };
@@ -165,8 +168,9 @@ public class Lobby_Manager : MonoBehaviour
         Shared.lobby_Manager = null;
         Game_Manager.OnLobbyUpdated -= OnLobbyUpdate;
         LobbyPlayer.PlayerChanged = null;
-        StartButton.gameObject.SetActive(false);
+        startButton.gameObject.SetActive(false);
         changeTrackButton.gameObject.SetActive(false);
+        selectCarButton.gameObject.SetActive(false);
         Shared.ui_Manager.RecivePopup(Instantiate(quitPopup, mainCanvas.transform));
     }
 

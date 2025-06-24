@@ -862,11 +862,9 @@ MonoBehaviour:
   buttonL_Positon:
   - {x: 0, y: 0}
   buttonS_Prefab: {fileID: 1212431913001837129, guid: 62604968652933a498e6a7560a45be2d, type: 3}
-  buttonS:
-  - {fileID: 5617902250898127254}
-  buttonSType: 10000000
-  buttonS_Positon:
-  - {x: 0, y: 0}
+  buttonS: []
+  buttonSType: 
+  buttonS_Positon: []
   buttomArea: {fileID: 0}
 --- !u!114 &8700124009001784341
 MonoBehaviour:
@@ -890,9 +888,10 @@ MonoBehaviour:
   quitPopup: {fileID: 0}
   forceStartPopup: {fileID: 7956768692323301267, guid: 4a36985aa3fce4e409e72a5ac26980e2, type: 3}
   changeTrackPopup: {fileID: 1240605087846845702, guid: 1aa410f573587784799aa4b5b0e8c200, type: 3}
-  changeCarPopup: {fileID: 0}
-  StartButton: {fileID: 4518588813332191350}
+  changeCarPopup: {fileID: 2479575673112933756, guid: f54d2a84a6a16524fb2074e6e69ab0fb, type: 3}
+  startButton: {fileID: 4518588813332191350}
   readyButton: {fileID: 4617665169170063108}
+  selectCarButton: {fileID: 368201573725194354}
   changeTrackButton: {fileID: 4893386735837092208}
   quitButton: {fileID: 1818336774664564128}
 --- !u!114 &3636784220987894637
@@ -1806,22 +1805,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8205292249566017977, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62604968652933a498e6a7560a45be2d, type: 3}
---- !u!114 &5617902250898127254 stripped
+--- !u!114 &368201573725194354 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1212431913001837129, guid: 62604968652933a498e6a7560a45be2d, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6357320512532992941, guid: 62604968652933a498e6a7560a45be2d, type: 3}
   m_PrefabInstance: {fileID: 6711946963781426143}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc3cf1bdaa8f50a46990de0c81e9f605, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &8391022141106231982 stripped
@@ -1855,7 +1854,7 @@ PrefabInstance:
       objectReference: {fileID: 1992259895154663583, guid: 586e9d58966edb04ab62336de216c493, type: 2}
     - target: {fileID: 1212431913001837129, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: uiType
-      value: 15
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 2978926771990626673, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_Pivot.x

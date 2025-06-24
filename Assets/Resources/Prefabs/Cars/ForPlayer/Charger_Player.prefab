@@ -6464,7 +6464,7 @@ Transform:
   m_GameObject: {fileID: 3790321208419157066}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8, y: 0.2, z: 1.4}
+  m_LocalPosition: {x: -0.8, y: 0.255, z: 1.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12795,7 +12795,7 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
@@ -14552,7 +14552,7 @@ Transform:
   m_GameObject: {fileID: 7696321601114848089}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.8, y: 0.2, z: 1.4}
+  m_LocalPosition: {x: 0.8, y: 0.255, z: 1.555}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15069,7 +15069,7 @@ Transform:
   m_GameObject: {fileID: 8031462252862334478}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000014106499, y: -0, z: 0.00000004371139, w: 1}
-  m_LocalPosition: {x: -0.8, y: 0.2, z: -1.3}
+  m_LocalPosition: {x: -0.8, y: 0.255, z: -1.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16283,7 +16283,7 @@ Transform:
   m_GameObject: {fileID: 8607436911432596030}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000014106499, y: -0, z: 0.00000004371139, w: 1}
-  m_LocalPosition: {x: 0.8, y: 0.2, z: -1.3}
+  m_LocalPosition: {x: 0.8, y: 0.255, z: -1.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17425,7 +17425,7 @@ GameObject:
   - component: {fileID: 4225608585699235138}
   m_Layer: 0
   m_Name: Charger_Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17711,7 +17711,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -17731,6 +17731,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 0}
+  speedTextForUI: {fileID: 0}
+  gearTextForUI: {fileID: 0}
+  nitroBar: {fileID: 0}
+  rpmGauge: {fileID: 0}
+  centerMass: {fileID: 4811961843594701441}
+  carRB: {fileID: 6795128057534110208}
+  dragCoefficient: 0.4
+  frontalArea: 2
+  airDensity: 1.225
+  sqrSpeed: 0
+  dragDirection: {x: 0, y: 0, z: 0}
+  dragMagnitude: 0
+  dragForce: {x: 0, y: 0, z: 0}
+  headLight_Object:
+  - {fileID: 4342915706387609779}
+  - {fileID: 4344275726344050968}
+  headLight_SpotLight:
+  - {fileID: 2735446705713421971}
+  - {fileID: 2793982241666810630}
+  tailLamp:
+  - {fileID: 3127281096991464467}
+  - {fileID: 6329473130886178246}
+  headLightSwitch: 1
   brakeInput: 0
   steeringCurve:
     serializedVersion: 2
@@ -17770,7 +17793,7 @@ MonoBehaviour:
   groundedL: 0
   groundedR: 0
   slipLimit: 0.3
-  smokePrefab: {fileID: 0}
+  smokePrefab: {fileID: 100000, guid: bafe3b28ce202a749a940ce779c3a90d, type: 3}
   smokes: []
   smokeParticles: []
   brakePower: 0
@@ -17784,24 +17807,8 @@ MonoBehaviour:
   isBrakingIntent: 0
   absSlipThreshold: 0.35
   absBrakeReleaseFactor: 0.3
-  speedTextForUI: {fileID: 0}
-  gearTextForUI: {fileID: 0}
-  nitroBar: {fileID: 0}
-  rpmGauge: {fileID: 0}
-  centerMass: {fileID: 0}
-  carRB: {fileID: 0}
-  dragCoefficient: 0.4
-  frontalArea: 2
-  airDensity: 1.225
-  sqrSpeed: 0
-  dragDirection: {x: 0, y: 0, z: 0}
-  dragMagnitude: 0
-  dragForce: {x: 0, y: 0, z: 0}
-  headLight_Object: []
-  headLight_SpotLight: []
-  tailLamp: []
-  headLightSwitch: 1
-  engineSound: []
+  engineSound:
+  - {fileID: 2595313706669684708}
   startUpSoundObject: {fileID: 0}
   isTCSEnabled: 1
   tcsSlipThreshold: 0.25
@@ -17887,6 +17894,11 @@ MonoBehaviour:
   nameChanged: 0
   inputCheck: {x: 0, y: 0, z: 0}
   _data: {fileID: 0}
+  wheelsModels:
+  - {fileID: 1302646427899966117}
+  - {fileID: 3211798268955371179}
+  - {fileID: 1591495219419026610}
+  - {fileID: 2309598660661004012}
   cameraData: {fileID: 2618143904914634885, guid: 08e00787136b89944b260e2782e6fef9, type: 3}
   cameraPositions: {fileID: 0}
   networkObject: {fileID: 0}
@@ -17987,19 +17999,145 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horsePower:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1000
+      value: 48
+      inSlope: 0.05
+      outSlope: 0.05
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 2000
+      value: 100
+      inSlope: 0.041599996
+      outSlope: 0.041599996
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 6000
+      value: 485
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 6450
+      value: 453
+      inSlope: -0.256
+      outSlope: -0.256
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 6500
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   torque:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1000
+      value: 305
+      inSlope: 0.15152942
+      outSlope: 0.15152942
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 4250
+      value: 644
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 6000
+      value: 576
+      inSlope: -0.060444444
+      outSlope: -0.060444444
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 6500
+      value: 508
+      inSlope: -0.45333332
+      outSlope: -0.45333332
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 6600
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   steer:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 30
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 200
+      value: 5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

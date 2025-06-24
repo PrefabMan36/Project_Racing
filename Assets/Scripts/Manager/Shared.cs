@@ -16,6 +16,7 @@ public static class Shared
     public static Room_Manager room_Manager;
     public static Lobby_Manager lobby_Manager;
     public static Lobby_Network_Manager lobby_Network_Manager;
+    public static CarSelect_Manager CarSelect_Manager;
 
     public static float audioVolume;
 

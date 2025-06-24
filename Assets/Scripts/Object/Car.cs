@@ -34,8 +34,8 @@ public partial class Car : Object_Movable
             {
                 currentEngineRPM = 0f;
                 currentWheelTorque = 0f;
-                if (!engineStartUP && throttle > 0)
-                    StartCoroutine(IgnitionEngine());
+                //if (!engineStartUP && throttle > 0)
+                //    StartCoroutine(IgnitionEngine());
             }
         }
     }
@@ -132,6 +132,11 @@ public partial class Car : Object_Movable
         }
     }
 
+    public void EngineStop()
+    {
+        if(LobbyPlayer.localPlayer.finished)
+            ignition = false;
+    }
     protected virtual void GetInputData()
     { }
 }

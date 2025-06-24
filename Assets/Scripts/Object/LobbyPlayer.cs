@@ -92,6 +92,11 @@ public class LobbyPlayer : NetworkBehaviour
         Debug.Log($"RPC_ChangeSyncTrackState: {spawnedOver}");
         isSync = spawnedOver;
     }
+    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+    public void RPC_ChangeFinishedRace(NetworkBool finishedOver)
+    {
+        finished = finishedOver;
+    }
 
     private void OnDisable()
     {

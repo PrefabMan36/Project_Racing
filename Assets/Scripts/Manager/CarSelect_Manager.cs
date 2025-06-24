@@ -22,16 +22,14 @@ public class CarSelect_Manager : MonoBehaviour
     [SerializeField] Quaternion startRotation;
     [SerializeField] Quaternion endRotation;
 
-    private float cameraDistance;
-
+    private void Awake()
+    {
+        Shared.CarSelect_Manager = this;
+        DontDestroyOnLoad(this);
+    }
     void Start()
     {
         InitializeCarsAsync();
-    }
-
-    void Update()
-    {
-        HandleInput();
     }
 
     /// <summary>
@@ -41,8 +39,6 @@ public class CarSelect_Manager : MonoBehaviour
     {
         if (coreTransform == null)
             coreTransform = transform;
-
-        currentCarIndex = Client_Data.CarID;
 
         while (CarData_Manager.instance == null || CarData_Manager.instance.carDatas == null || CarData_Manager.instance.carDatas.Count == 0)
         {
@@ -60,7 +56,7 @@ public class CarSelect_Manager : MonoBehaviour
             if (carPrefab != null)
             {
                 SelectableCar carInstance = Instantiate(carPrefab, coreTransform).GetComponent<SelectableCar>();
-                if(carInstance == null)
+                if (carInstance == null)
                 {
                     Debug.LogError($"{carPrefab}에서 SelectableCar 컴포넌트를 찾을수 없습니다.");
                     return;
@@ -139,23 +135,6 @@ public class CarSelect_Manager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 사용자 입력을 처리하여 차량을 선택합니다.
-    /// </summary>
-    private void HandleInput()
-    {
-        if (cars.Count == 0) return;
-
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            SelectPreviousCar();
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            SelectNextCar();
-        }
-    }
-
     private void SelectNextCarInternal(int direction)
     {
         if (currentCarIndex >= 1 && currentCarIndex <= cars.Count)
@@ -166,7 +145,6 @@ public class CarSelect_Manager : MonoBehaviour
             currentCarIndex = 1;
         else if (currentCarIndex < 1)
             currentCarIndex = cars.Count;
-        Client_Data.CarID = currentCarIndex;
         UpdateTargetRotation();
         SelectCar(currentCarIndex);
     }
@@ -184,10 +162,10 @@ public class CarSelect_Manager : MonoBehaviour
             cars[index].OnSelected();
         }
     }
-    
+
     private void DeselectAll()
     {
-        foreach(var car in cars)
+        foreach (var car in cars)
         {
             car.OnDeselected();
         }
@@ -200,7 +178,7 @@ public class CarSelect_Manager : MonoBehaviour
     /// <summary>
     /// 다음 차량을 선택합니다.
     /// </summary>
-    private void SelectNextCar()
+    public void SelectNextCar()
     {
         SelectNextCarInternal(1);
     }
@@ -208,9 +186,21 @@ public class CarSelect_Manager : MonoBehaviour
     /// <summary>
     /// 이전 차량을 선택합니다.
     /// </summary>
-    private void SelectPreviousCar()
+    public void SelectPreviousCar()
     {
         SelectNextCarInternal(-1);
+    }
+
+    public void ConfirmCurrentCar()
+    {
+        Client_Data.CarID = currentCarIndex;
+        LobbyPlayer.localPlayer.RPC_SetCarIndex(currentCarIndex);
+        DeselectAll();
+    }
+    public void CancelSelectCar()
+    {
+        currentCarIndex = Client_Data.CarID;
+        DeselectAll();
     }
 
     /// <summary>
@@ -230,18 +220,10 @@ public class CarSelect_Manager : MonoBehaviour
         while (true)
         {
             yield return waitForSeconds;
-            if(rotateTime < 1)
-            rotateTime += Time.deltaTime * 4;
+            if (rotateTime < 1)
+                rotateTime += Time.deltaTime * 4;
             coreTransform.localRotation = Quaternion.Slerp(startRotation, endRotation, rotateTime);
         }
     }
-
-    // 디버그 용으로 현재 선택된 차량의 인덱스를 표시합니다.
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 30;
-        style.normal.textColor = Color.white;
-        GUI.Label(new Rect(10, 10, 200, 50), "선택된 차량: " + (currentCarIndex + 1) + " / " + cars.Count, style);
-    }
 }
+

@@ -24,13 +24,14 @@ public partial class Car
     [Header("Other Value")]
     protected bool ignition = true;
     private bool engineStartUP = false;
+    private bool waitingForRaceStart = false;
     [SerializeField] protected AudioSource[] engineSound;
     [SerializeField] private GameObject startUpSoundObject;
     private GameObject _tempSoundObject;
     private AudioSource startUpSound;
 
     [Header("Value TCS")]
-    [SerializeField] private bool isTCSEnabled = true; // TCS 사용 여부
+    [SerializeField] protected bool isTCSEnabled = true; // TCS 사용 여부
     [SerializeField, Range(0.05f, 1.0f)] private float tcsSlipThreshold = 0.25f; // TCS 개입을 시작할 Forward Slip 임계값
     [SerializeField, Range(0.0f, 1.0f)] private float tcsTorqueReductionFactor = 1.0f; // TCS 개입 강도 (1이면 슬립 시 토크 0, 낮을수록 약하게 개입)
     [SerializeField] private float tcsBrake = 0f;
@@ -69,6 +70,7 @@ public partial class Car
     public void SetBaseEngineAcceleration(float _engineAcceleration) { baseEngineAcceleration = _engineAcceleration; }
     public void SetEngineRPMLimit(float _maxEngineRPM, float _minEngineRPM) { maxEngineRPM = _maxEngineRPM; minEngineRPM = _minEngineRPM; }
     public void SetEngineSound(AudioSource[] _engineSound) { engineSound = _engineSound; }
+    public void StartRace() { if(!waitingForRaceStart) waitingForRaceStart = true; }
     #endregion
 
     #region Function Engine
@@ -228,7 +230,7 @@ public partial class Car
     private void TorqueToWheel()
     {
         baseTorquePerWheel = (driveWheelsNum > 0) ? currentWheelTorque / driveWheelsNum : 0;
-
+        if(!waitingForRaceStart) return;
         for (int i = 0; i < driveWheelsNum; i++)
         {
             appliedMotorTorque = 0f;

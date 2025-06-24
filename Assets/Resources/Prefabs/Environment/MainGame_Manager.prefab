@@ -61,10 +61,15 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   spawnPointSpacing: 2.5
-  spawnPointVerticalOffset: 0.5
+  spawnPointVerticalOffset: 1
   playerCarPrefab:
   - {fileID: 1982242415706992608, guid: 7b367dccc659de64b8c4d882ca0505fc, type: 3}
   - {fileID: 2950555046133427952, guid: 1025e749bf4c01943b04668eae326147, type: 3}
+  playerCarPrefabNames:
+  - Super2000
+  - Super2000
+  - Super2000
+  - Super2000
   gameTimer: 0
   MainCamera_Prefab: {fileID: 7916578112111094242, guid: ead7127616435bd43bcabcaa12a9bcc9, type: 3}
   rpmGauge_Prefab: {fileID: 1899898029282573489, guid: 45faa3b313ff9314fa64ee051a2a8ddd, type: 3}

@@ -268,9 +268,6 @@ public class UI_Manager : MonoBehaviour
             case eUI_TYPE.LEAVESESSION:
                 action = OnClickToMain;
                 break;
-            case eUI_TYPE.CARSELECT:
-                action = Shared.lobby_Manager.OnClickChangeCar;
-                break;
             default:
                 Debug.Log($"{buttonType}에 해당하는 버튼 메소드가 정의되지 않았습니다.");
                 break;

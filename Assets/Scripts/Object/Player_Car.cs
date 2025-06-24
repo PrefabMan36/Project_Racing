@@ -26,6 +26,8 @@ public class Player_Car : Car
     public Curve_data _data;
     private MainGame_Manager gameManager;
 
+    [SerializeField] private GameObject[] wheelsModels = new GameObject[4];
+
     [SerializeField] private GameObject cameraData;
     [SerializeField] private GameObject cameraPositions;
     [SerializeField] private NetworkObject networkObject;
@@ -103,14 +105,15 @@ public class Player_Car : Car
             StartCoroutine(CameraUpdate());
             StartCoroutine(UIUpdating());
         }
-        SetWheels(transform.Find("Tire_LF").gameObject, transform.Find("Wheel_FrontLeft").GetComponent<WheelCollider>(), transform.Find("TrailFrontLeft").GetComponent<TrailRenderer>(), true);
-        SetWheels(transform.Find("Tire_RF").gameObject, transform.Find("Wheel_FrontRight").GetComponent<WheelCollider>(), transform.Find("TrailFrontRight").GetComponent<TrailRenderer>(), true);
-        SetWheels(transform.Find("Tire_LR").gameObject, transform.Find("Wheel_RearLeft").GetComponent<WheelCollider>(), transform.Find("TrailRearLeft").GetComponent<TrailRenderer>(), false);
-        SetWheels(transform.Find("Tire_RR").gameObject, transform.Find("Wheel_RearRight").GetComponent<WheelCollider>(), transform.Find("TrailRearRight").GetComponent<TrailRenderer>(), false);
+        SetWheels(wheelsModels[0], transform.Find("Wheel_FrontLeft").GetComponent<WheelCollider>(), transform.Find("TrailFrontLeft").GetComponent<TrailRenderer>(), true);
+        SetWheels(wheelsModels[1], transform.Find("Wheel_FrontRight").GetComponent<WheelCollider>(), transform.Find("TrailFrontRight").GetComponent<TrailRenderer>(), true);
+        SetWheels(wheelsModels[2], transform.Find("Wheel_RearLeft").GetComponent<WheelCollider>(), transform.Find("TrailRearLeft").GetComponent<TrailRenderer>(), false);
+        SetWheels(wheelsModels[3], transform.Find("Wheel_RearRight").GetComponent<WheelCollider>(), transform.Find("TrailRearRight").GetComponent<TrailRenderer>(), false);
         _data = gameObject.GetComponent<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
-
+        isTCSEnabled = false;
+        isABSEnabled = false;
         SetNitroInstall(true);
         SetNitroParticles(gameObject.GetComponent<Trail>());
         SetMaxNitroCapacity(100f);

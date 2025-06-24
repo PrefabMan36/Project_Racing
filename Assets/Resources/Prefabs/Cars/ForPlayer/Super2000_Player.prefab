@@ -1172,6 +1172,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 0}
+  speedTextForUI: {fileID: 0}
+  gearTextForUI: {fileID: 0}
+  nitroBar: {fileID: 0}
+  rpmGauge: {fileID: 0}
+  centerMass: {fileID: 4880681281052632171}
+  carRB: {fileID: 559560253472747298}
+  dragCoefficient: 0.4
+  frontalArea: 2
+  airDensity: 1.225
+  sqrSpeed: 0
+  dragDirection: {x: 0, y: 0, z: 0}
+  dragMagnitude: 0
+  dragForce: {x: 0, y: 0, z: 0}
+  headLight_Object:
+  - {fileID: 2548393500099216438}
+  - {fileID: 8719057731069453682}
+  headLight_SpotLight:
+  - {fileID: 1469519824543527820}
+  - {fileID: 8208235122908364761}
+  tailLamp:
+  - {fileID: 7466813844690450978}
+  - {fileID: 8175720268926043303}
+  headLightSwitch: 0
   brakeInput: 0
   steeringCurve:
     serializedVersion: 2
@@ -1225,29 +1248,6 @@ MonoBehaviour:
   isBrakingIntent: 0
   absSlipThreshold: 0.35
   absBrakeReleaseFactor: 0.3
-  speedTextForUI: {fileID: 0}
-  gearTextForUI: {fileID: 0}
-  nitroBar: {fileID: 0}
-  rpmGauge: {fileID: 0}
-  centerMass: {fileID: 4880681281052632171}
-  carRB: {fileID: 559560253472747298}
-  dragCoefficient: 0.4
-  frontalArea: 2
-  airDensity: 1.225
-  sqrSpeed: 0
-  dragDirection: {x: 0, y: 0, z: 0}
-  dragMagnitude: 0
-  dragForce: {x: 0, y: 0, z: 0}
-  headLight_Object:
-  - {fileID: 2548393500099216438}
-  - {fileID: 8719057731069453682}
-  headLight_SpotLight:
-  - {fileID: 1469519824543527820}
-  - {fileID: 8208235122908364761}
-  tailLamp:
-  - {fileID: 7466813844690450978}
-  - {fileID: 8175720268926043303}
-  headLightSwitch: 0
   engineSound:
   - {fileID: 4595467132180779318}
   startUpSoundObject: {fileID: 0}
@@ -1335,6 +1335,11 @@ MonoBehaviour:
   nameChanged: 0
   inputCheck: {x: 0, y: 0, z: 0}
   _data: {fileID: 0}
+  wheelsModels:
+  - {fileID: 1620928895707546}
+  - {fileID: 1499565907576370}
+  - {fileID: 1990250744371632}
+  - {fileID: 1681503282032348}
   cameraData: {fileID: 2618143904914634885, guid: 08e00787136b89944b260e2782e6fef9, type: 3}
   cameraPositions: {fileID: 0}
   networkObject: {fileID: 0}

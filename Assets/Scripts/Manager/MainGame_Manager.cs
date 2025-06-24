@@ -21,7 +21,7 @@ public class MainGame_Manager : NetworkBehaviour
 
     [SerializeField] private Transform[] spawnPosition = new Transform[4];
     [SerializeField] private float spawnPointSpacing = 2.5f;
-    [SerializeField] private float spawnPointVerticalOffset = 0.5f;
+    [SerializeField] private float spawnPointVerticalOffset = 1.0f;
     [SerializeField] private Player_Car[] playerCarPrefab;
     [SerializeField] private string[] playerCarPrefabNames;
 
@@ -130,12 +130,15 @@ public class MainGame_Manager : NetworkBehaviour
         //    gameTimer = TickTimer.CreateFromSeconds(networkRunner, 0f);
     }
 
+    public void GameStart()
+    { if (!gameStart) gameStart = true; }
+
     public void SpawnPlayer(NetworkRunner runner, LobbyPlayer player)
     {
         var index = LobbyPlayer.players.IndexOf(player);
         var point = spawnPosition[index];
 
-        var profabID = player.carIndex;
+        var profabID = player.carIndex-1;
         var prefab = playerCarPrefab[profabID];
 
         var entity = runner.Spawn(
