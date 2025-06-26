@@ -29,7 +29,6 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private TimeSpan gameTimeSpan;
     [SerializeField] private DateTime gameTime;
 
-    // 변경: Car_data 대신 CarData 클래스 사용
     [SerializeField] private CarData carData;
 
     [SerializeField] private Camera MainCamera_Prefab;
@@ -86,6 +85,23 @@ public class MainGame_Manager : NetworkBehaviour
     private Color thirdPlaceColor = new Color(0.815f, 0.486f, 0.222f, 0.7f); // 3등 색상 (브론즈)
     private Color defaultColor = new Color(0.65f, 0.65f, 0.65f, 0.8f); // 그 외 등수 색상 또는 기본 색상
 
+    [Header("Result UI")]
+    [SerializeField] private GameObject resultUI_Prefab;
+    [SerializeField] private GameObject resultUI;
+    [SerializeField] private RaceResultBox raceResultBox;
+
+    [Networked, Capacity(4)]
+    private NetworkDictionary<NetworkId, float> finishedPlayerTimes => default;
+    [Networked, Capacity(4)]
+    private NetworkDictionary<NetworkId, string> finishedPlayerNames => default;
+    private bool isResultPanelActiveLocally = false;
+
+    [Networked] private int totalPlayerCount { get; set; } = 0;
+    [Networked] private bool raceEndedByCompletion { get; set; } = false;
+    [Networked] private bool raceEndedByTimeout { get; set; } = false;
+    [Networked] private TickTimer sceneChangeTimer { get; set; }
+    [SerializeField] private float sceneChangeDelay = 5f; // 씬 변경 지연 시간 (초)
+
     private void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.Escape))
@@ -126,12 +142,116 @@ public class MainGame_Manager : NetworkBehaviour
         if(HasStateAuthority)
             LoadAndSetupTrack();
         StartCoroutine(WaitingForCheckpoint());
-        //if (LobbyPlayer.localPlayer.isHost)
-        //    gameTimer = TickTimer.CreateFromSeconds(networkRunner, 0f);
+
+        if (resultUI_Prefab != null)
+        {
+            resultUI = Instantiate(resultUI_Prefab, MainCanvas.transform);
+            raceResultBox = resultUI.GetComponent<RaceResultBox>();
+
+            if (raceResultBox == null)
+                Debug.LogError("RaceResultBox 컴포넌트가 resultUI에 없습니다. 추가해주세요.");
+            resultUI.SetActive(false);
+        }
+        else
+            Debug.LogError("resultUI가 할당되지 않았습니다. UI를 확인해주세요.");
+        sceneChangeTimer = TickTimer.None;
     }
 
-    public void GameStart()
+    public override void FixedUpdateNetwork()
+    {
+        base.FixedUpdateNetwork();
+        if(resultUI != null && localPlayer != null)
+        {
+            Player_Car localPlayerCar = localPlayer.GetComponent<Player_Car>();
+            if(localPlayerCar != null)
+            {
+                isResultPanelActiveLocally = (localPlayerCar.GetLap() >= maxLaps) || raceEndedByTimeout;
+                resultUI.SetActive(isResultPanelActiveLocally);
+            }
+        }
+        else if(resultUI != null && localPlayer == null)
+        {
+            resultUI.SetActive(false);
+        }
+
+        // 결과창이 활성화되면 UI 업데이트 (모든 클라이언트에서 ResultUIManager를 통해)
+        if (isResultPanelActiveLocally && resultUI != null)
+        {
+            raceResultBox.UpdateResultDisplay(finishedPlayerTimes, finishedPlayerNames);
+        }
+
+        // 호스트에서만 씬 전환 로직 실행
+        if (Object.HasStateAuthority)
+        {
+            if((raceEndedByCompletion || raceEndedByTimeout) && !sceneChangeTimer.IsRunning && sceneChangeTimer.ExpiredOrNotRunning(Runner))
+            {
+                // 모든 플레이어가 완주했거나 레이스가 강제 종료된 경우
+                sceneChangeTimer = TickTimer.CreateFromSeconds(Runner, sceneChangeDelay);
+                Debug.Log($"호스트: 씬 전환 타이머 시작! {sceneChangeDelay}초 후 씬 전환.");
+            }
+
+            // 씬 전환 타이머 만료 시 씬 전환
+            if (sceneChangeTimer.IsRunning && sceneChangeTimer.Expired(Runner))
+            {
+                Runner.LoadScene(SceneRef.FromIndex(3)); // "LobbyScene"으로 가정 (빌드 설정의 첫 번째 씬)
+                Debug.Log("호스트: 씬이 LobbyScene으로 전환됩니다.");
+            }
+        }
+    }
+
+    public void RaceStart()
     { if (!gameStart) gameStart = true; }
+    public void RaceEnd()
+    {
+        if (Object.HasStateAuthority)
+        {
+            if (gameStart)
+            {
+                gameStart = false;
+                Debug.Log("게임 종료! 첫 번째 플레이어 완주.");
+                foreach (var playerCarEntry in playerCars)
+                {
+                    if (playerCarEntry != null && playerCarEntry.GetLap() >= maxLaps) // 완주 조건 확인
+                    {
+                        NetworkId playerId = playerCarEntry.Object.Id;
+                        if (!finishedPlayerTimes.ContainsKey(playerId))
+                        {
+                            finishedPlayerTimes.Add(playerId, playerCarEntry.GetFinishTime());
+                            finishedPlayerNames.Add(playerId, playerCarEntry.GetName()); // 이름도 저장 (RPC를 통해 설정된 이름)
+                            Debug.Log($"플레이어 {playerCarEntry.GetName()} (ID: {playerId}) 완주 시간 기록: {playerCarEntry.GetFinishTime()}");
+                        }
+                    }
+                }
+            }
+        }
+        // 모든 플레이어가 완주했는지 확인 (호스트에서만)
+        if (finishedPlayerTimes.Count >= totalPlayerCount) // totalPlayerCount와 같거나 많으면 (혹시 모를 오류 대비 >=)
+        {
+            raceEndedByCompletion = true;
+            Debug.Log("호스트: 모든 플레이어가 완주했습니다. 씬 전환 준비.");
+        }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
+    public void RPC_ForceRaceEnd()
+    {
+        Debug.Log("RPC_ForceRaceEnd 호출됨: 레이스가 강제 종료됩니다.");
+        raceEndedByTimeout = true;
+        // 강제 종료 시, 모든 플레이어를 finishedPlayerTimes에 추가 (완주 시간은 0으로 처리하거나 적절한 값 설정)
+        // 이 부분은 필요에 따라 구현. 현재는 강제 종료 시 결과창만 띄우고 씬 전환.
+        // 예를 들어, 모든 플레이어를 강제로 완주 처리하고 싶다면:
+        // if (Object.HasStateAuthority)
+        // {
+        //     foreach (var car in playerCars)
+        //     {
+        //         if (car != null && !finishedPlayerTimes.ContainsKey(car.Object.Id))
+        //         {
+        //             finishedPlayerTimes.Add(car.Object.Id, -1f); // 강제 종료된 플레이어 시간 (음수 또는 특정 값)
+        //             finishedPlayerNames.Add(car.Object.Id, car.GetName());
+        //         }
+        //     }
+        // }
+    }
 
     public void SpawnPlayer(NetworkRunner runner, LobbyPlayer player)
     {
@@ -296,7 +416,18 @@ public class MainGame_Manager : NetworkBehaviour
             playersID[playerNumber] = playerCar.GetComponent<NetworkObject>().Id;
         else
             playersID.Add(playerNumber, playerCar.GetComponent<NetworkObject>().Id);
-        
+
+        // 호스트에서만 총 플레이어 수 업데이트
+        if (Object.HasStateAuthority)
+        {
+            playerCars[playerNumber++] = playerCar;
+            totalPlayerCount = playerNumber; // 현재 생성된 플레이어 수
+        }
+        else // 클라이언트의 경우, playerNumber만 증가
+        {
+            playerCars[playerNumber++] = playerCar;
+        }
+
         playerCars[playerNumber++] = playerCar;
         SetFirstCheckPoint(playerCar);
         if (!isRankingStart && playerNumber > 1)
@@ -379,8 +510,10 @@ public class MainGame_Manager : NetworkBehaviour
             _playerCar.ResetTimer();
             if (_playerCar.GetLap() >= maxLaps)
             {
+                // 완주 시 GameEnd 호출 및 최종 완주 시간 전달
+                _playerCar.SetFinishTime(gameTimer); // Player_Car에 완주 시간 저장 함수 추가 필요
+                RaceEnd(); // 게임 종료 및 결과창 활성화 트리거
                 bestLapTime = gameTimer;
-                ExitGame();
             }
             else
             {

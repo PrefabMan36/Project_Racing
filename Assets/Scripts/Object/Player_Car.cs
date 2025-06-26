@@ -47,6 +47,7 @@ public class Player_Car : Car
     [Networked, SerializeField] private float distanceToCheckPoint { get; set; }
     [SerializeField]private Transform nextCheckPoint;
     [SerializeField] private float gameTimer = 0;
+    [SerializeField] private float finishedTime = 0f;
     [SerializeField] private bool raceStarted = false;
     [SerializeField] private bool calculateDistance = false;
 
@@ -394,6 +395,15 @@ public class Player_Car : Car
 
     public short GetLap() { return lap; }
 
+    public void SetFinishTime(float _time)
+    {
+        finishedTime = _time;
+    }
+
+    public float GetFinishTime()
+    {
+        return finishedTime;
+    }
     public void SetID(int _id) { ID = _id; }
     public int GetID() { return ID; }
 
