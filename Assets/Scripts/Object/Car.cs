@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public partial class Car : Object_Movable
 {
     private float speed;
+
+    private bool waitingForRaceStart = false;
     [Networked] private int speedInt { get; set; }
     [SerializeField] protected TextMeshProUGUI speedTextForUI;
     [SerializeField] protected TextMeshProUGUI gearTextForUI;

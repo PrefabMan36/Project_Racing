@@ -71,7 +71,7 @@ public class RaceResultBox : MonoBehaviour
             TextMeshProUGUI nameText = resultEntryGO.transform.Find("NameText")?.GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI timeText = resultEntryGO.transform.Find("TimeText")?.GetComponent<TextMeshProUGUI>();
 
-            if (rankText != null) rankText.text = $"{rankNum}위";
+            if (rankText != null) rankText.text = rankNum.ToString();
             if (nameText != null) nameText.text = playerName;
             // 시간 표시 형식: 분:초.밀리초 (예: 01:23.45)
             if (timeText != null) timeText.text = System.TimeSpan.FromSeconds(finishTime).ToString("mm':'ss'.'fff");

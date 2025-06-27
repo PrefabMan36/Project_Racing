@@ -25,7 +25,7 @@ public class Loading_Manager : MonoBehaviour
         op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
         Shared.ui_Manager.isInGame = true;
-        Shared.ui_Manager.OnClickClose();
+        Shared.ui_Manager.OnLoadInGame();
         while (op.progress < 0.9f)
         {
             progressBar.value = op.progress;

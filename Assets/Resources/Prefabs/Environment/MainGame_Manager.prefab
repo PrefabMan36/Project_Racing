@@ -54,6 +54,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   localPlayer: {fileID: 0}
+  localPlayerCar: {fileID: 0}
   playerNumber: 0
   spawnPosition:
   - {fileID: 0}
@@ -102,7 +103,7 @@ MonoBehaviour:
   firstCheckPoint: {fileID: 0}
   lastCheckPoint: {fileID: 0}
   checkPoint: {fileID: 0}
-  maxLaps: 3
+  maxLaps: 1
   rank_Prefab: {fileID: 2033209421621909715, guid: 06eff513991954140a2d3deee6d02603, type: 3}
   rankPositons:
   - {fileID: 1742558439493240191, guid: aefab049b8e0d7e4cbe48091ac0e5ffd, type: 3}
@@ -114,6 +115,12 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
+  resultUI_Prefab: {fileID: 1142691206478491404, guid: 6ec263caf4ec25e429218166478b4402, type: 3}
+  resultUI: {fileID: 0}
+  raceResultBox: {fileID: 0}
+  sceneChangeDelay: 5
+  countDown_Prefab: {fileID: 5926505975737032418, guid: 4e8daa8e4ba616849bdb5063aab709e3, type: 3}
+  countDown: {fileID: 0}
 --- !u!114 &190380100839616690
 MonoBehaviour:
   m_ObjectHideFlags: 0

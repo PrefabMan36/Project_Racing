@@ -151,6 +151,7 @@ public partial class Car
     [SerializeField] private WheelCollider tempWheelColliderForBrake;
     [SerializeField] protected bool isABSEnabled = true; // ABS 사용 여부
     [SerializeField] private bool isBrakingIntent = false; // 브레이크 의도 여부
+    [SerializeField] private bool forceBrake = false; // 강제 브레이크 여부
     [SerializeField, Range(0.1f, 1.0f)] private float absSlipThreshold = 0.35f; // ABS 개입을 시작할 Forward Slip 임계값 (음수)
     [SerializeField, Range(0.1f, 1.0f)] private float absBrakeReleaseFactor = 0.3f; // ABS 개입 강도 (1이면 슬립 시 브레이크 0, 낮을수록 약하게 개입)
     #endregion
@@ -273,11 +274,18 @@ public partial class Car
         if (steeringHandle != null)
             steeringHandle.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
     }
+
+    protected void ForceStop()
+    {
+        if(waitingForRaceStart)
+            forceBrake = true;
+    }
+
     protected void Braking()
     {
         requestedBrakeTorque = brakeInput * brakePower;
         isBrakingIntent = brakeInput > 0.05f;
-
+        
         TailLampSwitch(isBrakingIntent);
 
         for (int i = 0; i < wheelNum; i++)
@@ -302,6 +310,7 @@ public partial class Car
                     finalBrakeTorque = requestedBrakeTorque;
                 }
             }
+            if (forceBrake) finalBrakeTorque = Mathf.Infinity;
             wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
         }
     }

@@ -100,6 +100,8 @@ public class CheckPoint : NetworkBehaviour
                     Debug.Log("CheckPoint " + checkPointIndex + " Entered by " + EnteredPlayer.name + " in " + tempTimer.ToString("0.00"));
                 }
             }
+            else
+                Debug.LogWarning("EnteredPlayer is null in CheckPoint.OnTriggerEnter");
         }
     }
 

@@ -13,7 +13,7 @@ public partial class Scene_manager : MonoBehaviour
     {
         if (curScene == _nextScene)
             return;
-        Shared.ui_Manager.OnClickClose();
+        Shared.ui_Manager.OnLoadInGame();
         nextScene = (int)_nextScene;
         
         if(Shared.lobby_Network_Manager.GetNetRunner() != null)

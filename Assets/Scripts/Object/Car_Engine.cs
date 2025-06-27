@@ -24,7 +24,6 @@ public partial class Car
     [Header("Other Value")]
     protected bool ignition = true;
     private bool engineStartUP = false;
-    private bool waitingForRaceStart = false;
     [SerializeField] protected AudioSource[] engineSound;
     [SerializeField] private GameObject startUpSoundObject;
     private GameObject _tempSoundObject;
@@ -70,7 +69,13 @@ public partial class Car
     public void SetBaseEngineAcceleration(float _engineAcceleration) { baseEngineAcceleration = _engineAcceleration; }
     public void SetEngineRPMLimit(float _maxEngineRPM, float _minEngineRPM) { maxEngineRPM = _maxEngineRPM; minEngineRPM = _minEngineRPM; }
     public void SetEngineSound(AudioSource[] _engineSound) { engineSound = _engineSound; }
-    public void StartRace() { if(!waitingForRaceStart) waitingForRaceStart = true; }
+    public virtual void StartRace()
+    {
+        if(!waitingForRaceStart)
+        {
+            waitingForRaceStart = true;
+        }
+    }
     #endregion
 
     #region Function Engine

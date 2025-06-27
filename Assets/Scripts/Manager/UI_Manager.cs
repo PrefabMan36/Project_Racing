@@ -428,6 +428,26 @@ public class UI_Manager : MonoBehaviour
         }
     }
 
+    public void BackToMenu()
+    {
+        MenuPanel menu;
+        menu = menus.Peek();
+        menu.StartPopUp();
+
+        if (!isInGame)
+            panel.SetActive(true);
+    }
+
+    public void OnLoadInGame()
+    {
+        MenuPanel menu;
+        menu = menus.Peek();
+        menu.ForceOut();
+
+        if (isInGame)
+            panel.SetActive(false);
+    }
+
     /// <summary>
     /// 방 만들기 버튼 클릭 시 호출됩니다.
     /// </summary>

@@ -137,6 +137,7 @@ public class Player_Car : Car
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
         StartCoroutine(Engine());// 엔진 코루틴 시작
         StartCoroutine(UpdateNitro());// 부스트 코루틴 시작
+        ForceChangeGear(eGEAR.eGEAR_FIRST);// 첫 번째 기어로 강제 변경
     }
 
     private void Update()
@@ -399,6 +400,11 @@ public class Player_Car : Car
     {
         finishedTime = _time;
     }
+    public void FinishRace()
+    {
+        raceStarted = false;
+        ForceStop();
+    }
 
     public float GetFinishTime()
     {
@@ -429,6 +435,12 @@ public class Player_Car : Car
         rankData.currentCheckpointIndex = currentCheckpointIndex;
         rankData.distanceToCheckPoint = distanceToCheckPoint;
         return rankData;
+    }
+
+    public override void StartRace()
+    {
+        base.StartRace();
+        raceStarted = true;
     }
 
     public bool GetLocalPlayer() { return localPlayer; }
