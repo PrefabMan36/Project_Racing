@@ -9,7 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
+public class Lobby_Network_Manager : Manager, INetworkRunnerCallbacks
 {
     [SerializeField] private Game_Manager gameManager_Prefab;
     [SerializeField] private LobbyPlayer playerPrefab;
@@ -23,8 +23,11 @@ public class Lobby_Network_Manager : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Awake()
     {
-        Shared.lobby_Network_Manager = this;
-        DontDestroyOnLoad(gameObject);
+        OnStart();
+        if(Shared.lobby_Network_Manager == null)
+            Shared.lobby_Network_Manager = this;
+        else
+            Destroy(gameObject);
     }
 
     private void Start()

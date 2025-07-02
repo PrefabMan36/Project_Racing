@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -109,6 +110,10 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private CountDown countDown_Prefab;
     [SerializeField] private CountDown countDown;
     [Networked] private bool raceFinishCountdownTriggered { get; set; } = false;
+    //[Networked] private NetworkBool countDownSpawned { get; set; } = false;
+
+    [SerializeField] private GameObject parentObjectForUIPanel_Prefab;
+    [SerializeField] private GameObject parentObjectForUIPanel;
 
     private void FixedUpdate()
     {
@@ -135,15 +140,19 @@ public class MainGame_Manager : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+
         trackName = SceneManager.GetActiveScene().name;
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+
         MainCanvas = Shared.ui_Manager.GetMainCanvas();
+        parentObjectForUIPanel = Instantiate(parentObjectForUIPanel_Prefab, MainCanvas.transform);
+
         for (int i = 0; i < rankPositons.Length; i++)
         {
-            rankTargetPositions[i] = Instantiate(rankPositons[i], MainCanvas.transform).position;
+            rankTargetPositions[i] = Instantiate(rankPositons[i], parentObjectForUIPanel.transform).position;
         }
         if (networkRunner == null)
             networkRunner = GameObject.Find("Session").GetComponent<NetworkRunner>();
@@ -153,7 +162,7 @@ public class MainGame_Manager : NetworkBehaviour
 
         if (resultUI_Prefab != null)
         {
-            resultUI = Instantiate(resultUI_Prefab, MainCanvas.transform);
+            resultUI = Instantiate(resultUI_Prefab, parentObjectForUIPanel.transform);
             raceResultBox = resultUI.GetComponent<RaceResultBox>();
 
             if (raceResultBox == null)
@@ -165,13 +174,11 @@ public class MainGame_Manager : NetworkBehaviour
 
         if(Object.HasStateAuthority)
         {
-            countDown = Runner.Spawn(countDown_Prefab);
-            countDown.transform.SetParent(MainCanvas.transform, false);
-            countDown.SetMainGameManager(this);
+            countDown = networkRunner.Spawn(countDown_Prefab);
+            //countDownSpawned = true;
             Debug.Log("CountDown 객체가 호스트에서 스폰되었습니다.");
         }
-        else
-            Debug.LogError("CountDown 프리팹이 MainGame_Manager에 할당되지 않았습니다. Unity 에디터에서 할당해주세요.");
+        StartCoroutine(CheckCountDownSpawned());
 
         sceneChangeTimer = TickTimer.None;
         raceFinishCountdownTriggered = false;
@@ -208,7 +215,12 @@ public class MainGame_Manager : NetworkBehaviour
             {
                 Shared.ui_Manager.isInGame = false;
                 Shared.ui_Manager.BackToMenu();
-                Runner.LoadScene(SceneRef.FromIndex(3));
+                isRankingStart = false;
+                removeUIs();
+
+                LobbyPlayer.localPlayer.Regroup();
+
+                Runner.LoadScene(SceneRef.FromIndex(2));
                 Destroy(resultUI);
                 Debug.Log("호스트: 씬이 LobbyScene으로 전환됩니다.");
             }
@@ -290,6 +302,11 @@ public class MainGame_Manager : NetworkBehaviour
         // }
     }
 
+    private void removeUIs()
+    {
+        Destroy(parentObjectForUIPanel);
+    }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_GameReadyAndStart()
     {
@@ -315,6 +332,19 @@ public class MainGame_Manager : NetworkBehaviour
         player.gameState = eGAMESTATE.GAMEREADY;
         player.car = entity;
         entity.GetComponent<Player_Car>().SetName(player.playerName.Value);
+    }
+
+    private IEnumerator CheckCountDownSpawned()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        while (FindObjectOfType<CountDown>() == null)
+        {
+            yield return waitForSeconds;
+        }
+        countDown = FindObjectOfType<CountDown>().GetComponent<CountDown>();
+        countDown.transform.SetParent(parentObjectForUIPanel.transform, false);
+        countDown.SetMainGameManager(this);
+        Debug.Log("카운트 다운이 시작됩니다.");
     }
 
     private void LoadAndSetupTrack()
@@ -383,12 +413,12 @@ public class MainGame_Manager : NetworkBehaviour
         {
             this.localPlayer = playerCar.GetComponent<NetworkObject>();
 
-            timerImage = Instantiate(Timer_Prefab, MainCanvas.transform).GetComponent<Image>();
-            lapTimeDiffImage = Instantiate(lapTimeDiff_Prefab, MainCanvas.transform).GetComponent<Image>();
+            timerImage = Instantiate(Timer_Prefab, parentObjectForUIPanel.transform).GetComponent<Image>();
+            lapTimeDiffImage = Instantiate(lapTimeDiff_Prefab, parentObjectForUIPanel.transform).GetComponent<Image>();
             timerText = timerImage.GetComponentInChildren<TextMeshProUGUI>();
             lapTimeDiffText = lapTimeDiffImage.GetComponentInChildren<TextMeshProUGUI>();
             lapTimeDiffImage.gameObject.SetActive(false);
-            localLapTimeDiffImage = Instantiate(localLapTimeDiff_Prefab, MainCanvas.transform).GetComponent<Image>();
+            localLapTimeDiffImage = Instantiate(localLapTimeDiff_Prefab, parentObjectForUIPanel.transform).GetComponent<Image>();
             localLapTimeDiffText = localLapTimeDiffImage.GetComponentInChildren<TextMeshProUGUI>();
             localLapTimeDiffImage.gameObject.SetActive(false);
             if (MainCamera == null)
@@ -398,12 +428,12 @@ public class MainGame_Manager : NetworkBehaviour
             }
             if (NitroBar == null)
             {
-                NitroBar = Instantiate(NitroBar_Prefab, MainCanvas.transform);
+                NitroBar = Instantiate(NitroBar_Prefab, parentObjectForUIPanel.transform);
                 playerCar.SetNitroBar(NitroBar);
             }
             if (rpmGauge == null)
             {
-                rpmGauge = Instantiate(rpmGauge_Prefab, MainCanvas.transform);
+                rpmGauge = Instantiate(rpmGauge_Prefab, parentObjectForUIPanel.transform);
                 playerCar.SetRPMGauge(rpmGauge);
             }
         }
@@ -483,9 +513,9 @@ public class MainGame_Manager : NetworkBehaviour
     public void SetRank(NetworkId _id)
     {
         if(!rankList.ContainsKey(_id))
-            rankList.Add(_id, Instantiate(rank_Prefab, MainCanvas.transform));
+            rankList.Add(_id, Instantiate(rank_Prefab, parentObjectForUIPanel.transform));
         rankList[_id].SetTargets(rankTargetPositions);
-        rankList[_id].Rpc_SetPosition(playerNumber, defaultColor);
+        rankList[_id].Rpc_SetPosition(0, defaultColor);
         rankList[_id].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString(), this, _id);
     }
     public void RemoveRank(NetworkId _id)
@@ -583,10 +613,14 @@ public class MainGame_Manager : NetworkBehaviour
         while(true)
         {
             yield return waitForSeconds;
+            if(!isRankingStart)
+                yield break;
             //랭크데이터 초기화
             rankData.Clear();
             for (int i = 0; i < playerCars.Length; i++)
             {
+                if (!isRankingStart)
+                    yield break;
                 if (playerCars[i] != null)
                     rankData.Add(playerCars[i].GetRankData());
             }
@@ -598,6 +632,8 @@ public class MainGame_Manager : NetworkBehaviour
             //정렬된 랭크데이터에 따라 랭크가 표시될 위치와 색 변경
             for (int i = 0; i < sortedRankData.Count; i++)
             {
+                if (!isRankingStart)
+                    yield break;
                 tempRank = (byte)(i + 1);
                 rank.Set(sortedRankData[i].playerId, tempRank);
                 if(tempRank - 1 < 4)

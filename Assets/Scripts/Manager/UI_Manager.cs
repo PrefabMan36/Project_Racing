@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using CsvHelper.Configuration;
 using System.Globalization;
 
-public class UI_Manager : MonoBehaviour
+public class UI_Manager : Manager
 {
     [SerializeField] private Canvas mainCanvas;
     [SerializeField] private Stack<MenuPanel> menus = new Stack<MenuPanel>();
@@ -50,8 +50,15 @@ public class UI_Manager : MonoBehaviour
 
     private void Awake()
     {
-        Shared.ui_Manager = this;
-        DontDestroyOnLoad(this);
+        OnStart();
+        if (Shared.ui_Manager == null)
+            Shared.ui_Manager = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
 
         if (mainCanvas == null)
         {
@@ -432,6 +439,7 @@ public class UI_Manager : MonoBehaviour
     {
         MenuPanel menu;
         menu = menus.Peek();
+        menu.gameObject.SetActive(true);
         menu.StartPopUp();
 
         if (!isInGame)

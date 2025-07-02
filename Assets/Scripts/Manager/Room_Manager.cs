@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room_Manager : MonoBehaviour
+public class Room_Manager : Manager
 {
     [SerializeField] Dictionary<int, TrackSelect> trackList = new Dictionary<int, TrackSelect>();
     [SerializeField] int[] mapEnum;
@@ -12,8 +12,11 @@ public class Room_Manager : MonoBehaviour
 
     private void Awake()
     {
-        Shared.room_Manager = this;
-        DontDestroyOnLoad(this);
+        OnStart();
+        if (Shared.room_Manager == null)
+            Shared.room_Manager = this;
+        else
+            Destroy(gameObject);
         //PlayerPrefs.GetInt("TrackIndex", 6);
         InitailzeTrackList();
     }

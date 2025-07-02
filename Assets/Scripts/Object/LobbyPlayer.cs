@@ -97,6 +97,17 @@ public class LobbyPlayer : NetworkBehaviour
     {
         finished = finishedOver;
     }
+    public void Regroup()
+    {
+        if (HasStateAuthority)
+        {
+            foreach (var player in players)
+            {
+                player.RPC_ChangeReadyState(false);
+            }
+        }
+    }
+
 
     private void OnDisable()
     {

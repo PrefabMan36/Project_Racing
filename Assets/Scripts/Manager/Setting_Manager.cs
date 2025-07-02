@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Setting_Manager : MonoBehaviour
+public class Setting_Manager : Manager
 {
     [SerializeField] private List<GameObject> panels = new List<GameObject>();
     [SerializeField] private int panelIndex = 0;
@@ -27,9 +27,12 @@ public class Setting_Manager : MonoBehaviour
 
     private void Awake()
     {
-        Shared.setting_Manager = this;
+        OnStart();
+        if (Shared.setting_Manager == null)
+            Shared.setting_Manager = this;
+        else
+            Destroy(gameObject);
 
-        DontDestroyOnLoad(this);
         
         if (PlayerPrefs.HasKey("AudioVolume"))
             volume = PlayerPrefs.GetFloat("AudioVolume");

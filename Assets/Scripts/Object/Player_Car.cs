@@ -416,15 +416,16 @@ public class Player_Car : Car
     public void SetName(string _name)
     {
         playerName = _name;
+        if(!nameChanged)
         NameChanged();
     }
 
     private void NameChanged()
     {
+        nameChanged = true;
         gameObject.name = playerName.Value;
         if(playerId != null)
             gameManager.SetRank(playerId);
-        nameChanged = true;
     }
 
     public string GetName() { return playerName.Value; }

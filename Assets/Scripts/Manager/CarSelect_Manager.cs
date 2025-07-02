@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class CarSelect_Manager : MonoBehaviour
+public class CarSelect_Manager : Manager
 {
     [Header("Rotate Value")]
     [SerializeField] private Transform coreTransform;
@@ -24,8 +24,11 @@ public class CarSelect_Manager : MonoBehaviour
 
     private void Awake()
     {
-        Shared.CarSelect_Manager = this;
-        DontDestroyOnLoad(this);
+        OnStart();
+        if (Shared.CarSelect_Manager == null)
+            Shared.CarSelect_Manager = this;
+        else
+            Destroy(gameObject);
     }
     void Start()
     {

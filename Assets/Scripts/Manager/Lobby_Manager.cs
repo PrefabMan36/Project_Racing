@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Lobby_Manager : MonoBehaviour
+public class Lobby_Manager : Manager
 {
     [SerializeField] private TextMeshProUGUI lobbyNameText;
     [SerializeField] private TextMeshProUGUI lobbyNumberText;
@@ -41,8 +41,11 @@ public class Lobby_Manager : MonoBehaviour
 
     private void Awake()
     {
-        if(Shared.lobby_Manager == null)
+        OnStart();
+        if (Shared.lobby_Manager == null)
             Shared.lobby_Manager = this;
+        else
+            Destroy(this);
     }
 
     private void Start()
