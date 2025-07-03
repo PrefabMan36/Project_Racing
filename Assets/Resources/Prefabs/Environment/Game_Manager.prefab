@@ -56,6 +56,7 @@ MonoBehaviour:
   _lobbyID: 0
   _trackIndex: 0
   _MaxUsers: 0
+  _gameStart: 0
 --- !u!114 &6086490494183057189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,7 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 2545173570
   ObjectInterest: 1
-  Flags: 1
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 9215592636895891928}

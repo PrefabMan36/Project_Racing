@@ -119,7 +119,8 @@ MonoBehaviour:
   resultUI: {fileID: 0}
   raceResultBox: {fileID: 0}
   sceneChangeDelay: 5
-  countDown_Prefab: {fileID: 5926505975737032418, guid: 4e8daa8e4ba616849bdb5063aab709e3, type: 3}
+  countDown_Prefab:
+    RawGuidValue: 4e8daa8e4ba616849bdb5063aab709e3
   countDown: {fileID: 0}
   parentObjectForUIPanel_Prefab: {fileID: 5753768892760090230, guid: 7cca50b510ca204418ebd47cf3df4178, type: 3}
   parentObjectForUIPanel: {fileID: 0}

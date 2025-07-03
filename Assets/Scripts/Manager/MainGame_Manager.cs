@@ -107,7 +107,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private float sceneChangeDelay = 5f; // 씬 변경 지연 시간 (초)
 
     [Header("Countdown")]
-    [SerializeField] private CountDown countDown_Prefab;
+    [SerializeField] private NetworkPrefabRef countDown_Prefab;
     [SerializeField] private CountDown countDown;
     [Networked] private bool raceFinishCountdownTriggered { get; set; } = false;
     //[Networked] private NetworkBool countDownSpawned { get; set; } = false;
@@ -174,7 +174,7 @@ public class MainGame_Manager : NetworkBehaviour
 
         if(Object.HasStateAuthority)
         {
-            countDown = networkRunner.Spawn(countDown_Prefab);
+            countDown = Runner.Spawn(countDown_Prefab).GetComponent<CountDown>();
             //countDownSpawned = true;
             Debug.Log("CountDown 객체가 호스트에서 스폰되었습니다.");
         }
@@ -187,6 +187,7 @@ public class MainGame_Manager : NetworkBehaviour
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
+
         if(resultUI != null && localPlayer != null)
         {
             if(localPlayerCar == null)
@@ -484,30 +485,28 @@ public class MainGame_Manager : NetworkBehaviour
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FOURTH, carData.gearSpeedLimit_eGEAR_FOURTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_FIFTH, carData.gearSpeedLimit_eGEAR_FIFTH);
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_SIXTH, carData.gearSpeedLimit_eGEAR_SIXTH);
+
         playerCar.SetID(playerNumber);
         if(playersID.ContainsKey(playerNumber))
             playersID[playerNumber] = playerCar.GetComponent<NetworkObject>().Id;
         else
             playersID.Add(playerNumber, playerCar.GetComponent<NetworkObject>().Id);
-
+        if(playerNumber < playerCars.Length)
+            playerCars[playerNumber] = playerCar;
         // 호스트에서만 총 플레이어 수 업데이트
         if (Object.HasStateAuthority)
-        {
-            playerCars[playerNumber++] = playerCar;
-            totalPlayerCount = playerNumber; // 현재 생성된 플레이어 수
-        }
-        else // 클라이언트의 경우, playerNumber만 증가
-        {
-            playerCars[playerNumber++] = playerCar;
-        }
+            totalPlayerCount = playerNumber + 1;
 
-        playerCars[playerNumber++] = playerCar;
+        playerNumber++;
+
         SetFirstCheckPoint(playerCar);
-        if (!isRankingStart && playerNumber > 1)
+
+        if (Object.HasStateAuthority && !isRankingStart)
         {
             isRankingStart = true;
             StartCoroutine(UpdatingRankings());
         }
+
         playerCar.Init();
     }
     public void SetRank(NetworkId _id)

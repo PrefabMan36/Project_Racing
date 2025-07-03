@@ -31,6 +31,7 @@ public class CountDown : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+        Runner.SetIsSimulated(Object, true);
         if (countNumberText != null) countNumberText.gameObject.SetActive(false);
         else Debug.LogError("countNumberText가 할당되지 않았습니다. Unity 에디터에서 할당해주세요.");
         if (countdownTimeImage != null) countdownTimeImage.gameObject.SetActive(false);
@@ -41,6 +42,8 @@ public class CountDown : NetworkBehaviour
         else Debug.LogError("finalDisplayImage가 할당되지 않았습니다. Unity 에디터에서 할당해주세요.");
         if (countdownTimeImage != null && countdownTimeImage.type != Image.Type.Filled)
             Debug.LogWarning("Countdown Circle Image의 Image Type이 Filled가 아닙니다. Unity 에디터에서 Filled로 변경해주세요.");
+        Debug.Log($"CountDown Spawned! Object ID: {Object.Id}, IsValid: {Object.IsValid}, Runner: {Runner != null}, Object.HasStateAuthority: {Object.HasStateAuthority}, Object.IsProxy: {Object.IsProxy}");
+        UpdateCountdownUI();
     }
 
     public void SetMainGameManager(MainGame_Manager manager)
@@ -69,9 +72,9 @@ public class CountDown : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+        Debug.LogWarning("FixedUpdateNetwork 실행중");
         base.FixedUpdateNetwork();
-        
-        if(countdownStarted)
+        if (countdownStarted)
         {
             if (currentCountdownIndex > 0)
             {
@@ -130,7 +133,7 @@ public class CountDown : NetworkBehaviour
         if (finalDisplayImage != null) finalDisplayImage.gameObject.SetActive(false);
         if (countdownTimeImage != null) countdownTimeImage.gameObject.SetActive(false);
         if (countdownTimeBackgroundImage != null) countdownTimeBackgroundImage.gameObject.SetActive(false);
-
+        Debug.LogWarning("Dsplay CountDown");
         if (countdownStarted)
         {
             if (currentCountdownIndex > 0)
