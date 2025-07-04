@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Fusion;
 using TMPro;
+using static Fusion.NetworkBehaviour;
 
 //이 클래스는 플레이어 차량을 나타내며, 차량의 물리적 특성과 카메라, UI 등을 관리합니다.
 //Car 클래스를 상속받아 차량의 동작을 정의합니다.
@@ -15,6 +16,8 @@ using TMPro;
 
 public class Player_Car : Car
 {
+    private ChangeDetector changeDetector;
+
     [SerializeField] private int carNumber;
     [SerializeField] private int ID;
     [SerializeField] private NetworkId playerId;
@@ -79,9 +82,22 @@ public class Player_Car : Car
         gameManager.CarInit(this, HasInputAuthority);// 게임 매니저를 이용해 차량을 초기화합니다.
         networkObject = GetComponent<NetworkObject>();// 네트워크 오브젝트를 가져옵니다.
         playerId = networkObject.Id;// 플레이어 ID를 설정합니다.
-        rankData.playerId = networkObject.Id;// 랭크 데이터에 플레이어 ID를 설정합니다.
-        if (!nameChanged)
-        { NameChanged(); }
+
+        changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+    }
+
+    public override void Render()
+    {
+        // 이 오브젝트의 네트워크 속성 변경을 감지합니다.
+        foreach (var change in changeDetector.DetectChanges(this))
+        {
+            // 변경된 속성의 이름이 'playerName'인지 확인합니다.
+            if (change == nameof(playerName))
+            {
+                // 이름이 변경되었다면, UI를 업데이트하는 메서드를 호출합니다.
+                UpdateNameDisplay();
+            }
+        }
     }
 
     public void Init()
@@ -416,16 +432,13 @@ public class Player_Car : Car
     public void SetName(string _name)
     {
         playerName = _name;
-        if(!nameChanged)
-        NameChanged();
     }
 
-    private void NameChanged()
+    private void UpdateNameDisplay()
     {
-        nameChanged = true;
         gameObject.name = playerName.Value;
-        if(playerId != null)
-            gameManager.SetRank(playerId);
+        if (gameManager != null && Object != null)
+            gameManager.SetRank(Object.Id);
     }
 
     public string GetName() { return playerName.Value; }

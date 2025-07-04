@@ -1,10 +1,8 @@
 using Fusion;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class RaceResultBox : MonoBehaviour
 {
@@ -12,6 +10,11 @@ public class RaceResultBox : MonoBehaviour
     [SerializeField] private GameObject resultEntryPrefab;
 
     [SerializeField] private Dictionary<NetworkId, GameObject> activeResultEntries = new Dictionary<NetworkId, GameObject>();
+
+    private void OnEnable()
+    {
+        transform.SetAsLastSibling();
+    }
 
     /// <summary>
     /// 네트워크를 통해 동기화된 완주 플레이어 데이터를 받아 결과 UI를 업데이트합니다.

@@ -195,15 +195,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
+    m_Left: 2
+    m_Right: 2
+    m_Top: 2
+    m_Bottom: 2
+  m_ChildAlignment: 1
   m_Spacing: 10
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
+  m_ChildControlWidth: 1
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
@@ -756,7 +756,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40.3
+  m_fontSize: 44.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1360,13 +1360,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4809413770878555236}
     m_Modifications:
+    - target: {fileID: 55360125361108655, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
+      propertyPath: m_fontSize
+      value: 22.2
+      objectReference: {fileID: 0}
     - target: {fileID: 932707967609574797, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
       propertyPath: m_Name
       value: QuitRoomButton
       objectReference: {fileID: 0}
     - target: {fileID: 4269628693488993917, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
       propertyPath: m_fontSize
-      value: 18
+      value: 19.45
       objectReference: {fileID: 0}
     - target: {fileID: 4776038124018939487, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
       propertyPath: m_Name
@@ -1455,6 +1459,10 @@ PrefabInstance:
     - target: {fileID: 6697441083105105930, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6835464641137340853, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
+      propertyPath: m_fontSize
+      value: 9.3
       objectReference: {fileID: 0}
     - target: {fileID: 7925707802574327421, guid: 2dddc8c2b0ee3a54f9ad0b71dde72345, type: 3}
       propertyPath: uiType
@@ -1635,7 +1643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontSize
-      value: 20.5
+      value: 22.7
       objectReference: {fileID: 0}
     - target: {fileID: 7169088598268140553, guid: 62604968652933a498e6a7560a45be2d, type: 3}
       propertyPath: m_fontAsset

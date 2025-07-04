@@ -12707,7 +12707,6 @@ GameObject:
   - component: {fileID: 2751375685216040175}
   - component: {fileID: 2274182632391598078}
   - component: {fileID: 2769393084673265461}
-  - component: {fileID: 1033703470734744035}
   m_Layer: 0
   m_Name: RMCar26_Body_Col
   m_TagString: Player
@@ -12780,28 +12779,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1033703470734744035
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6898320620753456041}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 2209814775844169187, guid: 4e8a28938e1002c4cb222e32844ab845, type: 3}
 --- !u!1 &6905503767692075171
 GameObject:
   m_ObjectHideFlags: 0
@@ -17417,6 +17394,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5414108620589773563}
   - component: {fileID: 4850756734130070591}
+  - component: {fileID: 527502262455241621}
   - component: {fileID: 6795128057534110208}
   - component: {fileID: 2950555046133427952}
   - component: {fileID: 447658670177631772}
@@ -17691,6 +17669,28 @@ LODGroup:
     - renderer: {fileID: 0}
     - renderer: {fileID: 4144105354729512984}
   m_Enabled: 1
+--- !u!64 &527502262455241621
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9041432283490599144}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2209814775844169187, guid: 4e8a28938e1002c4cb222e32844ab845, type: 3}
 --- !u!54 &6795128057534110208
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17813,7 +17813,7 @@ MonoBehaviour:
   startUpSoundObject: {fileID: 0}
   isTCSEnabled: 1
   tcsSlipThreshold: 0.25
-  tcsTorqueReductionFactor: 1
+  tcsTorqueReductionFactor: 0.7
   tcsBrake: 0
   tcsBrakeFactor: 50
   slipFactorTCS: 0
@@ -17942,8 +17942,9 @@ MonoBehaviour:
   corner: 1
   loop: 0
   points:
-  - {x: -0.6, y: 1.09, z: -2.15}
-  - {x: 0.6, y: 1.09, z: -2.15}
+  - {x: -0.625, y: 1.09, z: -2.385}
+  - {x: 0, y: 1.09, z: -2.5}
+  - {x: 0.625, y: 1.09, z: -2.385}
 --- !u!114 &-7545687253395084735
 MonoBehaviour:
   m_ObjectHideFlags: 0

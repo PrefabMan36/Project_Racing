@@ -92,6 +92,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private GameObject resultUI_Prefab;
     [SerializeField] private GameObject resultUI;
     [SerializeField] private RaceResultBox raceResultBox;
+    [SerializeField] private bool shouldShowResults;
 
     [Networked, Capacity(4)]
     private NetworkDictionary<NetworkId, float> finishedPlayerTimes => default;
@@ -100,9 +101,9 @@ public class MainGame_Manager : NetworkBehaviour
 
     private bool isResultPanelActiveLocally = false;
 
-    [Networked] private int totalPlayerCount { get; set; } = 0;
-    [Networked] private bool raceEndedByCompletion { get; set; } = false;
-    [Networked] private bool raceEndedByTimeout { get; set; } = false;
+    [Networked, SerializeField] private int totalPlayerCount { get; set; } = 0;
+    [Networked, SerializeField] private bool raceEndedByCompletion { get; set; } = false;
+    [Networked, SerializeField] private bool raceEndedByTimeout { get; set; } = false;
     [Networked] private TickTimer sceneChangeTimer { get; set; }
     [SerializeField] private float sceneChangeDelay = 5f; // 씬 변경 지연 시간 (초)
 
@@ -110,7 +111,8 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private NetworkPrefabRef countDown_Prefab;
     [SerializeField] private CountDown countDown;
     [Networked] private bool raceFinishCountdownTriggered { get; set; } = false;
-    //[Networked] private NetworkBool countDownSpawned { get; set; } = false;
+    [Networked] private TickTimer didNotFinishTimer { get; set; }
+    [SerializeField] private float didNotFinishCountdownDuration = 10f;
 
     [SerializeField] private GameObject parentObjectForUIPanel_Prefab;
     [SerializeField] private GameObject parentObjectForUIPanel;
@@ -140,6 +142,8 @@ public class MainGame_Manager : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+
+        Runner.SetIsSimulated(Object, true);
 
         trackName = SceneManager.GetActiveScene().name;
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
@@ -188,21 +192,26 @@ public class MainGame_Manager : NetworkBehaviour
     {
         base.FixedUpdateNetwork();
 
-        if(resultUI != null && localPlayer != null)
-        {
-            if(localPlayerCar == null)
-                localPlayerCar = localPlayer.GetComponent<Player_Car>();
-            if(localPlayerCar != null)
-            {
-                isResultPanelActiveLocally = (localPlayerCar.GetLap() >= maxLaps) || raceEndedByTimeout;
-                resultUI.SetActive(isResultPanelActiveLocally);
-            }
-        }
-        else if(resultUI != null && localPlayer == null)
-            resultUI.SetActive(false);
 
-        if (isResultPanelActiveLocally && resultUI != null)
-            raceResultBox.UpdateResultDisplay(finishedPlayerTimes, finishedPlayerNames);
+        if (Object.HasStateAuthority && didNotFinishTimer.IsRunning && didNotFinishTimer.Expired(Runner))
+        {
+            didNotFinishTimer = TickTimer.None;
+            RPC_ForceRaceEnd();
+            Debug.Log("DNF 타이머 만료. 레이스를 강제 종료합니다.");
+        }
+        if (resultUI == null) return;
+
+        if (resultUI != null)
+        {
+            if (localPlayerCar == null && localPlayer != null)
+                localPlayerCar = localPlayer.GetComponent<Player_Car>();
+
+            shouldShowResults = raceEndedByTimeout || raceEndedByCompletion || (localPlayerCar != null && localPlayerCar.GetLap() >= maxLaps);
+            resultUI.SetActive(shouldShowResults);
+
+            if (shouldShowResults && raceResultBox != null)
+                raceResultBox.UpdateResultDisplay(finishedPlayerTimes, finishedPlayerNames);
+        }
 
         if (Object.HasStateAuthority)
         {
@@ -244,41 +253,63 @@ public class MainGame_Manager : NetworkBehaviour
 
         if (!gameStart) gameStart = true;
     }
-    public void RaceEnd()
+
+    public void RaceEnd(NetworkId finishedPlayerId, string finishedPlayerName, float finishTime)
     {
-        if (Object.HasStateAuthority)
+
+        if (!Object.HasStateAuthority) return;
+
+        if (!finishedPlayerTimes.ContainsKey(finishedPlayerId))
         {
-            if (gameStart)
+            finishedPlayerTimes.Add(finishedPlayerId, finishTime);
+            finishedPlayerNames.Add(finishedPlayerId, finishedPlayerName);
+            Debug.Log($"플레이어 {finishedPlayerName} (ID: {finishedPlayerId}) 완주 시간 기록: {finishTime}");
+
+
+            if (finishedPlayerTimes.Count == 1)
             {
-                //gameStart = false;
-                Debug.Log("게임 종료! 첫 번째 플레이어 완주.");
-                foreach (var playerCarEntry in playerCars)
+                didNotFinishTimer = TickTimer.CreateFromSeconds(Runner, didNotFinishCountdownDuration);
+                Debug.Log($"첫 완주자 발생! {didNotFinishCountdownDuration}초 DNF 카운트다운을 시작합니다.");
+
+                if (countDown != null)
                 {
-                    if (playerCarEntry != null && playerCarEntry.GetLap() >= maxLaps) // 완주 조건 확인
-                    {
-                        NetworkId playerId = playerCarEntry.Object.Id;
-                        if (!finishedPlayerTimes.ContainsKey(playerId))
-                        {
-                            finishedPlayerTimes.Add(playerId, playerCarEntry.GetFinishTime());
-                            finishedPlayerNames.Add(playerId, playerCarEntry.GetName()); // 이름도 저장 (RPC를 통해 설정된 이름)
-                            Debug.Log($"플레이어 {playerCarEntry.GetName()} (ID: {playerId}) 완주 시간 기록: {playerCarEntry.GetFinishTime()}");
-                        }
-                    }
+                    countDown.StartCountdown((int)didNotFinishCountdownDuration, false);
                 }
             }
         }
-        // 모든 플레이어가 완주했는지 확인 (호스트에서만)
-        if (finishedPlayerTimes.Count >= totalPlayerCount) // totalPlayerCount와 같거나 많으면 (혹시 모를 오류 대비 >=)
+
+        if (finishedPlayerTimes.Count >= totalPlayerCount)
         {
             raceEndedByCompletion = true;
-            Debug.Log("호스트: 모든 플레이어가 완주했습니다. 씬 전환 준비.");
+            didNotFinishTimer = TickTimer.None;
+            Debug.Log("호스트: 모든 플레이어가 완주했습니다.");
+        }
+    }
+
+    [Rpc(RpcSources.Proxies, RpcTargets.StateAuthority)]
+    public void RPC_PlayerFinished(float finishTime, RpcInfo info = default)
+    {
+        Player_Car finishedCar = null;
+        foreach (var car in playerCars)
+        {
+            if (car != null && car.Object.InputAuthority == info.Source)
+            {
+                finishedCar = car;
+                break;
+            }
         }
 
-        if (countDown != null && !raceFinishCountdownTriggered)
+        if (finishedCar != null)
         {
-            countDown.StartCountdown(0, false); // 숫자 없이 바로 "Race Finish" 스프라이트 표시
-            raceFinishCountdownTriggered = true; // 플래그 설정
-            Debug.Log("MainGame_Manager: 레이스 종료 카운트다운이 트리거되었습니다.");
+            NetworkId playerId = finishedCar.Object.Id;
+            string playerName = finishedCar.GetName();
+
+            // 호스트의 RaceEnd 함수를 호출하여 완주 정보를 정확히 기록합니다.
+            RaceEnd(playerId, playerName, finishTime);
+        }
+        else
+        {
+            Debug.LogWarning($"RPC를 보낸 플레이어(Player {info.Source})의 차를 찾을 수 없습니다.");
         }
     }
 
@@ -286,21 +317,18 @@ public class MainGame_Manager : NetworkBehaviour
     public void RPC_ForceRaceEnd()
     {
         Debug.Log("RPC_ForceRaceEnd 호출됨: 레이스가 강제 종료됩니다.");
+
+        foreach (var car in playerCars)
+        {
+            if (car != null && !finishedPlayerTimes.ContainsKey(car.Object.Id))
+            {
+                finishedPlayerTimes.Add(car.Object.Id, 999f);
+                finishedPlayerNames.Add(car.Object.Id, car.GetName());
+                Debug.Log($"플레이어 {car.GetName()} DNF 처리됨.");
+            }
+        }
+
         raceEndedByTimeout = true;
-        // 강제 종료 시, 모든 플레이어를 finishedPlayerTimes에 추가 (완주 시간은 0으로 처리하거나 적절한 값 설정)
-        // 이 부분은 필요에 따라 구현. 현재는 강제 종료 시 결과창만 띄우고 씬 전환.
-        // 예를 들어, 모든 플레이어를 강제로 완주 처리하고 싶다면:
-        // if (Object.HasStateAuthority)
-        // {
-        //     foreach (var car in playerCars)
-        //     {
-        //         if (car != null && !finishedPlayerTimes.ContainsKey(car.Object.Id))
-        //         {
-        //             finishedPlayerTimes.Add(car.Object.Id, -1f); // 강제 종료된 플레이어 시간 (음수 또는 특정 값)
-        //             finishedPlayerNames.Add(car.Object.Id, car.GetName());
-        //         }
-        //     }
-        // }
     }
 
     private void removeUIs()
@@ -491,6 +519,7 @@ public class MainGame_Manager : NetworkBehaviour
             playersID[playerNumber] = playerCar.GetComponent<NetworkObject>().Id;
         else
             playersID.Add(playerNumber, playerCar.GetComponent<NetworkObject>().Id);
+
         if(playerNumber < playerCars.Length)
             playerCars[playerNumber] = playerCar;
         // 호스트에서만 총 플레이어 수 업데이트
@@ -498,6 +527,8 @@ public class MainGame_Manager : NetworkBehaviour
             totalPlayerCount = playerNumber + 1;
 
         playerNumber++;
+
+        SetRank(spawnedCar.Object.Id);
 
         SetFirstCheckPoint(playerCar);
 
@@ -511,12 +542,37 @@ public class MainGame_Manager : NetworkBehaviour
     }
     public void SetRank(NetworkId _id)
     {
-        if(!rankList.ContainsKey(_id))
-            rankList.Add(_id, Instantiate(rank_Prefab, parentObjectForUIPanel.transform));
-        rankList[_id].SetTargets(rankTargetPositions);
-        rankList[_id].Rpc_SetPosition(0, defaultColor);
-        rankList[_id].SetPlay(null, playerCar.GetName() != null ? playerCar.GetName() : playersID[playerNumber].ToString(), this, _id);
+        Rank playerRank;
+        // 랭킹 UI가 이미 존재하는지 확인합니다.
+        if (!rankList.TryGetValue(_id, out playerRank))
+        {
+            // UI가 없다면 새로 생성하고 초기 설정(위치, 색상)을 합니다.
+            playerRank = Instantiate(rank_Prefab, parentObjectForUIPanel.transform);
+            rankList.Add(_id, playerRank);
+            playerRank.Init(this, _id);
+        }
+
+        // ID에 해당하는 Player_Car를 찾습니다.
+        Player_Car carToUpdate = null;
+        foreach (var car in playerCars)
+        {
+            if (car != null && car.Object.Id == _id)
+            {
+                carToUpdate = car;
+                break;
+            }
+        }
+
+        // Player_Car를 찾았다면, 항상 이름을 업데이트합니다.
+        if (carToUpdate != null && playerRank != null)
+        {
+            playerRank.SetPlay(null, carToUpdate.GetName());
+        }
     }
+
+    public Vector3[] GetRankPositions()
+    { return rankTargetPositions; }
+
     public void RemoveRank(NetworkId _id)
     {
         if (rankList.ContainsKey(_id))
@@ -590,11 +646,14 @@ public class MainGame_Manager : NetworkBehaviour
             _playerCar.ResetTimer();
             if (_playerCar.GetLap() >= maxLaps)
             {
-                // 완주 시 GameEnd 호출 및 최종 완주 시간 전달
+                bestLapTime = gameTimer;
                 _playerCar.SetFinishTime(gameTimer); // Player_Car에 완주 시간 저장 함수 추가 필요
                 _playerCar.FinishRace();
-                RaceEnd(); // 게임 종료 및 결과창 활성화 트리거
-                bestLapTime = gameTimer;
+                
+                if(Object.HasStateAuthority)
+                    RaceEnd(_playerCar.Object.Id, _playerCar.GetName(), gameTimer);
+                else if (_playerCar.Object.HasInputAuthority)
+                    RPC_PlayerFinished(gameTimer);
             }
             else
             {
@@ -604,6 +663,9 @@ public class MainGame_Manager : NetworkBehaviour
         }
         return gameTimer;
     }
+
+    public int GetRank(NetworkId rankPlayer)
+    { return rank.ContainsKey(rankPlayer) ? rank[rankPlayer] : 0; }
 
     IEnumerator UpdatingRankings()
     {
@@ -633,30 +695,9 @@ public class MainGame_Manager : NetworkBehaviour
             {
                 if (!isRankingStart)
                     yield break;
+
                 tempRank = (byte)(i + 1);
                 rank.Set(sortedRankData[i].playerId, tempRank);
-                if(tempRank - 1 < 4)
-                {
-                    switch (tempRank - 1)
-                    {
-                        case 0:
-                            tempColor = firstPlaceColor;
-                            break;
-                        case 1:
-                            tempColor = secondPlaceColor;
-                            break;
-                        case 2:
-                            tempColor = thirdPlaceColor;
-                            break;
-                        default:
-                            tempColor = defaultColor;
-                            break;
-                    }
-                    if (rankList.TryGetValue(sortedRankData[i].playerId, out Rank playerRank))
-                    {
-                        playerRank.Rpc_SetPosition(tempRank - 1, tempColor);
-                    }
-                }
             }
         }
     }

@@ -72,7 +72,6 @@ public class CountDown : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        Debug.LogWarning("FixedUpdateNetwork ½ÇÇàÁß");
         base.FixedUpdateNetwork();
         if (countdownStarted)
         {
@@ -133,7 +132,7 @@ public class CountDown : NetworkBehaviour
         if (finalDisplayImage != null) finalDisplayImage.gameObject.SetActive(false);
         if (countdownTimeImage != null) countdownTimeImage.gameObject.SetActive(false);
         if (countdownTimeBackgroundImage != null) countdownTimeBackgroundImage.gameObject.SetActive(false);
-        Debug.LogWarning("Dsplay CountDown");
+        
         if (countdownStarted)
         {
             if (currentCountdownIndex > 0)
