@@ -77,7 +77,16 @@ public class RaceResultBox : MonoBehaviour
             if (rankText != null) rankText.text = rankNum.ToString();
             if (nameText != null) nameText.text = playerName;
             // 시간 표시 형식: 분:초.밀리초 (예: 01:23.45)
-            if (timeText != null) timeText.text = System.TimeSpan.FromSeconds(finishTime).ToString("mm':'ss'.'fff");
+            if (timeText != null)
+            {
+                if(finishTime >= 9999f)
+                {
+                    timeText.color = Color.red;
+                    timeText.text = "Retire";
+                }
+                else
+                    timeText.text = System.TimeSpan.FromSeconds(finishTime).ToString("mm':'ss'.'fff");
+            }
 
             rankNum++;
         }

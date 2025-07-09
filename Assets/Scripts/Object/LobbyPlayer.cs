@@ -103,11 +103,13 @@ public class LobbyPlayer : NetworkBehaviour
         {
             foreach (var player in players)
             {
-                player.RPC_ChangeReadyState(false);
+                player.isReady = false;
+                player.isReadyToPlay = false;
+                player.isSync = false;
+                player.finished = false;
             }
         }
     }
-
 
     private void OnDisable()
     {

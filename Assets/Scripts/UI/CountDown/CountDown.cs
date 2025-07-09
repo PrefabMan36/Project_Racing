@@ -96,7 +96,7 @@ public class CountDown : NetworkBehaviour
                     {
                         if (mainGameManager != null)
                         {
-                            mainGameManager.RaceStart(); // <--- RaceStart() 호출
+                            mainGameManager.RPC_GameReadyAndStart(); // <--- RaceStart() 호출
                             Debug.Log("CountDown: 게임 시작 신호를 MainGame_Manager.RaceStart()에 보냈습니다. (GO 이미지와 동시)");
                         }
                         else

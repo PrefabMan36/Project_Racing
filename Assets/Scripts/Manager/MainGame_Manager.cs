@@ -223,31 +223,39 @@ public class MainGame_Manager : NetworkBehaviour
 
             if (sceneChangeTimer.IsRunning && sceneChangeTimer.Expired(Runner))
             {
-                Shared.ui_Manager.isInGame = false;
-                Shared.ui_Manager.BackToMenu();
-                isRankingStart = false;
-                removeUIs();
+                sceneChangeTimer = TickTimer.None;
 
-                LobbyPlayer.localPlayer.Regroup();
+                foreach (var car in playerCars)
+                {
+                    if (car != null && car.Object != null && car.Object.IsValid)
+                    {
+                        Runner.Despawn(car.Object);
+                    }
+                }
 
-                Runner.LoadScene(SceneRef.FromIndex(2));
-                Destroy(resultUI);
-                Debug.Log("호스트: 씬이 LobbyScene으로 전환됩니다.");
+                RPC_CleanupAndReturnToLobby();
             }
         }
     }
 
     public void RaceStart()
-    { 
-        if(Object.HasStateAuthority)
+    {
+        //if(Object.HasStateAuthority)
+        //{
+        //    Debug.Log("MainGame_Manager: RaceStarted 호출됨. 모든 차량에 StartRace 실행.");
+        //    foreach (Player_Car playerCar in playerCars)
+        //    {
+        //        if (playerCar != null)
+        //        {
+        //            playerCar.StartRace();
+        //        }
+        //    }
+        //}
+        foreach (Player_Car playerCar in playerCars)
         {
-            Debug.Log("MainGame_Manager: RaceStarted 호출됨. 모든 차량에 StartRace 실행.");
-            foreach (Player_Car playerCar in playerCars)
+            if (playerCar != null)
             {
-                if (playerCar != null)
-                {
-                    playerCar.StartRace();
-                }
+                playerCar.StartRace();
             }
         }
 
@@ -322,7 +330,7 @@ public class MainGame_Manager : NetworkBehaviour
         {
             if (car != null && !finishedPlayerTimes.ContainsKey(car.Object.Id))
             {
-                finishedPlayerTimes.Add(car.Object.Id, 999f);
+                finishedPlayerTimes.Add(car.Object.Id, 9999f);
                 finishedPlayerNames.Add(car.Object.Id, car.GetName());
                 Debug.Log($"플레이어 {car.GetName()} DNF 처리됨.");
             }
@@ -331,9 +339,29 @@ public class MainGame_Manager : NetworkBehaviour
         raceEndedByTimeout = true;
     }
 
-    private void removeUIs()
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_CleanupAndReturnToLobby()
     {
+        Debug.Log($"[{(Object.HasStateAuthority ? "Host" : "Client")}] 씬 전환 및 UI 정리 시작.");
+
+        isRankingStart = false;
+
+        if(Shared.ui_Manager != null)
+        {
+            Shared.ui_Manager.isInGame = false;
+            Shared.ui_Manager.BackToMenu();
+        }
+
         Destroy(parentObjectForUIPanel);
+
+        if(resultUI != null) { Destroy(resultUI); }
+
+        if (Object.HasStateAuthority)
+        {
+            LobbyPlayer.localPlayer.Regroup();
+            Runner.LoadScene(SceneRef.FromIndex(2));
+            Debug.Log("호스트: LobbyScene 로드를 시작합니다.");
+        }
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -665,7 +693,10 @@ public class MainGame_Manager : NetworkBehaviour
     }
 
     public int GetRank(NetworkId rankPlayer)
-    { return rank.ContainsKey(rankPlayer) ? rank[rankPlayer] : 0; }
+    {
+        if (Object == null || !Object.IsValid || rank.Count == 0) return 0;
+        return rank.ContainsKey(rankPlayer) ? rank[rankPlayer] : 0;
+    }
 
     IEnumerator UpdatingRankings()
     {

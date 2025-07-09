@@ -87,6 +87,8 @@ public class CheckPoint : NetworkBehaviour
             
             if (EnteredPlayer != null)
             {
+                if (EnteredPlayer.Object == null || !EnteredPlayer.Object.IsValid)
+                    return;
                 currentLap = EnteredPlayer.GetLap();
                 if (!fastestCheckPointTime.ContainsKey(currentLap))
                     fastestCheckPointTime.Add(currentLap, 9999999f);

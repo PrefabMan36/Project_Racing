@@ -1246,6 +1246,7 @@ MonoBehaviour:
   tempWheelColliderForBrake: {fileID: 0}
   isABSEnabled: 1
   isBrakingIntent: 0
+  forceBrake: 0
   absSlipThreshold: 0.35
   absBrakeReleaseFactor: 0.3
   engineSound:
@@ -1356,6 +1357,7 @@ MonoBehaviour:
   _distanceToCheckPoint: 0
   nextCheckPoint: {fileID: 0}
   gameTimer: 0
+  finishedTime: 0
   raceStarted: 0
   calculateDistance: 0
   braking: 0
@@ -3120,9 +3122,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 20
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -3155,7 +3157,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

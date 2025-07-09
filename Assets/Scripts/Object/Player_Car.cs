@@ -129,8 +129,8 @@ public class Player_Car : Car
         _data = gameObject.GetComponent<Curve_data>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
-        isTCSEnabled = false;
-        isABSEnabled = false;
+        isTCSEnabled = true;
+        isABSEnabled = true;
         SetNitroInstall(true);
         SetNitroParticles(gameObject.GetComponent<Trail>());
         SetMaxNitroCapacity(100f);
