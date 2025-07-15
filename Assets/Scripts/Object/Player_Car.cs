@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Fusion;
 using TMPro;
-using static Fusion.NetworkBehaviour;
+//using static Fusion.NetworkBehaviour;
+//using UnityEngine.Windows;
 
 //이 클래스는 플레이어 차량을 나타내며, 차량의 물리적 특성과 카메라, UI 등을 관리합니다.
 //Car 클래스를 상속받아 차량의 동작을 정의합니다.
@@ -262,6 +263,8 @@ public class Player_Car : Car
         {
             throttle = 0f;
         }
+        ChangeMode(UnityEngine.Input.GetKey(KeyCode.Space));
+
         SetSlpingAngle();// 슬립 각도를 설정합니다.
         UpdatingFriction();// 마찰력을 업데이트합니다.
         Braking();// 브레이크를 적용합니다.
