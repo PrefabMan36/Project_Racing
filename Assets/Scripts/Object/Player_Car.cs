@@ -217,47 +217,23 @@ public class Player_Car : Car
         }
         if (ignition)
         {
-            if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
+            brakeInput = 0f;
+            if (throttle < -0.05f)
             {
-                if (throttle > 0.05f)
+                if (speed > 1f && GetCurrentGear() > eGEAR.eGEAR_REVERSE)
                 {
                     brakeInput = Mathf.Abs(throttle);
-                    throttle = 0;
-                }
-                else if (throttle < -0.05f)
-                {
-                    brakeInput = 0f;
-                }
-                else
-                {
-                    brakeInput = 0f;
                     throttle = 0f;
                 }
             }
-            else
+            else if (throttle > 0.05f)
             {
-                if (throttle < -0.05f)
+                if (GetCurrentGear() == eGEAR.eGEAR_REVERSE && speed > 1f)
                 {
                     brakeInput = Mathf.Abs(throttle);
-                    throttle = 0;
-                }
-                else if (throttle > 0.05f)
-                {
-                    brakeInput = 0f;
-                }
-                else
-                {
-                    brakeInput = 0f;
                     throttle = 0f;
                 }
             }
-
-            // 주의: 이 수정된 입력 로직은 TorqueToWheel 함수가
-            // 음수 throttle을 후진 가속 토크로 올바르게 해석할 수 있어야 작동합니다.
-            // 현재 TorqueToWheel의 Mathf.Max(0, throttle) 부분은 이대로라면
-            // 음수 throttle을 0으로 만들게 됩니다.
-            // 따라서 TorqueToWheel 함수에서도 후진 기어 상태일 때는
-            // 음수 throttle을 받아 후진 토크를 적용하는 로직 수정이 필요할 수 있습니다.
         }
         else // 시동이 꺼진 경우
         {
@@ -380,8 +356,14 @@ public class Player_Car : Car
     {
         if (radialBlur != null)
         {
-            radialBlur.blurStrength = Mathf.Lerp(0f, 1f, GetSpeed() / 200f);
-            radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / 200f) + GetNitroBlurWidth();
+            if(isNitroActive)
+            {
+                radialBlur.enabled = true;
+                radialBlur.blurStrength = Mathf.Lerp(0f, 1f, GetSpeed() / 200f);
+                radialBlur.blurWidth = Mathf.Lerp(0f, 1f, GetSpeed() / 200f) + GetNitroBlurWidth();
+            }
+            else
+                radialBlur.enabled = false;
         }
     }
     public void SetCheckPoint(int _checkPoint) { currentCheckpointIndex = _checkPoint; }

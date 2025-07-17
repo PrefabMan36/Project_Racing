@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public partial class Car : Object_Movable
 {
-    private float speed;
+    protected float speed;
 
     private bool waitingForRaceStart = false;
     [Networked] private int speedInt { get; set; }
@@ -79,6 +79,7 @@ public partial class Car : Object_Movable
                     }
                 }
             }
+            NitroEffect();
         }
     }
     protected IEnumerator UIUpdating()

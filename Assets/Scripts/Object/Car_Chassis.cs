@@ -248,7 +248,7 @@ public partial class Car
         {
             if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                overallSlip[i] = Mathf.Abs(wheelHit.forwardSlip + wheelHit.sidewaysSlip);
+                //overallSlip[i] = Mathf.Abs(wheelHit.forwardSlip + wheelHit.sidewaysSlip);
 
                 forwardFriction = wheels[i].wheelCollider.forwardFriction;
                 forwardFriction.stiffness = forwardTireGrip - overallSlip[i] / forwardValue;
@@ -260,6 +260,8 @@ public partial class Car
 
                 forwardSlip[i] = wheelHit.forwardSlip;
                 sidewaysSlip[i] = wheelHit.sidewaysSlip;
+
+                overallSlip[i] = Mathf.Sqrt(forwardSlip[i] * forwardSlip[i] + sidewaysSlip[i] * sidewaysSlip[i]);
             }
         }
     }
@@ -370,20 +372,27 @@ public partial class Car
         {
             if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                if (Mathf.Abs(wheelHit.sidewaysSlip) >= 0.15f || Mathf.Abs(wheelHit.forwardSlip) >= 0.3f && IsGrounded())
+                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.3f)
                 {
                     wheels[i].skidMarks.emitting = true;
-                    if (!smokeParticles[i].isPlaying)
-                        smokeParticles[i].Play();
-                    //Debug.Log(WheelHit.sidewaysSlip);
-                    //Debug.Log(WheelHit.forwardSlip);
+
+                    var emission = smokeParticles[i].emission;
+                    emission.enabled = true;
                 }
                 else
                 {
                     wheels[i].skidMarks.emitting = false;
-                    if (!smokeParticles[i].isStopped)
-                        smokeParticles[i].Stop();
+
+                    var emission = smokeParticles[i].emission;
+                    emission.enabled = false;
                 }
+            }
+            else
+            {
+                wheels[i].skidMarks.emitting = false;
+
+                var emission = smokeParticles[i].emission;
+                emission.enabled = false;
             }
         }
     }
@@ -395,6 +404,7 @@ public partial class Car
             {
                 smokes[i] = Instantiate(smokePrefab);
                 smokeParticles[i] = smokes[i].GetComponent<ParticleSystem>();
+                smokeParticles[i].Play();
                 smokes[i].transform.parent = wheels[i].skidMarks.transform;
                 smokes[i].transform.position = wheels[i].skidMarks.transform.position;
                 smokes[i].transform.rotation = Quaternion.identity;

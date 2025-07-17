@@ -242,12 +242,12 @@ public partial class Car
             if (currentGear == eGEAR.eGEAR_REVERSE)
             {
                 if (throttle < 0)
-                { appliedMotorTorque = Mathf.Abs(throttle) * baseTorquePerWheel; }
+                { appliedMotorTorque = -Mathf.Abs(baseTorquePerWheel) * Mathf.Abs(throttle); }
             }
             else
             {
                 if (throttle > 0)
-                { appliedMotorTorque = Mathf.Max(0, throttle) * baseTorquePerWheel; }
+                { appliedMotorTorque = Mathf.Abs(baseTorquePerWheel) * throttle; }
             }
 
             if (isEngineBrakingEnabled && throttle < 0.1f && clutch > 0.5f && currentGear != eGEAR.eGEAR_NEUTURAL && currentGear != eGEAR.eGEAR_REVERSE && currentEngineRPM > minEngineRPM + 500)
@@ -479,7 +479,7 @@ public partial class Car
 
         // Up-Shift 조건: 다음 기어로 변속해도 괜찮은 속도 && 현재 RPM이 마력 기반 Up 시점 도달
         // (속도 조건은 급격한 저속 고 RPM 상태에서 불필요한 변속 방지용으로 추가 가능)
-        if (currentGear < lastGear && currentEngineRPM > optimalShiftUpRPM && speed > speedThresholdForUpshift)
+        if (currentGear >= eGEAR.eGEAR_FIRST && currentGear < lastGear && currentEngineRPM > optimalShiftUpRPM && speed > speedThresholdForUpshift)
         { ChangeGear(true); }
 
         // Down-Shift 조건: 현재 RPM이 마력 기반 Down 시점 미만 && 첫번째 기어가 아님
@@ -496,12 +496,12 @@ public partial class Car
                 ForceChangeGear(eGEAR.eGEAR_REVERSE);
         }
 
-        if (speed < 1.0f)
+        if (speed < 3.0f)
         {
-            if (throttle < -0.1f && currentGear != eGEAR.eGEAR_REVERSE)
-                ForceChangeGear(eGEAR.eGEAR_REVERSE);
-            else if (throttle > 0.1f && currentGear == eGEAR.eGEAR_REVERSE)
+            if (throttle > 0.1f && currentGear != eGEAR.eGEAR_FIRST)
                 ForceChangeGear(eGEAR.eGEAR_FIRST);
+            else if (throttle < -0.1f && currentGear != eGEAR.eGEAR_REVERSE)
+                ForceChangeGear(eGEAR.eGEAR_REVERSE);
         }
     }
     public eGEAR GetCurrentGear() { return currentGear; }
@@ -510,7 +510,8 @@ public partial class Car
     #region Value Nitro
     [Header("Nitro Value")]
     [SerializeField] private AudioSource nitroSoundEffect;
-    [SerializeField] private Trail nitroParticles;
+    [SerializeField] private ParticleSystem nitroEffect;
+    [SerializeField] private Trail nitroTrail;
     [SerializeField] private bool isNitroInstalled;
     [SerializeField] private bool powerMode = false;
     [SerializeField] private float maxNitroCapacity = 100f;
@@ -528,11 +529,11 @@ public partial class Car
     [SerializeField] private float nitroDuration = 1f;//파워모드 지속시간
     //[SerializeField] private float nitroDurationTimer = 0f;//파워모드 지속시간 타이머
     [SerializeField] private bool nitroPowerReady = true;//파워모드 지속시간 타이머 최대값
-    [SerializeField] private bool isNitroActive = false;
+    [Networked, SerializeField] protected bool isNitroActive { get; set; } = false;
     #endregion
 
     #region Function Nitro setting
-    public void SetNitroParticles(Trail _trail) { nitroParticles = _trail; }
+    public void SetNitroParticles(Trail _trail) { nitroTrail = _trail; }
     public void SetNitroInstall(bool _isNitroInstalled)
     {
         isNitroInstalled = _isNitroInstalled;
@@ -559,18 +560,43 @@ public partial class Car
             isNitroActive = true;
             if (nitroSoundEffect != null && !nitroSoundEffect.isPlaying)
             { nitroSoundEffect.Play(); }
-            if (nitroParticles != null && !nitroParticles.enabled)
-            { nitroParticles.enabled = true; }
         }
         else
         {
             isNitroActive = false;
             if (nitroSoundEffect != null && nitroSoundEffect.isPlaying)
             { nitroSoundEffect.Stop(); }
-            if (nitroParticles != null && nitroParticles.enabled)
-            { nitroParticles.enabled = false; }
         }
     }
+
+    private void NitroEffect()
+    {
+        if(nitroTrail != null)
+        {
+            if(isNitroActive)
+            {
+                if (!nitroTrail.enabled)
+                    nitroTrail.enabled = true;
+                if(nitroEffect != null)
+                {
+                    if (!nitroEffect.isPlaying) { nitroEffect.Play(); }
+                    var emission = nitroEffect.emission;
+                    emission.enabled = true;
+                }
+            }
+            else
+            {
+                if (nitroTrail.enabled)
+                    nitroTrail.enabled = false;
+                if (nitroEffect != null)
+                {
+                    var emission = nitroEffect.emission;
+                    emission.enabled = false;
+                }
+            }
+        }
+    }
+
     public float GetCurrentNitroAmount() { return currentNitroAmount; }
     public float GetMaxNitroAmount() { return maxNitroCapacity; }
     public float GetNitroBlurWidth() { return nitroAdjustBlurWidth; }
