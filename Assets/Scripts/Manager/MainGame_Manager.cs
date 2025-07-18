@@ -11,55 +11,35 @@ using UnityEngine.UI;
 
 public class MainGame_Manager : NetworkBehaviour
 {
-    [SerializeField] private bool gameStart = false;
-    [SerializeField] NetworkRunner networkRunner;
+    #region 변수 (Fields)
 
+    #region Core Game & Scene Management
+    [Header("Core Game & Scene Management")]
+    [SerializeField] private bool gameStart = false;
+    [SerializeField] private NetworkRunner networkRunner;
+    [Networked] private TickTimer sceneChangeTimer { get; set; }
+    [SerializeField] private float sceneChangeDelay = 5f; // 씬 변경 지연 시간 (초)
+    #endregion
+
+    #region Player & Car Management
+    [Header("Player & Car Management")]
     [SerializeField] private Player_Car playerCar;
     [SerializeField] private Player_Car[] playerCars = new Player_Car[4];
     [SerializeField] private NetworkObject localPlayer;
     [SerializeField] private Player_Car localPlayerCar;
     [SerializeField] private Dictionary<int, NetworkId> playersID = new Dictionary<int, NetworkId>();
     [SerializeField] private byte playerNumber = 0;
+    [SerializeField] private Player_Car[] playerCarPrefab;
+    [SerializeField] private string[] playerCarPrefabNames;
+    [SerializeField] private CarData carData;
+    [Networked, SerializeField] private int totalPlayerCount { get; set; } = 0;
+    #endregion
 
+    #region Track & Checkpoint Management
+    [Header("Track & Checkpoint Management")]
     [SerializeField] private Transform[] spawnPosition = new Transform[4];
     [SerializeField] private float spawnPointSpacing = 2.5f;
     [SerializeField] private float spawnPointVerticalOffset = 1.0f;
-    [SerializeField] private Player_Car[] playerCarPrefab;
-    [SerializeField] private string[] playerCarPrefabNames;
-
-    [SerializeField] private float gameTimer;
-    [SerializeField] private TimeSpan gameTimeSpan;
-    [SerializeField] private DateTime gameTime;
-
-    [SerializeField] private CarData carData;
-
-    [SerializeField] private Camera MainCamera_Prefab;
-    [SerializeField] private RPMGauge rpmGauge_Prefab;
-    [SerializeField] private Slider NitroBar_Prefab;
-
-    [SerializeField] private Canvas MainCanvas;
-    [SerializeField] private Camera MainCamera;
-    [SerializeField] private Slider NitroBar;
-    [SerializeField] private RPMGauge rpmGauge;
-
-    [SerializeField] private GameObject Timer_Prefab;
-    [SerializeField] private GameObject lapTimeDiff_Prefab;
-    [SerializeField] private GameObject localLapTimeDiff_Prefab;
-
-    [SerializeField] private Image timerImage;
-    [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private Image lapTimeDiffImage;
-    [SerializeField] private Image localLapTimeDiffImage;
-    [SerializeField] private TextMeshProUGUI lapTimeDiffText;
-    [SerializeField] private TextMeshProUGUI localLapTimeDiffText;
-    [SerializeField] bool isLapTimeDiffShowing = false;
-    [SerializeField] bool isLocalLapTimeDiffShowing = false;
-    [SerializeField] private float lapTimeDiffTimer = 0f;
-    [SerializeField] private float localLapTimeDiffTimer = 0f;
-    [SerializeField] private float diffTime1;
-    [SerializeField] private float diffTime2;
-    [SerializeField] private float bestLapTime;
-
     private string trackName = "eSCENE_CITY_NIGHT";
     [SerializeField] private TrackData tracksData;
     [Networked, SerializeField] private int lastCheckPointIndex { get; set; } = 0;
@@ -69,80 +49,99 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private CheckPoint lastCheckPoint;
     [SerializeField] private CheckPoint checkPoint;
     [SerializeField] private int maxLaps = 1;
+    #endregion
 
+    #region UI Prefabs & References
+    [Header("UI Prefabs & References")]
+    [SerializeField] private Camera MainCamera_Prefab;
+    [SerializeField] private RPMGauge rpmGauge_Prefab;
+    [SerializeField] private Slider NitroBar_Prefab;
+    [SerializeField] private GameObject Timer_Prefab;
+    [SerializeField] private GameObject lapTimeDiff_Prefab;
+    [SerializeField] private GameObject localLapTimeDiff_Prefab;
+    [SerializeField] private Rank rank_Prefab;
+    [SerializeField] private GameObject resultUI_Prefab;
+    [SerializeField] private NetworkPrefabRef countDown_Prefab;
+    [SerializeField] private GameObject parentObjectForUIPanel_Prefab;
+    #endregion
+
+    #region Instantiated UI Elements
+    [Header("Instantiated UI Elements")]
+    [SerializeField] private Canvas MainCanvas;
+    [SerializeField] private Camera MainCamera;
+    [SerializeField] private Slider NitroBar;
+    [SerializeField] private RPMGauge rpmGauge;
+    [SerializeField] private Image timerImage;
+    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private Image lapTimeDiffImage;
+    [SerializeField] private TextMeshProUGUI lapTimeDiffText;
+    [SerializeField] private Image localLapTimeDiffImage;
+    [SerializeField] private TextMeshProUGUI localLapTimeDiffText;
+    [SerializeField] private GameObject resultUI;
+    [SerializeField] private RaceResultBox raceResultBox;
+    [SerializeField] private CountDown countDown;
+    [SerializeField] private GameObject parentObjectForUIPanel;
+    [SerializeField] private Transform[] rankPositons;
+    #endregion
+
+    #region Ranking System
+    [Header("Ranking System")]
     [SerializeField] private List<Rank_Data> rankData = new List<Rank_Data>();
     [SerializeField] private List<Rank_Data> sortedRankData = new List<Rank_Data>();
     [Networked, Capacity(4), SerializeField] private NetworkDictionary<NetworkId, byte> rank => default;
     private byte tempRank;
     private bool isRankingStart = false;
-
-    [SerializeField] private Rank rank_Prefab;
     [SerializeField] private Dictionary<NetworkId, Rank> rankList = new Dictionary<NetworkId, Rank>();
-    [SerializeField] private Transform[] rankPositons;
     [SerializeField] private Vector3[] rankTargetPositions = new Vector3[4];
+    #endregion
 
+    #region Rank Colors
     [Header("Rank Colors")]
     private Color tempColor;
     private Color firstPlaceColor = new Color(1.0f, 0.843f, 0.0f, 0.7f); // 1등 색상 (골드)
-    private Color secondPlaceColor = new Color(0.769f, 0.769f, 0.769f, 0.7f);  // 2등 색상 (실버)
+    private Color secondPlaceColor = new Color(0.769f, 0.769f, 0.769f, 0.7f); // 2등 색상 (실버)
     private Color thirdPlaceColor = new Color(0.815f, 0.486f, 0.222f, 0.7f); // 3등 색상 (브론즈)
     private Color defaultColor = new Color(0.65f, 0.65f, 0.65f, 0.8f); // 그 외 등수 색상 또는 기본 색상
+    #endregion
 
-    [Header("Result UI")]
-    [SerializeField] private GameObject resultUI_Prefab;
-    [SerializeField] private GameObject resultUI;
-    [SerializeField] private RaceResultBox raceResultBox;
+    #region Race Results & Completion
+    [Header("Race Results & Completion")]
     [SerializeField] private bool shouldShowResults;
-
-    [Networked, Capacity(4)]
-    private NetworkDictionary<NetworkId, float> finishedPlayerTimes => default;
-    [Networked, Capacity(4)]
-    private NetworkDictionary<NetworkId, string> finishedPlayerNames => default;
-
+    [Networked, Capacity(4)] private NetworkDictionary<NetworkId, float> finishedPlayerTimes => default;
+    [Networked, Capacity(4)] private NetworkDictionary<NetworkId, string> finishedPlayerNames => default;
     private bool isResultPanelActiveLocally = false;
-
-    [Networked, SerializeField] private int totalPlayerCount { get; set; } = 0;
     [Networked, SerializeField] private bool raceEndedByCompletion { get; set; } = false;
     [Networked, SerializeField] private bool raceEndedByTimeout { get; set; } = false;
-    [Networked] private TickTimer sceneChangeTimer { get; set; }
-    [SerializeField] private float sceneChangeDelay = 5f; // 씬 변경 지연 시간 (초)
+    #endregion
 
-    [Header("Countdown")]
-    [SerializeField] private NetworkPrefabRef countDown_Prefab;
-    [SerializeField] private CountDown countDown;
+    #region Countdown & Timers
+    [Header("Countdown & Timers")]
+    [SerializeField] private float gameTimer;
+    [SerializeField] private TimeSpan gameTimeSpan;
+    [SerializeField] private DateTime gameTime;
     [Networked] private bool raceFinishCountdownTriggered { get; set; } = false;
     [Networked] private TickTimer didNotFinishTimer { get; set; }
     [SerializeField] private float didNotFinishCountdownDuration = 10f;
+    #endregion
 
-    [SerializeField] private GameObject parentObjectForUIPanel_Prefab;
-    [SerializeField] private GameObject parentObjectForUIPanel;
+    #region Lap Time Difference
+    [Header("Lap Time Difference")]
+    [SerializeField] bool isLapTimeDiffShowing = false;
+    [SerializeField] bool isLocalLapTimeDiffShowing = false;
+    [SerializeField] private float lapTimeDiffTimer = 0f;
+    [SerializeField] private float localLapTimeDiffTimer = 0f;
+    [SerializeField] private float diffTime1;
+    [SerializeField] private float diffTime2;
+    [SerializeField] private float bestLapTime;
+    #endregion
 
-    private void FixedUpdate()
-    {
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            ExitGame();
-        }
-        if (gameStart)
-        {
-            gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
-            gameTime = DateTime.Today.Add(gameTimeSpan);
-            timerText.text = gameTime.ToString("mm':'ss'.'ff");
-        }
-        //if(Input.GetKey(KeyCode.Return))
-        //{
-        //    if (Runner.GameMode == GameMode.Host)
-        //    {
-        //        foreach (LobbyPlayer player in LobbyPlayer.players)
-        //            SpawnPlayer(Runner, player);
-        //    }
-        //}
-    }
+    #endregion
+
+    #region Unity 생명주기 메서드 (Unity Lifecycle Methods)
 
     public override void Spawned()
     {
         base.Spawned();
-
         Runner.SetIsSimulated(Object, true);
 
         trackName = SceneManager.GetActiveScene().name;
@@ -160,7 +159,8 @@ public class MainGame_Manager : NetworkBehaviour
         }
         if (networkRunner == null)
             networkRunner = GameObject.Find("Session").GetComponent<NetworkRunner>();
-        if(HasStateAuthority)
+
+        if (HasStateAuthority)
             LoadAndSetupTrack();
         StartCoroutine(WaitingForCheckpoint());
 
@@ -176,10 +176,9 @@ public class MainGame_Manager : NetworkBehaviour
         else
             Debug.LogError("resultUI가 할당되지 않았습니다. UI를 확인해주세요.");
 
-        if(Object.HasStateAuthority)
+        if (Object.HasStateAuthority)
         {
             countDown = Runner.Spawn(countDown_Prefab).GetComponent<CountDown>();
-            //countDownSpawned = true;
             Debug.Log("CountDown 객체가 호스트에서 스폰되었습니다.");
         }
         StartCoroutine(CheckCountDownSpawned());
@@ -188,19 +187,35 @@ public class MainGame_Manager : NetworkBehaviour
         raceFinishCountdownTriggered = false;
     }
 
+    private void FixedUpdate()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            ExitGame();
+        }
+
+        if (gameStart)
+        {
+            gameTimeSpan = TimeSpan.FromSeconds(gameTimer);
+            gameTime = DateTime.Today.Add(gameTimeSpan);
+            timerText.text = gameTime.ToString("mm':'ss'.'ff");
+        }
+    }
+
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
 
-
+        // DNF Timer Logic
         if (Object.HasStateAuthority && didNotFinishTimer.IsRunning && didNotFinishTimer.Expired(Runner))
         {
             didNotFinishTimer = TickTimer.None;
             RPC_ForceRaceEnd();
             Debug.Log("DNF 타이머 만료. 레이스를 강제 종료합니다.");
         }
-        if (resultUI == null) return;
 
+        // Result UI Logic
+        if (resultUI == null) return;
         if (resultUI != null)
         {
             if (localPlayerCar == null && localPlayer != null)
@@ -213,9 +228,10 @@ public class MainGame_Manager : NetworkBehaviour
                 raceResultBox.UpdateResultDisplay(finishedPlayerTimes, finishedPlayerNames);
         }
 
+        // Scene Change Logic (Host only)
         if (Object.HasStateAuthority)
         {
-            if((raceEndedByCompletion || raceEndedByTimeout) && !sceneChangeTimer.IsRunning && sceneChangeTimer.ExpiredOrNotRunning(Runner))
+            if ((raceEndedByCompletion || raceEndedByTimeout) && !sceneChangeTimer.IsRunning && sceneChangeTimer.ExpiredOrNotRunning(Runner))
             {
                 sceneChangeTimer = TickTimer.CreateFromSeconds(Runner, sceneChangeDelay);
                 Debug.Log($"호스트: 씬 전환 타이머 시작! {sceneChangeDelay}초 후 씬 전환.");
@@ -224,7 +240,6 @@ public class MainGame_Manager : NetworkBehaviour
             if (sceneChangeTimer.IsRunning && sceneChangeTimer.Expired(Runner))
             {
                 sceneChangeTimer = TickTimer.None;
-
                 foreach (var car in playerCars)
                 {
                     if (car != null && car.Object != null && car.Object.IsValid)
@@ -238,19 +253,12 @@ public class MainGame_Manager : NetworkBehaviour
         }
     }
 
+    #endregion
+
+    #region 레이스 생명주기 관리 (Race Lifecycle Management)
+
     public void RaceStart()
     {
-        //if(Object.HasStateAuthority)
-        //{
-        //    Debug.Log("MainGame_Manager: RaceStarted 호출됨. 모든 차량에 StartRace 실행.");
-        //    foreach (Player_Car playerCar in playerCars)
-        //    {
-        //        if (playerCar != null)
-        //        {
-        //            playerCar.StartRace();
-        //        }
-        //    }
-        //}
         foreach (Player_Car playerCar in playerCars)
         {
             if (playerCar != null)
@@ -264,7 +272,6 @@ public class MainGame_Manager : NetworkBehaviour
 
     public void RaceEnd(NetworkId finishedPlayerId, string finishedPlayerName, float finishTime)
     {
-
         if (!Object.HasStateAuthority) return;
 
         if (!finishedPlayerTimes.ContainsKey(finishedPlayerId))
@@ -272,7 +279,6 @@ public class MainGame_Manager : NetworkBehaviour
             finishedPlayerTimes.Add(finishedPlayerId, finishTime);
             finishedPlayerNames.Add(finishedPlayerId, finishedPlayerName);
             Debug.Log($"플레이어 {finishedPlayerName} (ID: {finishedPlayerId}) 완주 시간 기록: {finishTime}");
-
 
             if (finishedPlayerTimes.Count == 1)
             {
@@ -294,173 +300,26 @@ public class MainGame_Manager : NetworkBehaviour
         }
     }
 
-    [Rpc(RpcSources.Proxies, RpcTargets.StateAuthority)]
-    public void RPC_PlayerFinished(float finishTime, RpcInfo info = default)
-    {
-        Player_Car finishedCar = null;
-        foreach (var car in playerCars)
-        {
-            if (car != null && car.Object.InputAuthority == info.Source)
-            {
-                finishedCar = car;
-                break;
-            }
-        }
+    #endregion
 
-        if (finishedCar != null)
-        {
-            NetworkId playerId = finishedCar.Object.Id;
-            string playerName = finishedCar.GetName();
-
-            // 호스트의 RaceEnd 함수를 호출하여 완주 정보를 정확히 기록합니다.
-            RaceEnd(playerId, playerName, finishTime);
-        }
-        else
-        {
-            Debug.LogWarning($"RPC를 보낸 플레이어(Player {info.Source})의 차를 찾을 수 없습니다.");
-        }
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
-    public void RPC_ForceRaceEnd()
-    {
-        Debug.Log("RPC_ForceRaceEnd 호출됨: 레이스가 강제 종료됩니다.");
-
-        foreach (var car in playerCars)
-        {
-            if (car != null && !finishedPlayerTimes.ContainsKey(car.Object.Id))
-            {
-                finishedPlayerTimes.Add(car.Object.Id, 9999f);
-                finishedPlayerNames.Add(car.Object.Id, car.GetName());
-                Debug.Log($"플레이어 {car.GetName()} DNF 처리됨.");
-            }
-        }
-
-        raceEndedByTimeout = true;
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_CleanupAndReturnToLobby()
-    {
-        Debug.Log($"[{(Object.HasStateAuthority ? "Host" : "Client")}] 씬 전환 및 UI 정리 시작.");
-
-        isRankingStart = false;
-
-        if(Shared.ui_Manager != null)
-        {
-            Shared.ui_Manager.isInGame = false;
-            Shared.ui_Manager.BackToMenu();
-        }
-
-        Destroy(parentObjectForUIPanel);
-
-        if(resultUI != null) { Destroy(resultUI); }
-
-        if (Object.HasStateAuthority)
-        {
-            LobbyPlayer.localPlayer.Regroup();
-            Runner.LoadScene(SceneRef.FromIndex(2));
-            Debug.Log("호스트: LobbyScene 로드를 시작합니다.");
-        }
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_GameReadyAndStart()
-    {
-        RaceStart();
-        Debug.Log("MainGame_Manager: RPC_GameReadyAndStart 수신됨. 게임 시작 준비 완료!");
-    }
+    #region 플레이어 및 차량 설정 (Player & Car Setup)
 
     public void SpawnPlayer(NetworkRunner runner, LobbyPlayer player)
     {
         var index = LobbyPlayer.players.IndexOf(player);
         var point = spawnPosition[index];
 
-        var profabID = player.carIndex-1;
+        var profabID = player.carIndex - 1;
         var prefab = playerCarPrefab[profabID];
-
         var entity = runner.Spawn(
             prefab,
             point.position,
             point.rotation,
             player.Object.InputAuthority
             );
-
         player.gameState = eGAMESTATE.GAMEREADY;
         player.car = entity;
         entity.GetComponent<Player_Car>().SetName(player.playerName.Value);
-    }
-
-    private IEnumerator CheckCountDownSpawned()
-    {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
-        while (FindObjectOfType<CountDown>() == null)
-        {
-            yield return waitForSeconds;
-        }
-        countDown = FindObjectOfType<CountDown>().GetComponent<CountDown>();
-        countDown.transform.SetParent(parentObjectForUIPanel.transform, false);
-        countDown.SetMainGameManager(this);
-        Debug.Log("카운트 다운이 시작됩니다.");
-    }
-
-    private void LoadAndSetupTrack()
-    {
-        tracksData = TrackData_Manager.instance.GetTrackDataByName(trackName);
-        if (tracksData != null)
-        {
-            bool lastcheck = false;
-            lastCheckPointIndex = tracksData.Checkpoints.Count-1;
-            for (int i = 0; i < tracksData.Checkpoints.Count; i++)
-            {
-                CheckPoint checkPoint = networkRunner.Spawn(checkPoint_Prefab);
-
-                if(i == lastCheckPointIndex)
-                { lastcheck = true; }
-                else
-                { lastcheck = false; }
-
-                checkPoint.SetCheckPointIndex(i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale, lastcheck);
-            }
-            GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
-            lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();
-            LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
-        }
-        else
-        {
-            Debug.LogError($"Failed to load {trackName} track data.");
-        }
-    }
-    public void SetFirstCheckPoint(CheckPoint checkPoint)
-    { firstCheckPoint = checkPoint; }
-    public void SetLastCheckPoint(CheckPoint checkPoint)
-    { lastCheckPoint = checkPoint; }
-
-    private void GenerateSpawnPointsFromCheckpoint(CheckPoint referenceCheckpoint)
-    {
-        if (referenceCheckpoint == null)
-        {
-            Debug.LogError("Cannot generate spawn points: referenceCheckpoint is null.");
-            return;
-        }
-        Transform checkpointTransform = referenceCheckpoint.transform;
-        float initialOffset = -((spawnPosition.Length - 1) * spawnPointSpacing) / 2.0f;
-        for (int i = 0; i < spawnPosition.Length; i++)
-        {
-            Vector3 horizontalOffset = checkpointTransform.right * (initialOffset + (i * spawnPointSpacing));
-            Vector3 verticalOffsetVector = checkpointTransform.up * spawnPointVerticalOffset;
-
-            Vector3 spawnPos = checkpointTransform.position + horizontalOffset + verticalOffsetVector;
-            Quaternion spawnRot = checkpointTransform.rotation;
-
-            GameObject spGO = new GameObject($"DynamicSpawnPoint_{i}");
-            spGO.transform.position = spawnPos;
-            spGO.transform.rotation = spawnRot;
-            spGO.transform.SetParent(this.transform);
-
-            spawnPosition[i] = spGO.transform;
-        }
-        Debug.Log($"Generated {spawnPosition.Length} spawn points from the first checkpoint.");
     }
 
     public void CarInit(Player_Car spawnedCar, bool localPlayer)
@@ -469,7 +328,6 @@ public class MainGame_Manager : NetworkBehaviour
         if (localPlayer)
         {
             this.localPlayer = playerCar.GetComponent<NetworkObject>();
-
             timerImage = Instantiate(Timer_Prefab, parentObjectForUIPanel.transform).GetComponent<Image>();
             lapTimeDiffImage = Instantiate(lapTimeDiff_Prefab, parentObjectForUIPanel.transform).GetComponent<Image>();
             timerText = timerImage.GetComponentInChildren<TextMeshProUGUI>();
@@ -478,6 +336,7 @@ public class MainGame_Manager : NetworkBehaviour
             localLapTimeDiffImage = Instantiate(localLapTimeDiff_Prefab, parentObjectForUIPanel.transform).GetComponent<Image>();
             localLapTimeDiffText = localLapTimeDiffImage.GetComponentInChildren<TextMeshProUGUI>();
             localLapTimeDiffImage.gameObject.SetActive(false);
+
             if (MainCamera == null)
             {
                 MainCamera = Instantiate(MainCamera_Prefab);
@@ -494,7 +353,7 @@ public class MainGame_Manager : NetworkBehaviour
                 playerCar.SetRPMGauge(rpmGauge);
             }
         }
-        //playerCar.SetName();
+
         carData = CarData_Manager.instance.GetCarDataByNumber(playerCar.GetCarNumber());
         playerCar.SetCarMass(carData.Mass);
         playerCar.SetDragCoefficient(carData.dragCoefficient);
@@ -502,27 +361,13 @@ public class MainGame_Manager : NetworkBehaviour
         playerCar.SetEngineRPMLimit(carData.maxEngineRPM, carData.minEngineRPM);
         switch (carData.lastGear)
         {
-            case 1:
-                playerCar.SetLastGear(Car.eGEAR.eGEAR_FIRST);
-                break;
-            case 2:
-                playerCar.SetLastGear(Car.eGEAR.eGEAR_SECOND);
-                break;
-            case 3:
-                playerCar.SetLastGear(Car.eGEAR.eGEAR_THIRD);
-                break;
-            case 4:
-                playerCar.SetLastGear(Car.eGEAR.eGEAR_FOURTH);
-                break;
-            case 5:
-                playerCar.SetLastGear(Car.eGEAR.eGEAR_FIFTH);
-                break;
-            case 6:
-                playerCar.SetLastGear(Car.eGEAR.eGEAR_SIXTH);
-                break;
-            default:
-                Debug.Log("잘못된 lastGear설정입니다.");
-                break;
+            case 1: playerCar.SetLastGear(Car.eGEAR.eGEAR_FIRST); break;
+            case 2: playerCar.SetLastGear(Car.eGEAR.eGEAR_SECOND); break;
+            case 3: playerCar.SetLastGear(Car.eGEAR.eGEAR_THIRD); break;
+            case 4: playerCar.SetLastGear(Car.eGEAR.eGEAR_FOURTH); break;
+            case 5: playerCar.SetLastGear(Car.eGEAR.eGEAR_FIFTH); break;
+            case 6: playerCar.SetLastGear(Car.eGEAR.eGEAR_SIXTH); break;
+            default: Debug.Log("잘못된 lastGear설정입니다."); break;
         }
         playerCar.SetGearRatio(Car.eGEAR.eGEAR_NEUTURAL, 0f);
         playerCar.SetGearRatio(Car.eGEAR.eGEAR_REVERSE, carData.gearRatio_eGEAR_REVERSE);
@@ -543,21 +388,20 @@ public class MainGame_Manager : NetworkBehaviour
         playerCar.SetGearSpeedLimit(Car.eGEAR.eGEAR_SIXTH, carData.gearSpeedLimit_eGEAR_SIXTH);
 
         playerCar.SetID(playerNumber);
-        if(playersID.ContainsKey(playerNumber))
+        if (playersID.ContainsKey(playerNumber))
             playersID[playerNumber] = playerCar.GetComponent<NetworkObject>().Id;
         else
             playersID.Add(playerNumber, playerCar.GetComponent<NetworkObject>().Id);
 
-        if(playerNumber < playerCars.Length)
+        if (playerNumber < playerCars.Length)
             playerCars[playerNumber] = playerCar;
-        // 호스트에서만 총 플레이어 수 업데이트
+
         if (Object.HasStateAuthority)
             totalPlayerCount = playerNumber + 1;
 
         playerNumber++;
 
         SetRank(spawnedCar.Object.Id);
-
         SetFirstCheckPoint(playerCar);
 
         if (Object.HasStateAuthority && !isRankingStart)
@@ -568,52 +412,13 @@ public class MainGame_Manager : NetworkBehaviour
 
         playerCar.Init();
     }
-    public void SetRank(NetworkId _id)
-    {
-        Rank playerRank;
-        // 랭킹 UI가 이미 존재하는지 확인합니다.
-        if (!rankList.TryGetValue(_id, out playerRank))
-        {
-            // UI가 없다면 새로 생성하고 초기 설정(위치, 색상)을 합니다.
-            playerRank = Instantiate(rank_Prefab, parentObjectForUIPanel.transform);
-            rankList.Add(_id, playerRank);
-            playerRank.Init(this, _id);
-        }
 
-        // ID에 해당하는 Player_Car를 찾습니다.
-        Player_Car carToUpdate = null;
-        foreach (var car in playerCars)
-        {
-            if (car != null && car.Object.Id == _id)
-            {
-                carToUpdate = car;
-                break;
-            }
-        }
-
-        // Player_Car를 찾았다면, 항상 이름을 업데이트합니다.
-        if (carToUpdate != null && playerRank != null)
-        {
-            playerRank.SetPlay(null, carToUpdate.GetName());
-        }
-    }
-
-    public Vector3[] GetRankPositions()
-    { return rankTargetPositions; }
-
-    public void RemoveRank(NetworkId _id)
-    {
-        if (rankList.ContainsKey(_id))
-        {
-            Destroy(rankList[_id].gameObject);
-            rankList.Remove(_id);
-        }
-    }
     public void OnJoinPlayer(NetworkObject networkPlayerObject)
     {
         playersID[playerNumber] = networkPlayerObject.Id;
         rank.Add(networkPlayerObject.Id, 0);
     }
+
     public void OnLeftPlayer(NetworkObject networkPlayerObject)
     {
         rank.Remove(networkPlayerObject.Id);
@@ -621,39 +426,65 @@ public class MainGame_Manager : NetworkBehaviour
         RemoveRank(networkPlayerObject.Id);
     }
 
-    private void ExitGame()
-    {
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-    }
-    IEnumerator WaitingForCheckpoint()
-    {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
-        while (!LobbyPlayer.players.All(player => player.isSync))
-        {
-            yield return waitForSeconds;
-        }
-        if (networkRunner.GameMode == GameMode.Host)
-        {
-            foreach (LobbyPlayer player in LobbyPlayer.players)
-                SpawnPlayer(networkRunner, player);
+    #endregion
 
-            while(countDown == null)
+    #region 트랙 및 체크포인트 로직 (Track & Checkpoint Logic)
+
+    private void LoadAndSetupTrack()
+    {
+        tracksData = TrackData_Manager.instance.GetTrackDataByName(trackName);
+        if (tracksData != null)
+        {
+            bool lastcheck = false;
+            lastCheckPointIndex = tracksData.Checkpoints.Count - 1;
+            for (int i = 0; i < tracksData.Checkpoints.Count; i++)
             {
-                yield return waitForSeconds;
-            }
+                CheckPoint checkPoint = networkRunner.Spawn(checkPoint_Prefab);
+                if (i == lastCheckPointIndex)
+                { lastcheck = true; }
+                else
+                { lastcheck = false; }
 
-            countDown.StartCountdown(3, true);
-            Debug.Log("MainGame_Manager: 게임 시작 카운트다운이 시작되었습니다.");
+                checkPoint.SetCheckPointIndex(i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale, lastcheck);
+            }
+            GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+            lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();
+            LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
+        }
+        else
+        {
+            Debug.LogError($"Failed to load {trackName} track data.");
         }
     }
-    public void SetTimer(float _timer)
-    { gameTimer = _timer; }
+
+    private void GenerateSpawnPointsFromCheckpoint(CheckPoint referenceCheckpoint)
+    {
+        if (referenceCheckpoint == null)
+        {
+            Debug.LogError("Cannot generate spawn points: referenceCheckpoint is null.");
+            return;
+        }
+        Transform checkpointTransform = referenceCheckpoint.transform;
+        float initialOffset = -((spawnPosition.Length - 1) * spawnPointSpacing) / 2.0f;
+        for (int i = 0; i < spawnPosition.Length; i++)
+        {
+            Vector3 horizontalOffset = checkpointTransform.right * (initialOffset + (i * spawnPointSpacing));
+            Vector3 verticalOffsetVector = checkpointTransform.up * spawnPointVerticalOffset;
+
+            Vector3 spawnPos = checkpointTransform.position + horizontalOffset + verticalOffsetVector;
+            Quaternion spawnRot = checkpointTransform.rotation;
+            GameObject spGO = new GameObject($"DynamicSpawnPoint_{i}");
+            spGO.transform.position = spawnPos;
+            spGO.transform.rotation = spawnRot;
+            spGO.transform.SetParent(this.transform);
+
+            spawnPosition[i] = spGO.transform;
+        }
+        Debug.Log($"Generated {spawnPosition.Length} spawn points from the first checkpoint.");
+    }
+
     public float CheckPointChecked(Player_Car _playerCar, float _bestTime, float _localBestTime, int checkPointIndex)
     {
-        //체크 포인트의 기록과 비교후 느릴 경우 표시한다, 개인 기록은 항상 표시한다.
         if (_bestTime != 0 && _playerCar.GetComponent<NetworkObject>().Id == localPlayer.Id)
         {
             diffTime1 = gameTimer - _bestTime;
@@ -663,6 +494,7 @@ public class MainGame_Manager : NetworkBehaviour
             if (!isLocalLapTimeDiffShowing)
                 StartCoroutine(ShowLocalLapTimeDifference(diffTime2));
         }
+
         if (lastCheckPointIndex == checkPointIndex)
         {
             _playerCar.SetCheckPoint(1);
@@ -672,13 +504,14 @@ public class MainGame_Manager : NetworkBehaviour
             Debug.Log("Lap " + tempLap + " CheckPoint " + checkPointIndex + " Entered by " + _playerCar.name);
             bestLapTime = gameTimer;
             _playerCar.ResetTimer();
+
             if (_playerCar.GetLap() >= maxLaps)
             {
                 bestLapTime = gameTimer;
-                _playerCar.SetFinishTime(gameTimer); // Player_Car에 완주 시간 저장 함수 추가 필요
+                _playerCar.SetFinishTime(gameTimer);
                 _playerCar.FinishRace();
-                
-                if(Object.HasStateAuthority)
+
+                if (Object.HasStateAuthority)
                     RaceEnd(_playerCar.Object.Id, _playerCar.GetName(), gameTimer);
                 else if (_playerCar.Object.HasInputAuthority)
                     RPC_PlayerFinished(gameTimer);
@@ -692,22 +525,187 @@ public class MainGame_Manager : NetworkBehaviour
         return gameTimer;
     }
 
+    public void SetFirstCheckPoint(CheckPoint checkPoint) { firstCheckPoint = checkPoint; }
+    public void SetLastCheckPoint(CheckPoint checkPoint) { lastCheckPoint = checkPoint; }
+    private void SetFirstCheckPoint(Player_Car _playerCar)
+    {
+        _playerCar.SetNextCheckPointPosition(firstCheckPoint);
+    }
+    public void SetTimer(float _timer) { gameTimer = _timer; }
+
+
+    #endregion
+
+    #region 랭킹 로직 (Ranking Logic)
+
+    public void SetRank(NetworkId _id)
+    {
+        Rank playerRank;
+        if (!rankList.TryGetValue(_id, out playerRank))
+        {
+            playerRank = Instantiate(rank_Prefab, parentObjectForUIPanel.transform);
+            rankList.Add(_id, playerRank);
+            playerRank.Init(this, _id);
+        }
+
+        Player_Car carToUpdate = null;
+        foreach (var car in playerCars)
+        {
+            if (car != null && car.Object.Id == _id)
+            {
+                carToUpdate = car;
+                break;
+            }
+        }
+
+        if (carToUpdate != null && playerRank != null)
+        {
+            playerRank.SetPlay(null, carToUpdate.GetName());
+        }
+    }
+
     public int GetRank(NetworkId rankPlayer)
     {
         if (Object == null || !Object.IsValid || rank.Count == 0) return 0;
         return rank.ContainsKey(rankPlayer) ? rank[rankPlayer] : 0;
     }
 
-    IEnumerator UpdatingRankings()
+    public void RemoveRank(NetworkId _id)
     {
-        //코루틴 갱신 간격 설정(초당60프레임 정도로)
-        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
-        while(true)
+        if (rankList.ContainsKey(_id))
+        {
+            Destroy(rankList[_id].gameObject);
+            rankList.Remove(_id);
+        }
+    }
+
+    public Vector3[] GetRankPositions() { return rankTargetPositions; }
+
+    #endregion
+
+    #region RPC (Remote Procedure Calls)
+
+    [Rpc(RpcSources.Proxies, RpcTargets.StateAuthority)]
+    public void RPC_PlayerFinished(float finishTime, RpcInfo info = default)
+    {
+        Player_Car finishedCar = null;
+        foreach (var car in playerCars)
+        {
+            if (car != null && car.Object.InputAuthority == info.Source)
+            {
+                finishedCar = car;
+                break;
+            }
+        }
+
+        if (finishedCar != null)
+        {
+            NetworkId playerId = finishedCar.Object.Id;
+            string playerName = finishedCar.GetName();
+            RaceEnd(playerId, playerName, finishTime);
+        }
+        else
+        {
+            Debug.LogWarning($"RPC를 보낸 플레이어(Player {info.Source})의 차를 찾을 수 없습니다.");
+        }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
+    public void RPC_ForceRaceEnd()
+    {
+        Debug.Log("RPC_ForceRaceEnd 호출됨: 레이스가 강제 종료됩니다.");
+        foreach (var car in playerCars)
+        {
+            if (car != null && !finishedPlayerTimes.ContainsKey(car.Object.Id))
+            {
+                finishedPlayerTimes.Add(car.Object.Id, 9999f);
+                finishedPlayerNames.Add(car.Object.Id, car.GetName());
+                Debug.Log($"플레이어 {car.GetName()} DNF 처리됨.");
+            }
+        }
+
+        raceEndedByTimeout = true;
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_CleanupAndReturnToLobby()
+    {
+        Debug.Log($"[{(Object.HasStateAuthority ? "Host" : "Client")}] 씬 전환 및 UI 정리 시작.");
+        isRankingStart = false;
+
+        if (Shared.ui_Manager != null)
+        {
+            Shared.ui_Manager.isInGame = false;
+            Shared.ui_Manager.BackToMenu();
+        }
+
+        Destroy(parentObjectForUIPanel);
+
+        if (resultUI != null) { Destroy(resultUI); }
+
+        if (Object.HasStateAuthority)
+        {
+            LobbyPlayer.localPlayer.Regroup();
+            Runner.LoadScene(SceneRef.FromIndex(2));
+            Debug.Log("호스트: LobbyScene 로드를 시작합니다.");
+        }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_GameReadyAndStart()
+    {
+        RaceStart();
+        Debug.Log("MainGame_Manager: RPC_GameReadyAndStart 수신됨. 게임 시작 준비 완료!");
+    }
+
+    #endregion
+
+    #region 코루틴 (Coroutines)
+
+    private IEnumerator CheckCountDownSpawned()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        while (FindObjectOfType<CountDown>() == null)
         {
             yield return waitForSeconds;
-            if(!isRankingStart)
+        }
+        countDown = FindObjectOfType<CountDown>().GetComponent<CountDown>();
+        countDown.transform.SetParent(parentObjectForUIPanel.transform, false);
+        countDown.SetMainGameManager(this);
+        Debug.Log("카운트 다운이 시작됩니다.");
+    }
+
+    private IEnumerator WaitingForCheckpoint()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        while (!LobbyPlayer.players.All(player => player.isSync))
+        {
+            yield return waitForSeconds;
+        }
+        if (networkRunner.GameMode == GameMode.Host)
+        {
+            foreach (LobbyPlayer player in LobbyPlayer.players)
+                SpawnPlayer(networkRunner, player);
+
+            while (countDown == null)
+            {
+                yield return waitForSeconds;
+            }
+
+            countDown.StartCountdown(3, true);
+            Debug.Log("MainGame_Manager: 게임 시작 카운트다운이 시작되었습니다.");
+        }
+    }
+
+    private IEnumerator UpdatingRankings()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
+        while (true)
+        {
+            yield return waitForSeconds;
+            if (!isRankingStart)
                 yield break;
-            //랭크데이터 초기화
+
             rankData.Clear();
             for (int i = 0; i < playerCars.Length; i++)
             {
@@ -716,44 +714,37 @@ public class MainGame_Manager : NetworkBehaviour
                 if (playerCars[i] != null)
                     rankData.Add(playerCars[i].GetRankData());
             }
-            //초기화된 랭크데이터를 바퀴수,체크포인트상황,체크포인트와의 거리 순으로 정렬
+
             sortedRankData = rankData.OrderByDescending(carData => carData.lap)
                 .ThenByDescending(carData => carData.currentCheckpointIndex)
                 .ThenBy(carData => carData.distanceToCheckPoint)
                 .ToList();
-            //정렬된 랭크데이터에 따라 랭크가 표시될 위치와 색 변경
+
             for (int i = 0; i < sortedRankData.Count; i++)
             {
                 if (!isRankingStart)
                     yield break;
-
                 tempRank = (byte)(i + 1);
                 rank.Set(sortedRankData[i].playerId, tempRank);
             }
         }
     }
 
-    private void SetFirstCheckPoint(Player_Car _playerCar)
+    private IEnumerator ShowLapTimeDifference(float _diffTime)
     {
-        _playerCar.SetNextCheckPointPosition(firstCheckPoint);
-    }
-    //체크포인트에 기록된 최고기록을 받아와서 코루틴 실행
-    IEnumerator ShowLapTimeDifference(float _diffTime)
-    {
-        //코루틴 갱신 간격 설정(초당 15프레임정도)
         WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
         Debug.Log("start diff timer");
-        //표시될 시간의 초기화와 오브젝트 활성화
+
         isLapTimeDiffShowing = true;
         lapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
         lapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
         lapTimeDiffText.text = '+' + string.Format("{0:0.00}", _diffTime);
         lapTimeDiffImage.gameObject.SetActive(true);
+
         while (true)
         {
             yield return waitForSeconds;
             lapTimeDiffTimer += 0.04f;
-            //3초뒤 비활성화 코루틴 종료
             if (lapTimeDiffTimer > 3f)
             {
                 lapTimeDiffImage.gameObject.SetActive(false);
@@ -761,7 +752,6 @@ public class MainGame_Manager : NetworkBehaviour
                 isLapTimeDiffShowing = false;
                 yield break;
             }
-            //2초뒤 3초 천천히 사라지기 시작
             else if (lapTimeDiffTimer > 2f)
             {
                 lapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
@@ -769,32 +759,31 @@ public class MainGame_Manager : NetworkBehaviour
             }
         }
     }
-    //체크포인트에 기록된 개인최고기록을 받아와서 코루틴 실행
-    IEnumerator ShowLocalLapTimeDifference(float _diffTime)
+
+    private IEnumerator ShowLocalLapTimeDifference(float _diffTime)
     {
-        //개인 최고기록이 없을경우(초기값이 1000000이 넘음) 표시되지 않음
         if (Mathf.Abs(_diffTime) > 1000000)
         {
             isLocalLapTimeDiffShowing = false;
             yield break;
         }
-        //코루틴 갱신 간격 설정(초당 15프레임정도)
+
         WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
         Debug.Log("start diff timer");
         isLocalLapTimeDiffShowing = true;
-        //표시될 시간의 배경과 텍스트 색 초기화, 비교후 느리면 붉은색 빠르면 초록색
+
         localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
-        if(_diffTime < 0)
+        if (_diffTime < 0)
             localLapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
         else
             localLapTimeDiffText.color = new Color(0f, 1f, 0f, 1f);
         localLapTimeDiffText.text = '+' + string.Format("{0:0.00}", _diffTime);
         localLapTimeDiffImage.gameObject.SetActive(true);
+
         while (true)
         {
             yield return waitForSeconds;
             localLapTimeDiffTimer += 0.04f;
-            //이하 내용은 최고기록 비교와 같음
             if (localLapTimeDiffTimer > 3f)
             {
                 localLapTimeDiffImage.gameObject.SetActive(false);
@@ -812,4 +801,16 @@ public class MainGame_Manager : NetworkBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region 유틸리티 (Utilities)
+    private void ExitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+    #endregion
 }

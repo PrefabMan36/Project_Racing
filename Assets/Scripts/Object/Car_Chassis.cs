@@ -77,6 +77,11 @@ public partial class Car
     #region Value Drift
     [Header("Drift Value")]
     [Range(0.0f, 0.5f), SerializeField] private float slipLimit = 0.3f;
+    [SerializeField] private AudioSource slipSound;
+    [SerializeField] private float currentMaxSlip;
+    [SerializeField] private float sumSlip;
+    [SerializeField] private float finalMaxSlip;
+    [SerializeField] private float slipVolume;
     [SerializeField] private GameObject smokePrefab;
     [SerializeField] private GameObject[] smokes;
     [SerializeField] private ParticleSystem[] smokeParticles;
@@ -368,16 +373,25 @@ public partial class Car
     }
     protected void EffectDrift()
     {
+        finalMaxSlip = 0f;
+        sumSlip = 0f;
         for(int i = 0; i < wheelNum; i++)
         {
             if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.3f)
+                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.15f)
                 {
                     wheels[i].skidMarks.emitting = true;
 
                     var emission = smokeParticles[i].emission;
                     emission.enabled = true;
+
+                    currentMaxSlip = MathF.Max(wheelHit.sidewaysSlip, wheelHit.forwardSlip);
+                    if(finalMaxSlip < currentMaxSlip)
+                    {
+                        finalMaxSlip = currentMaxSlip;
+                        sumSlip = wheelHit.sidewaysSlip + wheelHit.forwardSlip;
+                    }
                 }
                 else
                 {
@@ -394,6 +408,19 @@ public partial class Car
                 var emission = smokeParticles[i].emission;
                 emission.enabled = false;
             }
+        }
+        if(finalMaxSlip > 0.15f)
+        {
+            if (slipSound != null && !slipSound.isPlaying)
+                slipSound.Play();
+
+            slipSound.volume = Mathf.Clamp01(finalMaxSlip * 2);
+            slipSound.pitch = Mathf.Clamp(finalMaxSlip, 0.75f, 1f);
+        }
+        else
+        {
+            if (slipSound != null && slipSound.isPlaying)
+                slipSound.Stop();
         }
     }
     protected void SpawnSmoke()

@@ -510,6 +510,7 @@ public partial class Car
     #region Value Nitro
     [Header("Nitro Value")]
     [SerializeField] private AudioSource nitroSoundEffect;
+    [SerializeField] private AudioSource nitroStartSoundEffect;
     [SerializeField] private ParticleSystem nitroEffect;
     [SerializeField] private Trail nitroTrail;
     [SerializeField] private bool isNitroInstalled;
@@ -580,6 +581,12 @@ public partial class Car
                 if(nitroEffect != null)
                 {
                     if (!nitroEffect.isPlaying) { nitroEffect.Play(); }
+                    if (!nitroSoundEffect.isPlaying) { nitroSoundEffect.Play(); }
+                    if (!nitroStartSoundEffect.isPlaying)
+                    {
+                        nitroStartSoundEffect.time = 0f;
+                        nitroStartSoundEffect.Play();
+                    }
                     var emission = nitroEffect.emission;
                     emission.enabled = true;
                 }
@@ -593,6 +600,9 @@ public partial class Car
                     var emission = nitroEffect.emission;
                     emission.enabled = false;
                 }
+
+                if (nitroSoundEffect.isPlaying) { nitroSoundEffect.Stop(); }
+                if (nitroStartSoundEffect.isPlaying) { nitroStartSoundEffect.Stop(); }
             }
         }
     }
