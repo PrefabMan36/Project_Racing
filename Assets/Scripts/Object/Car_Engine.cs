@@ -54,13 +54,13 @@ public partial class Car
     [SerializeField] private float overSpeed;
     [SerializeField] private bool redLine = false;
     [SerializeField] private float engineLerpValue;
-    [SerializeField] private bool isEngineBrakingEnabled = true;
+    [SerializeField] protected bool isEngineBrakingEnabled = false;
     [SerializeField] private float engineBrakingFactor = 800f;
     [SerializeField] private float engineBrakeEffect;
     #endregion
 
     #region Function Engine setting
-    public void SetEngineCurves(AnimationCurve _horsePowerCurve,  AnimationCurve _engineTorqueCurve)
+    public void SetEngineCurves(AnimationCurve _horsePowerCurve, AnimationCurve _engineTorqueCurve)
     {
         horsePowerCurve = _horsePowerCurve;
         engineTorqueCurve = _engineTorqueCurve;
@@ -71,7 +71,7 @@ public partial class Car
     public void SetEngineSound(AudioSource[] _engineSound) { engineSound = _engineSound; }
     public virtual void StartRace()
     {
-        if(!waitingForRaceStart)
+        if (!waitingForRaceStart)
         {
             waitingForRaceStart = true;
         }
@@ -94,7 +94,7 @@ public partial class Car
             }
             yield break;
         }
-        if (startUpSound == null ) yield break;
+        if (startUpSound == null) yield break;
         _tempSoundObject = Instantiate(startUpSoundObject);
         startUpSound = _tempSoundObject.GetComponent<AudioSource>();
         _tempSoundObject.transform.position = engineSound[0].transform.position;
@@ -128,9 +128,9 @@ public partial class Car
             return;
         }
         maxHorsePower = 0f;
-        foreach(var key in horsePowerCurve.keys)
+        foreach (var key in horsePowerCurve.keys)
         {
-            if(key.value > maxHorsePower)
+            if (key.value > maxHorsePower)
             {
                 maxHorsePower = key.value;
                 rpmAtMaxHorsePower = key.time;
@@ -170,7 +170,7 @@ public partial class Car
     private void CalculateTorque()
     {
         if (currentEngineRPM >= maxEngineRPM) SetEngineLerp(maxEngineRPM - 1000f);
-        if(!redLine)
+        if (!redLine)
         {
             currentDynamicEngineAcceleration = baseEngineAcceleration * Mathf.Max(0.15f, GetPowerFactor(currentEngineRPM));
             overSpeed = (speed > gearSpeedLimit[currentGear]) ? 4f : 1f;
@@ -183,7 +183,7 @@ public partial class Car
             else
             {
                 CalculateWheelRPM();
-                targetRPM = 
+                targetRPM =
                     Mathf.Max
                     (
                         minEngineRPM,
@@ -201,7 +201,7 @@ public partial class Car
                     currentWheelTorque =
                         (
                             engineTorqueCurve.Evaluate(currentEngineRPM) *
-                            nitroPowerMultiplier * (gearRatio[currentGear] *finalDriveRatio)
+                            nitroPowerMultiplier * (gearRatio[currentGear] * finalDriveRatio)
                             * clutch
                         );
                 else
@@ -216,10 +216,16 @@ public partial class Car
                     currentEngineRPM > minEngineRPM + 500
                 )
                 {
+                    float averageSidewaysSlip = GetAverageDriveWheelSidewaysSlip();
+
+                    float slipThreshold = 0.3f;
+                    float slipMax = 1.0f;
+                    float sidewaysSlipFactor = 1.0f - Mathf.Clamp01(Mathf.InverseLerp(slipThreshold, slipMax, averageSidewaysSlip));
+
                     engineBrakeEffect =
                         (currentEngineRPM / maxEngineRPM) *
-                        engineBrakingFactor * Mathf.Abs(gearRatio[currentGear]);
-                        currentWheelTorque -= engineBrakeEffect;
+                        engineBrakingFactor * Mathf.Abs(gearRatio[currentGear] * sidewaysSlipFactor);
+                    currentWheelTorque -= engineBrakeEffect;
                 }
                 if (throttle > 0.1f && currentWheelTorque < 0)
                     currentWheelTorque = 0;
@@ -235,7 +241,7 @@ public partial class Car
     private void TorqueToWheel()
     {
         baseTorquePerWheel = (driveWheelsNum > 0) ? currentWheelTorque / driveWheelsNum : 0;
-        if(!waitingForRaceStart) return;
+        if (!waitingForRaceStart) return;
         for (int i = 0; i < driveWheelsNum; i++)
         {
             appliedMotorTorque = 0f;
@@ -287,10 +293,10 @@ public partial class Car
     // 엔진 회전수를 강제로 설정하는 함수
     private void forceEngineLerp()
     {
-        if(redLine)
+        if (redLine)
         {
             //curEngineTorque = 0f;
-            currentEngineRPM = Mathf.Lerp(currentEngineRPM,engineLerpValue,20 * Runner.DeltaTime);
+            currentEngineRPM = Mathf.Lerp(currentEngineRPM, engineLerpValue, 20 * Runner.DeltaTime);
             redLine = currentEngineRPM <= engineLerpValue + 100 ? false : true;
         }
     }
@@ -350,13 +356,13 @@ public partial class Car
     }
     public void SetGearSpeedLimit(eGEAR _gearName, float _gearSpeed)
     {
-        if(gearSpeedLimit.ContainsKey(_gearName))
+        if (gearSpeedLimit.ContainsKey(_gearName))
             gearSpeedLimit[_gearName] = _gearSpeed;
         else
             gearSpeedLimit.Add(_gearName, _gearSpeed);
     }
     public void SetDifferentialRatio(float _ratio) { differentialRatio = _ratio; }
-    public void SetFinalDriveRatio(float  _ratio) {  finalDriveRatio = _ratio; }
+    public void SetFinalDriveRatio(float _ratio) { finalDriveRatio = _ratio; }
     public void SetLastGear(eGEAR _lastGearName) { lastGear = _lastGearName; }
     public void SetAutoGear(bool _autoGear) { autoGear = _autoGear; }
     public void SetShiftTiming(float _shiftTiming) { shiftTiming = _shiftTiming; }
@@ -367,8 +373,8 @@ public partial class Car
     {
         if (_up)
         {
-            if(currentGear == lastGear /*|| (currentGear == eGEAR.eGEAR_NEUTURAL && currentGear != nextGear)*/) { return; }
-            switch(currentGear)
+            if (currentGear == lastGear /*|| (currentGear == eGEAR.eGEAR_NEUTURAL && currentGear != nextGear)*/) { return; }
+            switch (currentGear)
             {
                 case eGEAR.eGEAR_REVERSE:
                     nextGear = eGEAR.eGEAR_FIRST;
@@ -417,8 +423,8 @@ public partial class Car
     }
     protected void ForceChangeGear(eGEAR _gear)
     {
-        if(lastGear == eGEAR.eGEAR_FIFTH && _gear == eGEAR.eGEAR_SIXTH) return;
-        nextGear = _gear; 
+        if (lastGear == eGEAR.eGEAR_FIFTH && _gear == eGEAR.eGEAR_SIXTH) return;
+        nextGear = _gear;
     }
     protected void GearShifting()
     {
@@ -429,7 +435,7 @@ public partial class Car
         if (shiftTimer < shiftTiming)
         {
             currentGear = eGEAR.eGEAR_NEUTURAL;
-            if(throttle > 0)
+            if (throttle > 0)
                 throttle = 0f;
             clutch = 0f;
             shiftTimer += Runner.DeltaTime;
@@ -469,9 +475,9 @@ public partial class Car
     }
     private void AutoGear()
     {
-        if(!IsGrounded() || currentGear == eGEAR.eGEAR_NEUTURAL || shiftTimer > 0f) return;
+        if (!IsGrounded() || currentGear == eGEAR.eGEAR_NEUTURAL || shiftTimer > 0f) return;
 
-        speedThresholdForUpshift = 
+        speedThresholdForUpshift =
             currentGear == eGEAR.eGEAR_FIRST ?
             gearSpeedLimit[eGEAR.eGEAR_FIRST] / 2f :
             throttle > 0.9f ?
@@ -538,7 +544,7 @@ public partial class Car
     public void SetNitroInstall(bool _isNitroInstalled)
     {
         isNitroInstalled = _isNitroInstalled;
-        if(nitroBar !=  null)
+        if (nitroBar != null)
             nitroBar.enabled = _isNitroInstalled;
     }
     public void SetNitroPowerMode(bool _powerMode) { powerMode = _powerMode; }
@@ -554,8 +560,8 @@ public partial class Car
     #region Function Nitro
     protected void ActivateNitro(bool _activate)
     {
-        if(!isNitroInstalled) return;
-        if(powerMode && !nitroPowerReady) return;
+        if (!isNitroInstalled) return;
+        if (powerMode && !nitroPowerReady) return;
         if (_activate && currentNitroAmount > 0f)
         {
             isNitroActive = true;
@@ -572,13 +578,13 @@ public partial class Car
 
     private void NitroEffect()
     {
-        if(nitroTrail != null)
+        if (nitroTrail != null)
         {
-            if(isNitroActive)
+            if (isNitroActive)
             {
                 if (!nitroTrail.enabled)
                     nitroTrail.enabled = true;
-                if(nitroEffect != null)
+                if (nitroEffect != null)
                 {
                     if (!nitroEffect.isPlaying) { nitroEffect.Play(); }
                     if (!nitroSoundEffect.isPlaying) { nitroSoundEffect.Play(); }
@@ -616,6 +622,42 @@ public partial class Car
     {
         currentNitroAmount += _amount;
         currentNitroAmount = Mathf.Clamp(currentNitroAmount, 0f, maxNitroCapacity);
+    }
+    #endregion
+
+    #region Function Other
+    private float GetAverageDriveWheelSidewaysSlip()
+    {
+        if (driveWheelsNum == 0) return 0f;
+
+        float totalSidewaysSlip = 0f;
+        int driveWheelsFound = 0;
+
+        for (int i = 0; i < wheelNum; i++)
+        {
+            bool isDriveWheel = false;
+            switch (driveAxel) // 차량의 구동 방식을 확인합니다[cite: 135].
+            {
+                case eCAR_DRIVEAXEL.eRWD: // 후륜 구동일 경우
+                    if (wheels[i].axel == eAXEL.eAXEL_BACK) isDriveWheel = true;
+                    break;
+                case eCAR_DRIVEAXEL.eFWD: // 전륜 구동일 경우
+                    if (wheels[i].axel == eAXEL.eAXEL_FRONT) isDriveWheel = true;
+                    break;
+                case eCAR_DRIVEAXEL.e4WD: // 4륜 구동일 경우
+                    isDriveWheel = true;
+                    break;
+            }
+            if (isDriveWheel)
+            {
+                if (sidewaysSlip != null && i < sidewaysSlip.Length)
+                {
+                    totalSidewaysSlip += Mathf.Abs(sidewaysSlip[i]);
+                    driveWheelsFound++;
+                }
+            }
+        }
+        return (driveWheelsFound > 0) ? totalSidewaysSlip / driveWheelsFound : 0f;
     }
     #endregion
 }

@@ -6,7 +6,11 @@ public class RaceStarter : MonoBehaviour
 {
     private void Start()
     {
-        Shared.lobby_Network_Manager.OnStartRace();
+        if(!Shared.mainGameManagerSpawned)
+        {
+            Shared.lobby_Network_Manager.OnStartRace();
+            Shared.mainGameManagerSpawned = true;
+        }
         Destroy(gameObject);
     }
 }

@@ -227,7 +227,7 @@ public class Lobby_Network_Manager : Manager, INetworkRunnerCallbacks
 
     public void OnStartRace()
     {
-        if(!networkRunner.IsClient)
+        if(networkRunner.IsServer)
             networkRunner.Spawn(mainGame_Manager_Prefab);
     }
 

@@ -65,6 +65,11 @@ public class Lobby_Manager : Manager
         quitButton.onClick.AddListener(Shared.lobby_Network_Manager.QuitSession);
     }
 
+    private void OnEnable()
+    {
+        Shared.mainGameManagerSpawned = false;
+    }
+
     private void OnLobbyUpdate(Game_Manager manager)
     {
         lobbyNameText.text = "πÊ ¿Ã∏ß : " + manager.lobbyName.Value;

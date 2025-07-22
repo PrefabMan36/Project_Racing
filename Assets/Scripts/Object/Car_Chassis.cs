@@ -67,6 +67,7 @@ public partial class Car
 
     #region Value AntiRoll
     [SerializeField] private float antiRoll;
+    [SerializeField] private WheelHit wheelHitForAntiRoll;
     [SerializeField] private float antiRollForce;
     [SerializeField] private float travelL;
     [SerializeField] private float travelR;
@@ -344,23 +345,36 @@ public partial class Car
     public void SetAntiRoll(float _antiRoll) { antiRoll = _antiRoll; }
     protected void AntiRollBar()
     {
-        travelL = 1.0f;
-        travelR = 1.0f;
-        groundedL = steerWheels[0].GetGroundHit(out wheelHit) ? true : false;
-        groundedR = steerWheels[1].GetGroundHit(out wheelHit) ? true : false;
-        if (groundedL)
+        for(int i = 0; i < wheelNum; i += 2)
         {
-            travelL = (-steerWheels[0].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[0].radius) / steerWheels[0].suspensionDistance;
+            WheelCollider wheelL = wheels[i].wheelCollider;
+            WheelCollider wheelR = wheels[i + 1].wheelCollider;
+
+            travelL = 1.0f;
+            travelR = 1.0f;
+
+            groundedL = wheelL.GetGroundHit(out wheelHitForAntiRoll);
+            groundedR = wheelR.GetGroundHit(out wheelHitForAntiRoll);
+
+            if (groundedL)
+            {
+                travelL = (-wheelL.transform.InverseTransformPoint(wheelHit.point).y - wheelL.radius) / wheelL.suspensionDistance;
+            }
+            if (groundedR)
+            {
+                travelR = (-wheelR.transform.InverseTransformPoint(wheelHit.point).y - wheelR.radius) / wheelR.suspensionDistance;
+            }
+
+            antiRollForce = (travelL - travelR) * antiRoll;
+
+            if (groundedL)
+                carRB.AddForceAtPosition(wheelL.transform.up * -antiRollForce, steerWheels[0].transform.position);
+            if (groundedR)
+                carRB.AddForceAtPosition(wheelR.transform.up * antiRollForce, steerWheels[1].transform.position);
         }
-        if (groundedR)
-        {
-            travelR = (-steerWheels[1].transform.InverseTransformPoint(wheelHit.point).y - steerWheels[1].radius) / steerWheels[1].suspensionDistance;
-        }
-        antiRollForce = (travelL - travelR) * antiRoll;
-        if (groundedL)
-            carRB.AddForceAtPosition(steerWheels[0].transform.up * -antiRollForce, steerWheels[0].transform.position);
-        if (groundedR)
-            carRB.AddForceAtPosition(steerWheels[1].transform.up * antiRollForce, steerWheels[1].transform.position);
+
+        
+        
     }
     private bool IsGrounded()
     {

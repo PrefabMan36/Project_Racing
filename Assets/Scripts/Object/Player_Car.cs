@@ -132,6 +132,7 @@ public class Player_Car : Car
         SetSteeringCurve(_data.steer);
         isTCSEnabled = true;
         isABSEnabled = true;
+        isEngineBrakingEnabled = false;
         SetNitroInstall(true);
         SetNitroParticles(gameObject.GetComponent<Trail>());
         SetMaxNitroCapacity(100f);
@@ -145,7 +146,7 @@ public class Player_Car : Car
         ForcePlayEngineSound();// 엔진 사운드 강제 재생
         SetBaseEngineAcceleration(5f);// 기본 엔진 가속도 설정
         SetAutoGear(true);// 자동 기어 설정
-        SetAntiRoll(35000f);// 안티롤 설정
+        SetAntiRoll(2.0f);// 안티롤 설정
         SetShiftTiming(0.5f);// 기어 변속 타이밍 설정
         SetBrakePower(3000f);// 브레이크 파워 설정
         SetDriveAxel(eCAR_DRIVEAXEL.eRWD);// 구동축 설정
@@ -167,6 +168,7 @@ public class Player_Car : Car
         //}
         if (Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
         UpdatingWheels();
+        AntiRollBar();
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
         SetRadialBlur();

@@ -20,6 +20,8 @@ public static class Shared
 
     public static float audioVolume;
 
+    public static bool mainGameManagerSpawned;
+
     public static string CarName;
     public static int CarIndex;
     public static string UserID;
