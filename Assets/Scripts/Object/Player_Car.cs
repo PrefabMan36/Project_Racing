@@ -69,11 +69,6 @@ public class Player_Car : Car
     [Networked] public NetworkInputManager inputData { get; set; }
     private bool localPlayer = false;
 
-    //스폰시 자동으로 호출되는 함수
-    //상속받은 클래스의 Spawned()를 오버라이드하여 사용합니다.
-    //이 함수는 네트워크에서 오브젝트가 생성될 때 호출됩니다.
-    //이 함수에서 카메라와 UI를 초기화하고, 차량의 물리적 특성을 설정합니다.
-    //플레이어와 NPC의 차량의 동작을 다르게 하기 위해 override합니다.
     public override void Spawned()
     {
         if(playerName.Value != "")
@@ -167,8 +162,7 @@ public class Player_Car : Car
         //    ChangeFriction(drifting);
         //}
         if (Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
-        UpdatingWheels();
-        AntiRollBar();
+        
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
         SetRadialBlur();
@@ -179,7 +173,6 @@ public class Player_Car : Car
         }
     }
 
-    //Braking()를 호출하기 전에 플레이어 브레이크 입력을 처리합니다.
     public override void FixedUpdateNetwork()
     {
         GetInputData();
@@ -241,17 +234,17 @@ public class Player_Car : Car
         {
             throttle = 0f;
         }
-        ChangeMode(UnityEngine.Input.GetKey(KeyCode.Space));
+        ChangeMode(sideBraking);//드리프트 모드 진입
 
+        UpdatingWheels();
+        AntiRollBar();
         SetSlpingAngle();// 슬립 각도를 설정합니다.
         UpdatingFriction();// 마찰력을 업데이트합니다.
         Braking();// 브레이크를 적용합니다.
         ApplyAerodynamicDrag();// 공기 저항력을 적용합니다.
         EffectDrift();// 드리프트 효과를 적용합니다.
     }
-    // 플레이어의 입력을 처리하는 함수입니다.
-    // 이 함수는 네트워크 입력을 가져와 차량의 조향, 가속, 기어 변경 등을 처리합니다.
-    // 플레이어가 아닌 NPC의 입력을 받을 수 있기는 함수 이기에 override합니다.
+
     protected override void GetInputData()
     {
         if (GetInput(out NetworkInputManager data))

@@ -15,7 +15,6 @@ public class UI_Manager : Manager
     [SerializeField] private Stack<MenuPanel> menus = new Stack<MenuPanel>();
     [SerializeField] private Stack<GameObject> UIs = new Stack<GameObject>();
 
-
     [Header("Menus")]
     [SerializeField] private GameObject clickBlocker;
     [SerializeField] private MenuPanel mainMenu;
