@@ -1,0 +1,8 @@
+Number,State,Name,FileName
+001,eSCENE_TITLE,TitleBGM01,TitleBGM01.ogg
+002,eSCENE_LOADING,LoadingBGM01,LoadingBGM01.ogg
+003,eSCENE_MAINMENU,MainMenuBGM01,MainMenuBGM01.ogg
+004,eSCENE_MAINGAME,Payload,Track001.ogg
+005,eSCENE_MAINGAME,질주본능,Track002.ogg
+006,eSCENE_MAINGAME,Saitama-City,Track003.ogg
+007,eSCENE_MAINGAME,Tokyo-Wars,Track004.ogg

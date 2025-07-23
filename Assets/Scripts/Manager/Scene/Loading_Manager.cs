@@ -59,6 +59,7 @@ public class Loading_Manager : MonoBehaviour
             yield return new WaitUntil(() => LobbyPlayer.players.All(p => p.isReadyToPlay));
             Debug.LogWarning("로딩 대기중(서버)");
             op.allowSceneActivation = true;
+            Shared.audio_Manager.StopBGM();
             runner.LoadScene(SceneRef.FromIndex(nextScene), LoadSceneMode.Single);
             Debug.LogWarning("씬넘기기");
         }
@@ -70,6 +71,7 @@ public class Loading_Manager : MonoBehaviour
             {
                 progressBar.value = Mathf.Lerp(progressBar.value, 1f, Time.deltaTime * 5f);
                 Debug.LogWarning("로딩 대기중(싱글/클라이언트)");
+                Shared.audio_Manager.StopBGM();
                 yield return null;
             }
 

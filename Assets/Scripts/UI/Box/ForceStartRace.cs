@@ -10,5 +10,6 @@ public class ForceStartRace : MonoBehaviour
     private void Start()
     {
         yesButton.onClick.AddListener(Shared.lobby_Manager.ForceStart);
+        yesButton.onClick.AddListener(Shared.ui_Manager.OnClickNo);
     }
 }

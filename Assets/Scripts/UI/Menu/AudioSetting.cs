@@ -32,6 +32,8 @@ public class AudioSetting : MonoBehaviour
     {
         volume = slider.value;
         Shared.audioVolume = volume;
+        AudioListener.volume = volume;
+        PlayerPrefs.SetFloat("AudioVolume", volume);
         if (!changeing)
         {
             chagingTime = 0f;

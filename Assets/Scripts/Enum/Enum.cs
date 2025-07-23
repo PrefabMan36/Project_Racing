@@ -10,6 +10,14 @@ public enum eSCENE
     eSCENE_MOUNT_TRACK = 7
 }
 
+public enum eSCENE_TYPE
+{
+    eSCENE_TITLE = 0,
+    eSCENE_LOADING = 1,
+    eSCENE_MAINMENU = 2,
+    eSCENE_MAINGAME = 3
+}
+
 public enum eCAR_COLOR
 {
     Black,

@@ -15,6 +15,11 @@ public class Title_Manager : MonoBehaviour
     private void Awake()
     {
         mainCanvas = FindAnyObjectByType<Canvas>();
+        if (PlayerPrefs.HasKey("AudioVolume"))
+            AudioListener.volume = PlayerPrefs.GetFloat("AudioVolume");
+        else
+            PlayerPrefs.SetFloat("AudioVolume", 1.0f);
+        Shared.audioVolume = PlayerPrefs.GetFloat("AudioVolume");
     }
 
     public void OnClickLogin()

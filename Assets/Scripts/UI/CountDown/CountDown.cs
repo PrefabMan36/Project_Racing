@@ -10,6 +10,7 @@ public class CountDown : NetworkBehaviour
     [SerializeField] private Image finalDisplayImage;
     [SerializeField] private Image countdownTimeImage;
     [SerializeField] private Image countdownTimeBackgroundImage;
+    [SerializeField] private bool started = false;
 
     [Header("표시될 내용")]
     [SerializeField] private Sprite goSprite;
@@ -163,7 +164,17 @@ public class CountDown : NetworkBehaviour
                 if (finalDisplayImage != null)
                 {
                     finalDisplayImage.gameObject.SetActive(true);
-                    finalDisplayImage.sprite = isGameStartCountdown ? goSprite : raceFinishSprite; // startOrEnd 변수에 따라 GO/RaceFinish 결정
+                    if (isGameStartCountdown)
+                    {
+                        finalDisplayImage.sprite = goSprite;
+                        if(!started)
+                        {
+                            started = true;
+                            Shared.audio_Manager.PlayBGM(eSCENE_TYPE.eSCENE_MAINGAME);
+                        }
+                    }
+                    else
+                        finalDisplayImage.sprite = raceFinishSprite;
                 }
 
                 // countdownTimeImage와 countdownTimeBackgroundImage 비활성화 (요청 사항)
