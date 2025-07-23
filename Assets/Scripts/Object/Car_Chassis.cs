@@ -393,7 +393,7 @@ public partial class Car
         {
             if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.15f)
+                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.3f)
                 {
                     wheels[i].skidMarks.emitting = true;
 

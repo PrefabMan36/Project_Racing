@@ -44,7 +44,7 @@ public partial class Car
         // Fd = 0.5 * rho * v^2 * Cd * A
         dragMagnitude = 0.5f * airDensity * sqrSpeed * dragCoefficient * frontalArea;
         dragForce = dragDirection * dragMagnitude;
-        carRB.AddForce(dragForce * Time.deltaTime, ForceMode.Force);
+        carRB.AddForce(dragForce * Runner.DeltaTime, ForceMode.Force);
     }
     #endregion
 

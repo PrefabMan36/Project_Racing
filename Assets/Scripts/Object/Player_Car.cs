@@ -127,7 +127,7 @@ public class Player_Car : Car
         SetSteeringCurve(_data.steer);
         isTCSEnabled = true;
         isABSEnabled = true;
-        isEngineBrakingEnabled = false;
+        isEngineBrakingEnabled = true;
         SetNitroInstall(true);
         SetNitroParticles(gameObject.GetComponent<Trail>());
         SetMaxNitroCapacity(100f);
@@ -215,7 +215,7 @@ public class Player_Car : Car
             brakeInput = 0f;
             if (throttle < -0.05f)
             {
-                if (speed > 1f && GetCurrentGear() > eGEAR.eGEAR_REVERSE)
+                if (speed > 1f && GetCurrentGear() != eGEAR.eGEAR_REVERSE)
                 {
                     brakeInput = Mathf.Abs(throttle);
                     throttle = 0f;
@@ -249,7 +249,7 @@ public class Player_Car : Car
     {
         if (GetInput(out NetworkInputManager data))
         {
-            data.direction.Normalize();
+            //data.direction.Normalize();
             throttle = data.direction.y;
             Steering(data.direction.x);
             sideBraking = data.sideBraking;
