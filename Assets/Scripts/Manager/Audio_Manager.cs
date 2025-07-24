@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
+using UnityEngine.AddressableAssets; // Addressables 사용을 위해 추가
+using UnityEngine.ResourceManagement.AsyncOperations; // Addressables 사용을 위해 추가
 
 public class Audio_Manager : Manager
 {
     private AudioSource bgmAudioSource;
     private Dictionary<eSCENE_TYPE, List<BGMData>> bgmDataDictionary = new Dictionary<eSCENE_TYPE, List<BGMData>>();
+
+    private AsyncOperationHandle<AudioClip> currentBgmHandle;
+
+    private const string BGM_ADDRESSABLE_PATH = "Assets/Audio/BGM/";
+
     private void Awake()
     {
         OnStart();
@@ -25,13 +31,21 @@ public class Audio_Manager : Manager
         LoadBGMData();
     }
 
+    private void OnDestroy()
+    {
+        if (currentBgmHandle.IsValid())
+        {
+            Addressables.Release(currentBgmHandle);
+            Debug.Log("[AudioManager] OnDestroy에서 BGM 리소스를 해제했습니다.");
+        }
+    }
+
     private async void LoadBGMData()
     {
         var bgmList = await CSVParser.ParseCSV<BGMData>(
             "BGMList.csv",
             registerClassMapAction: context => context.RegisterClassMap<BGMDataMap>()
         );
-
         if (bgmList == null || bgmList.Count == 0)
         {
             Debug.LogError("[AudioManager] BGM 데이터를 로드하지 못했습니다.");
@@ -56,45 +70,53 @@ public class Audio_Manager : Manager
     {
         if (bgmDataDictionary.TryGetValue(sceneType, out List<BGMData> bgmList) && bgmList.Count > 0)
         {
-            var bgmData = bgmList[Random.Range(0,bgmList.Count)];
-            StartCoroutine(LoadAndPlayAudio(bgmData.FileName));
+            var bgmData = bgmList[Random.Range(0, bgmList.Count)];
+            StartCoroutine(LoadAndPlayAudioAddressable(bgmData.FileName));
         }
         else
         {
             Debug.LogWarning($"[AudioManager] {sceneType}에 해당하는 BGM을 찾을 수 없습니다.");
-            bgmAudioSource.Stop();
+            StopBGM();
         }
     }
 
     public void StopBGM()
     {
         bgmAudioSource.Stop();
+        if (currentBgmHandle.IsValid())
+        {
+            Addressables.Release(currentBgmHandle);
+        }
     }
 
-    private System.Collections.IEnumerator LoadAndPlayAudio(string audioFileName)
+    /// <summary>
+    /// Addressables를 사용해 오디오 클립을 로드하고 재생하는 코루틴
+    /// </summary>
+    private IEnumerator LoadAndPlayAudioAddressable(string audioFileName)
     {
-        string audioPath = Path.Combine(Application.streamingAssetsPath, "Audio", "BGM", audioFileName);
-        string uri = "file:///" + audioPath;
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-            uri = audioPath;
-#endif
-
-        using (var www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(uri, AudioType.OGGVORBIS))
+        if (currentBgmHandle.IsValid())
         {
-            yield return www.SendWebRequest();
+            Addressables.Release(currentBgmHandle);
+        }
 
-            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-            {
-                AudioClip clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
-                bgmAudioSource.clip = clip;
-                bgmAudioSource.Play();
-                Debug.Log($"[AudioManager] BGM 재생: {audioFileName}");
-            }
-            else
-            {
-                Debug.LogError($"[AudioManager] 오디오 파일 로드 실패: {www.error}. Path: {uri}");
-            }
+        string audioAddress = BGM_ADDRESSABLE_PATH + audioFileName;
+
+        AsyncOperationHandle<AudioClip> loadHandle = Addressables.LoadAssetAsync<AudioClip>(audioAddress);
+
+        currentBgmHandle = loadHandle;
+
+        yield return loadHandle;
+
+        if (loadHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            AudioClip clip = loadHandle.Result;
+            bgmAudioSource.clip = clip;
+            bgmAudioSource.Play();
+            Debug.Log($"[AudioManager] BGM 재생: {audioFileName}");
+        }
+        else
+        {
+            Debug.LogError($"[AudioManager] Addressable 오디오 파일 로드 실패: {audioAddress}");
         }
     }
 }

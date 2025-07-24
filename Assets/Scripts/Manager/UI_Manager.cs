@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using System.Threading.Tasks;
 using CsvHelper.Configuration;
 using System.Globalization;
+using UnityEngine.U2D;
 
 public class UI_Manager : Manager
 {
@@ -73,56 +74,89 @@ public class UI_Manager : Manager
         else
             Debug.LogError("Panel Prefab이 할당되지 않았습니다. 메인 패널을 생성할 수 없습니다.");
 
-        StartCoroutine(CallAsyncMethodAsCoroutine(LoadIconsAsync()));
+        LoadSpriteAtlas();
+        StartCoroutine(CallAsyncMethodAsCoroutine(InitializeButtons()));
     }
-    /// <summary>
-    /// 아이콘들을 비동기적으로 로드합니다.
-    /// </summary>
-    private async Task LoadIconsAsync()
-    {
-        //특정 아이콘만 지정해서 로드
-        string iconsFolderPath = Path.Combine(Application.streamingAssetsPath, "icons");
-        string[] iconFilenames = {
-            "RacingGameTitleIcon.png",
-            "White Gear 2.png",
-            "White Power Button.png",
-            "White Check.png",
-            "White Close 2.png",
-            "White Backward 2.png",
-            "White Person 2.png",
-            "White Flag.png",
-            "White Car.png",
-            "Free Flat People 1 Icon.png",
-            "Free Flat Move In Icon.png",
-            "Free Flat Volume 3 Icon.png",
-            "icon_achievement.png"
-        };
 
-        foreach (string filename in iconFilenames)
+    //private async Task LoadIconsAsync()
+    //{
+    //    //특정 아이콘만 지정해서 로드
+    //    string iconsFolderPath = Path.Combine(Application.streamingAssetsPath, "icons");
+    //    string[] iconFilenames = {
+    //        "RacingGameTitleIcon.png",
+    //        "White Gear 2.png",
+    //        "White Power Button.png",
+    //        "White Check.png",
+    //        "White Close 2.png",
+    //        "White Backward 2.png",
+    //        "White Person 2.png",
+    //        "White Flag.png",
+    //        "White Car.png",
+    //        "Free Flat People 1 Icon.png",
+    //        "Free Flat Move In Icon.png",
+    //        "Free Flat Volume 3 Icon.png",
+    //        "icon_achievement.png"
+    //    };
+
+    //    foreach (string filename in iconFilenames)
+    //    {
+    //        string iconFilePath = Path.Combine(iconsFolderPath, filename);
+    //        using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(iconFilePath))
+    //        {
+    //            await webRequest.SendWebRequest();
+    //            if(webRequest.result != UnityWebRequest.Result.Success)
+    //                Debug.LogError($"아이콘 로드 실패: {filename} - {webRequest.error}");
+    //            else
+    //            {
+    //                Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
+    //                if(texture != null)
+    //                {
+    //                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    //                    icons.Add(filename, sprite);
+    //                    Debug.Log($"아이콘 로드 성공 및 추가: {filename}");
+    //                }
+    //                else
+    //                    Debug.LogError($"Texture2D 생성 실패: {filename}");
+    //            }
+    //        }
+    //    }
+    //    Debug.Log("모든 아이콘 로딩 시도 완료.");
+    //    await InitializeButtons();
+    //}
+
+    private void LoadSpriteAtlas()
+    {
+        string atlasPath = "Atlas/Icons";
+        SpriteAtlas atlas = Resources.Load<SpriteAtlas>(atlasPath);
+
+        if (atlas == null)
         {
-            string iconFilePath = Path.Combine(iconsFolderPath, filename);
-            using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(iconFilePath))
+            Debug.LogError($"SpriteAtlas '{atlasPath}'를 찾을 수 없습니다.");
+            return;
+        }
+
+        Sprite[] sprites = new Sprite[atlas.spriteCount];
+        atlas.GetSprites(sprites);
+
+        foreach (Sprite sprite in sprites)
+        {
+            if (sprite != null)
             {
-                await webRequest.SendWebRequest();
-                if(webRequest.result != UnityWebRequest.Result.Success)
-                    Debug.LogError($"아이콘 로드 실패: {filename} - {webRequest.error}");
+                string spriteName = sprite.name.Replace("(Clone)", ""); // 아이콘 이름에서 접두사 제거
+                if (!icons.ContainsKey(spriteName))
+                {
+                    icons.Add(spriteName, sprite);
+                    Debug.Log($"아이콘 스프라이트 추가 성공: {spriteName}");
+                }
                 else
                 {
-                    Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
-                    if(texture != null)
-                    {
-                        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                        icons.Add(filename, sprite);
-                        Debug.Log($"아이콘 로드 성공 및 추가: {filename}");
-                    }
-                    else
-                        Debug.LogError($"Texture2D 생성 실패: {filename}");
+                    Debug.LogWarning($"이미 존재하는 아이콘 스프라이트: {spriteName}");
                 }
             }
         }
-        Debug.Log("모든 아이콘 로딩 시도 완료.");
-        await InitializeButtons();
+        Debug.Log("모든 아이콘 스프라이트 로딩 완료.");
     }
+
     /// <summary>
     /// 비동기 Task를 코루틴으로 실행합니다.
     /// </summary>

@@ -93,7 +93,7 @@ public class UIBox : MonoBehaviour
     public void SetTopBar()
     {
         uiType = eUI_TYPE.MAINBAR;
-        icon.sprite = Shared.ui_Manager.GetLoadedIcon("RacingGameTitleIcon.png");
+        icon.sprite = Shared.ui_Manager.GetLoadedIcon("RacingGameTitleIcon");
     }
 
     public void SetPosition(Vector2 positon)

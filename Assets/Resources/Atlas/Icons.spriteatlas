@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Icons
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 21300000, guid: 38a3e8a9a7c4e2e468eb1642c5a7c527, type: 3}
+    - {fileID: 21300000, guid: b05c64737cdf0814bbe9b6b0cd66b400, type: 3}
+    - {fileID: 21300000, guid: a17cc0c9b08a5fa469398ecc2a0657e6, type: 3}
+    - {fileID: 21300000, guid: 19ccac3e2bb0e714b9b38a4fd76d2511, type: 3}
+    - {fileID: 21300000, guid: b65ac0f69009a3f4ea82eb5c1be9b133, type: 3}
+    - {fileID: 21300000, guid: ab2378d25563d114babdeb1db1052038, type: 3}
+    - {fileID: 21300000, guid: fa77d6d47b9878640844dba8c07e1957, type: 3}
+    - {fileID: 21300000, guid: 9d6405bd748226c4d9fb19a8d06eae14, type: 3}
+    - {fileID: 21300000, guid: 51e91875a96712048aa9d4ed793e5fce, type: 3}
+    - {fileID: 21300000, guid: 0d08b5a63f75b7d4bb2be5051c66e859, type: 3}
+    - {fileID: 21300000, guid: a3623855e23a6014380c60a72b0cfdf9, type: 3}
+    - {fileID: 21300000, guid: 9c1126097e05f174aad71f7bad479be2, type: 3}
+    - {fileID: 21300000, guid: 1536c87996d33c643976b95e1ef8f067, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - ab2378d25563d114babdeb1db1052038: 21300000
+    - b05c64737cdf0814bbe9b6b0cd66b400: 21300000
+    - fa77d6d47b9878640844dba8c07e1957: 21300000
+    - a3623855e23a6014380c60a72b0cfdf9: 21300000
+    - 51e91875a96712048aa9d4ed793e5fce: 21300000
+    - 0d08b5a63f75b7d4bb2be5051c66e859: 21300000
+    - b65ac0f69009a3f4ea82eb5c1be9b133: 21300000
+    - 9c1126097e05f174aad71f7bad479be2: 21300000
+    - 1536c87996d33c643976b95e1ef8f067: 21300000
+    - 38a3e8a9a7c4e2e468eb1642c5a7c527: 21300000
+    - a17cc0c9b08a5fa469398ecc2a0657e6: 21300000
+    - 9d6405bd748226c4d9fb19a8d06eae14: 21300000
+    - 19ccac3e2bb0e714b9b38a4fd76d2511: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: ab2378d25563d114babdeb1db1052038, type: 3}
+  - {fileID: 21300000, guid: b05c64737cdf0814bbe9b6b0cd66b400, type: 3}
+  - {fileID: 21300000, guid: fa77d6d47b9878640844dba8c07e1957, type: 3}
+  - {fileID: 21300000, guid: a3623855e23a6014380c60a72b0cfdf9, type: 3}
+  - {fileID: 21300000, guid: 51e91875a96712048aa9d4ed793e5fce, type: 3}
+  - {fileID: 21300000, guid: 0d08b5a63f75b7d4bb2be5051c66e859, type: 3}
+  - {fileID: 21300000, guid: b65ac0f69009a3f4ea82eb5c1be9b133, type: 3}
+  - {fileID: 21300000, guid: 9c1126097e05f174aad71f7bad479be2, type: 3}
+  - {fileID: 21300000, guid: 1536c87996d33c643976b95e1ef8f067, type: 3}
+  - {fileID: 21300000, guid: 38a3e8a9a7c4e2e468eb1642c5a7c527, type: 3}
+  - {fileID: 21300000, guid: a17cc0c9b08a5fa469398ecc2a0657e6, type: 3}
+  - {fileID: 21300000, guid: 9d6405bd748226c4d9fb19a8d06eae14, type: 3}
+  - {fileID: 21300000, guid: 19ccac3e2bb0e714b9b38a4fd76d2511, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - White Backward 2
+  - White Gear 2
+  - White Person 2
+  - Free Flat Move In Icon
+  - White Car
+  - Free Flat People 1 Icon
+  - White Close 2
+  - Free Flat Volume 3 Icon
+  - icon_achievement
+  - RacingGameTitleIcon
+  - White Power Button
+  - White Flag
+  - White Check
+  m_RenderDataMap: {}
+  m_Tag: Icons
+  m_IsVariant: 0
