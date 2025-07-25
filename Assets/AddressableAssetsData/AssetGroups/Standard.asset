@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Atlas
+  m_Name: Standard
   m_EditorClassIdentifier: 
-  m_GroupName: Atlas
+  m_GroupName: Standard
   m_Data:
     m_SerializedData: []
-  m_GUID: 7602aaa336b9ba1418aaa0e4dd01b410
+  m_GUID: b9c39fd4c776d4b478cd963a351e9783
   m_SerializeEntries:
-  - m_GUID: 3c4df4c8e69b1194b93f6b2e7ce28343
-    m_Address: Assets/Images/Atlas/Icons.spriteatlas
+  - m_GUID: b35a91fda97974dc7a8b581b33116287
+    m_Address: Assets/Packs/RealisticMobileCars - Pro3DModels/Main/Shaders/Standard/CarPaintWithVertexColor.shader
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f9976e74eea5b704aa9c22f28b6224de, type: 2}
-    - {fileID: 11400000, guid: 98193c2cedfe2cc4f9fa74b27b950849, type: 2}
+    - {fileID: 11400000, guid: 3ecafdad488466243a15efa42755bb23, type: 2}
+    - {fileID: 11400000, guid: 30d42b4f96cdc0e49965ea474a295e1d, type: 2}

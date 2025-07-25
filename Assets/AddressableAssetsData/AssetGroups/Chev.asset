@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Chev
+  m_EditorClassIdentifier: 
+  m_GroupName: Chev
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 107aaae1dbe3701469725b7ce444cbba
+  m_SerializeEntries:
+  - m_GUID: 04beba6ea7729ba4ebf794c9a9349d46
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Glass.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 375cf7bb1f95b7144a665cf6feb83033
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Caje.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6891ecb6b9ede8a4eb02f590651889c7
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Chev/CHEVY_opticas.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6eb75b8012fbd994aa9b2bfefc87f1d1
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Black.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76db61fa1ad0c0c4585bf3af596ab0b7
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Wheel.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 845c7d99a63b73742b652fce7bf10499
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Carbody666.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1215da9b5a9ba1438a810e74fdbb578
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Chev/Chevy_Windows.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: caa4d5d12a92af34ebd71cd7d7eece90
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Chev/Chevy_Carbody666.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc0b4ebf26a4dfa4bbc9d3dfb1006d8b
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Antenas.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df0245b804c6ac547bdb5f0ccc005e3a
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Windows.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e96f54d8bc43b97489d94a3aabe65d6f
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Engine.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed061e3a976665448acf1552a295fa25
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Chev/CHEVY_INTERIOR.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eda3a7d8c7943554da3ccf4933f17a7d
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Interior.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0ba7afcf91085e499737d6966a5fc93
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Chev/M_Opticas_Tras.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3b7515474879db340adefa4ac62ff6f7, type: 2}
+    - {fileID: 11400000, guid: 978bbdb6198f33e448a807eec9c2fcd9, type: 2}

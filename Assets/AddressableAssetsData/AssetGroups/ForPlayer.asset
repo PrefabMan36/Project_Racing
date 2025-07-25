@@ -10,15 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Atlas
+  m_Name: ForPlayer
   m_EditorClassIdentifier: 
-  m_GroupName: Atlas
+  m_GroupName: ForPlayer
   m_Data:
     m_SerializedData: []
-  m_GUID: 7602aaa336b9ba1418aaa0e4dd01b410
+  m_GUID: e4823f62d0b686f4b91d8d84c1de83ca
   m_SerializeEntries:
-  - m_GUID: 3c4df4c8e69b1194b93f6b2e7ce28343
-    m_Address: Assets/Images/Atlas/Icons.spriteatlas
+  - m_GUID: 1025e749bf4c01943b04668eae326147
+    m_Address: Assets/Prefabs/Cars/ForPlayer/Charger_Player.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b367dccc659de64b8c4d882ca0505fc
+    m_Address: Assets/Prefabs/Cars/ForPlayer/Super2000_Player.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +31,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f9976e74eea5b704aa9c22f28b6224de, type: 2}
-    - {fileID: 11400000, guid: 98193c2cedfe2cc4f9fa74b27b950849, type: 2}
+    - {fileID: 11400000, guid: 1a418c910f60a5e469cd0ae69b2a544f, type: 2}
+    - {fileID: 11400000, guid: 67db02cde03a3a8449d290940e4ed7b9, type: 2}

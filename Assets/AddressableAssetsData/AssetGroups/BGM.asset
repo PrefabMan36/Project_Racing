@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: BGM
   m_Data:
     m_SerializedData: []
-  m_GUID: d3458540c50f9674da766e628db283db
+  m_GUID: 7fb2dc8960ddf5a46ac2622236b9c303
   m_SerializeEntries:
   - m_GUID: 1d119ef729843f7479b34088f28afb09
     m_Address: Assets/Audio/BGM/Track004.ogg
@@ -55,4 +55,6 @@ MonoBehaviour:
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
-    m_Schemas: []
+    m_Schemas:
+    - {fileID: 11400000, guid: 9e6adc270a73b1848b7371ec3684eae7, type: 2}
+    - {fileID: 11400000, guid: e88da97a61e87ad468ed1954e18222c1, type: 2}

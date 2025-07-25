@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 5e49301ad5b200e438a013e39fcb69dd
   m_currentHash:
     serializedVersion: 2
-    Hash: b0df734ae9a5ebedb55ad0cbb83440ee
+    Hash: 7a8cf6500ebb7e296cb8e82c83b3d06d
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -44,10 +44,36 @@ MonoBehaviour:
   m_BuildAddressablesWithPlayerBuild: 0
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
-  - {fileID: 11400000, guid: 2ca2603c167016f499062c3d0a131006, type: 2}
+  - {fileID: 11400000, guid: fe198c1df72d87d4a821f7ca3bdd0f2c, type: 2}
+  - {fileID: 11400000, guid: 62e9bed7a5c7802409150c68aca3170d, type: 2}
+  - {fileID: 11400000, guid: 1966b2b8c36cf174c9ca65cab36225fd, type: 2}
+  - {fileID: 11400000, guid: 27753304cb108d449b1d50609bba5813, type: 2}
+  - {fileID: 11400000, guid: f94749189f2b0cc41bd8a7408a14a13d, type: 2}
+  - {fileID: 11400000, guid: 5cd75282106999840a8da06fc1258c31, type: 2}
+  - {fileID: 11400000, guid: 415fe23d3cfaeb84a95c544b5636a479, type: 2}
+  - {fileID: 11400000, guid: d03c37e4a951fa847b17cefb6b6be708, type: 2}
+  - {fileID: 11400000, guid: 466b9e661b7020049ba4c59975a913f9, type: 2}
   - {fileID: 11400000, guid: 096ac4b192e76e949920fc918791fa72, type: 2}
-  - {fileID: 11400000, guid: c268810966179034f9191df93fb15031, type: 2}
+  - {fileID: 11400000, guid: 1bc2c2bd2b2f29a41aa4f33e16f47e82, type: 2}
+  - {fileID: 11400000, guid: d434a8b4ee5190b4f80ac3dda2e911bc, type: 2}
+  - {fileID: 11400000, guid: 921a2de4a803da54fbbf5719e4dc1060, type: 2}
+  - {fileID: 11400000, guid: 2ca2603c167016f499062c3d0a131006, type: 2}
   - {fileID: 11400000, guid: ddfa930f3619ad84db4dba98f9e438c4, type: 2}
+  - {fileID: 11400000, guid: 0991966cd0913804c818de31ccfb41b0, type: 2}
+  - {fileID: 11400000, guid: c268810966179034f9191df93fb15031, type: 2}
+  - {fileID: 11400000, guid: be509d4bfbd04b5438f954da5922167a, type: 2}
+  - {fileID: 11400000, guid: dba19f1193b6b4f45a6c150449b5dae6, type: 2}
+  - {fileID: 11400000, guid: 201aec20ed2dc8846842dd6682894eac, type: 2}
+  - {fileID: 11400000, guid: 0961e66aa0fe8134eb21095422966cb9, type: 2}
+  - {fileID: 11400000, guid: 996e1a0223293f5419c1ad4828de1051, type: 2}
+  - {fileID: 11400000, guid: 7ab411329fe7dbf43bc332205ddd36ed, type: 2}
+  - {fileID: 11400000, guid: 07c6d069706969e4384de25ba02c43e3, type: 2}
+  - {fileID: 11400000, guid: ee12031099e6f494fa1f71b98b7bc872, type: 2}
+  - {fileID: 11400000, guid: 944cbb4a0891be246b6cbee28a08adf4, type: 2}
+  - {fileID: 11400000, guid: 61774e991ad445749932bd89d490e328, type: 2}
+  - {fileID: 11400000, guid: 88dc7dbdd64b99644ac5063c38cd9add, type: 2}
+  - {fileID: 11400000, guid: 77f34c06e3cff8a4ba5a74998315dd00, type: 2}
+  - {fileID: 11400000, guid: 30e6af18cb9df82458bbc851ba7d697d, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1

@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: RMCar26
+  m_EditorClassIdentifier: 
+  m_GroupName: RMCar26
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 8d1c1559ff0b95a4197dbfd547eced80
+  m_SerializeEntries:
+  - m_GUID: 23cf531a533334041837742b752ddec0
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26_Glass.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25ee8bd13e7faa249909381a1766b8e0
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26BodyMetallicSmoothness.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38d32a0e31738994aa2078887b2f8ce4
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26_Body.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 457e7b361f3a3a14983ff5b6c0c40d42
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26BodyAlbedo.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c3c25d0d6e0e3846a0626484891f2dd
+    m_Address: Assets/Prefabs/Cars/Object/RMCar26/Wheel_A.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6975264b3c53d474b9a2efcfca287eb0
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26_Light.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 79d9f372e06b8bb48a30eadff5675100
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26BodyEmissive.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 816b9742b58ef2a44a44082d693f8eef
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26_Windows.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a9201237ba84d194592f279e70a85fed
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26PaintAo.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f34eb1aaa5df1ce4888bd0841ed78da3
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26_Paint.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ffe41f365ed99ba4d94cfe3bc2736cce
+    m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26BodyNormal.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: fd386171837efd7478ec3af97435e346, type: 2}
+    - {fileID: 11400000, guid: 96e21016aaaa35247863841b5fb97f1b, type: 2}

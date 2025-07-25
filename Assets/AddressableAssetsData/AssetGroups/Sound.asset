@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Sound
+  m_EditorClassIdentifier: 
+  m_GroupName: Sound
+  m_Data:
+    m_SerializedData: []
+  m_GUID: fb6ae54ae4f9245408d8ca14c83517c5
+  m_SerializeEntries:
+  - m_GUID: 6c3ca9e4929219b4fa76784fd3d65fbb
+    m_Address: Assets/Prefabs/Cars/Sound/NitroSound.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74f751505dada554295d2a6a1ac443a7
+    m_Address: Assets/Prefabs/Cars/Sound/NitroStartSound.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df4698fe5e50a4144b8b28b63bcbed61
+    m_Address: Assets/Prefabs/Cars/Sound/SlipSound.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 49e4931de37f7424487ba3a3cc04b3da, type: 2}
+    - {fileID: 11400000, guid: e7e3d372335583b449b732784a8a84eb, type: 2}

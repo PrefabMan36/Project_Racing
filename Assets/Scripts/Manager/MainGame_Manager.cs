@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class MainGame_Manager : NetworkBehaviour
 {
@@ -29,10 +30,14 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private Player_Car localPlayerCar;
     [SerializeField] private Dictionary<int, NetworkId> playersID = new Dictionary<int, NetworkId>();
     [SerializeField] private byte playerNumber = 0;
-    [SerializeField] private Player_Car[] playerCarPrefab;
+    [SerializeField] private Dictionary<int, Player_Car> playerCarPrefabs = new Dictionary<int, Player_Car>();
     [SerializeField] private string[] playerCarPrefabNames;
     [SerializeField] private CarData carData;
     [Networked, SerializeField] private int totalPlayerCount { get; set; } = 0;
+
+    [SerializeField] private AssetBundle carPrefabBundle;
+    [SerializeField] private bool areCarPrefabsLoaded = false;
+    [SerializeField] private List<AsyncOperationHandle<GameObject>> loadedCarHandles = new List<AsyncOperationHandle<GameObject>>();
     #endregion
 
     #region Track & Checkpoint Management
@@ -144,6 +149,8 @@ public class MainGame_Manager : NetworkBehaviour
         base.Spawned();
         Runner.SetIsSimulated(Object, true);
 
+        StartCoroutine(LoadCarPrefabsCoroutine());
+
         trackName = SceneManager.GetActiveScene().name;
         var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
@@ -244,6 +251,7 @@ public class MainGame_Manager : NetworkBehaviour
                 {
                     if (car != null && car.Object != null && car.Object.IsValid)
                     {
+                        car.StopAllCoroutines();
                         Runner.Despawn(car.Object);
                     }
                 }
@@ -309,8 +317,12 @@ public class MainGame_Manager : NetworkBehaviour
         var index = LobbyPlayer.players.IndexOf(player);
         var point = spawnPosition[index];
 
-        var profabID = player.carIndex - 1;
-        var prefab = playerCarPrefab[profabID];
+        //var profabID = player.carIndex - 1;
+        if (!playerCarPrefabs.TryGetValue(player.carIndex, out Player_Car prefab))
+        {
+            Debug.LogError($"스폰 오류: 차량 번호 {player.carIndex}에 해당하는 프리팹이 로드되지 않았습니다.");
+            return;
+        }
         var entity = runner.Spawn(
             prefab,
             point.position,
@@ -633,6 +645,15 @@ public class MainGame_Manager : NetworkBehaviour
         Debug.Log($"[{(Object.HasStateAuthority ? "Host" : "Client")}] 씬 전환 및 UI 정리 시작.");
         isRankingStart = false;
 
+        foreach (var handle in loadedCarHandles)
+        {
+            Addressables.Release(handle);
+        }
+        loadedCarHandles.Clear();
+        playerCarPrefabs.Clear();
+        areCarPrefabsLoaded = false;
+        Debug.Log("로드했던 모든 차량 프리팹을 메모리에서 해제했습니다.");
+
         if (Shared.ui_Manager != null)
         {
             Shared.ui_Manager.isInGame = false;
@@ -682,6 +703,13 @@ public class MainGame_Manager : NetworkBehaviour
         {
             yield return waitForSeconds;
         }
+
+        while (!areCarPrefabsLoaded)
+        {
+            Debug.Log("차량 프리팹 로딩을 기다리는 중...");
+            yield return null; // 로드가 완료될 때까지 한 프레임 대기
+        }
+
         if (networkRunner.GameMode == GameMode.Host)
         {
             foreach (LobbyPlayer player in LobbyPlayer.players)
@@ -800,6 +828,50 @@ public class MainGame_Manager : NetworkBehaviour
                 localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
             }
         }
+    }
+
+    private IEnumerator LoadCarPrefabsCoroutine()
+    {
+        areCarPrefabsLoaded = false;
+        playerCarPrefabs.Clear();
+        loadedCarHandles.Clear();
+
+        var neededCarIndices = new HashSet<int>();
+        foreach (var player in LobbyPlayer.players)
+        {
+            neededCarIndices.Add(player.carIndex);
+        }
+        Debug.Log($"이번 경기에 필요한 차량 종류: {neededCarIndices.Count}개");
+
+        foreach (int carIndex in neededCarIndices)
+        {
+            CarData spec = CarData_Manager.instance.GetCarDataByNumber(carIndex);
+            if (spec == null)
+            {
+                Debug.LogError($"CarData_Manager에 차량 번호 {carIndex}에 대한 데이터가 없습니다.");
+                continue;
+            }
+
+            string address = $"Assets/Prefabs/Cars/ForPlayer/{spec.fileName}.prefab";
+
+            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(address);
+            loadedCarHandles.Add(handle);
+
+            yield return handle;
+
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                playerCarPrefabs[carIndex] = handle.Result.GetComponent<Player_Car>();
+                Debug.Log($"Addressable 프리팹 '{address}' (차량 번호: {carIndex}) 로드 완료.");
+            }
+            else
+            {
+                Debug.LogError($"Addressable 주소 '{address}'에서 프리팹을 로드할 수 없습니다.");
+            }
+        }
+
+        areCarPrefabsLoaded = true;
+        Debug.Log("모든 차량 프리팹 로딩 및 설정이 완료되었습니다.");
     }
 
     #endregion

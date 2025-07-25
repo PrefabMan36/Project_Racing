@@ -1,0 +1,590 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: City_Night
+  m_EditorClassIdentifier: 
+  m_GroupName: City_Night
+  m_Data:
+    m_SerializedData: []
+  m_GUID: d3f28390a8a852f45beae341ec10e6b3
+  m_SerializeEntries:
+  - m_GUID: 03571863373bf8641ba55aa179965d64
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/factory_building_big_bgr.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0392a9d92e15bdd4aa8c40dc637ec21f
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/small_house_3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a984da1cd0ebf846ab2481ce6b77b3f
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/factory_building_small.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 13faf7475aac74a418597eaf9c203dc8
+    m_Address: Assets/Models/Scene/City_Night/factory_building_big.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 140035e2fe065134aba228ec10fd96ac
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_1_bgr.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14a3f32c76f649d47812dbec6c810180
+    m_Address: Assets/Models/Scene/City_Night/basement_big.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1539a5461c562d640b97b26fbd7bf9f9
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_1_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15f5ac9ecdce3de4db7286c24974c77f
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/building_lamp_orange.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 164ba863f116f844badd128ff3d17250
+    m_Address: Assets/Models/Scene/City_Night/office_building_1.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 18def28a0ae3af04b92baf54be5868be
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_2_with_base.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 192942cee9759494aa27cca32255320c
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/tree_3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a0bab7143c6ac04497ead708e204e56
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 206a787b1d0da6640b6375d86a2e9d05
+    m_Address: Assets/Models/Scene/City_Night/mid_house_4_2.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2428e7e466b559e43a0e4202eae899ff
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_single_blue.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24ad189905c64de479a8a1b241bc7294
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/factory_building_small_bgr.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27bd8f785b4b73940a92ff6fcf04915d
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/building_lamp_blue.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 29a8981c6f21b6345a1737aa4b906a22
+    m_Address: Assets/Models/Scene/City_Night/basement_mid.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2bc29f7b65506c44b811c30266ed8833
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-10.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2fa00f3931e486b42bd4d57611f47051
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-2_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3329082d61256954d934428d2d1c7b71
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_4_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3390c1ec7496ee04d87b70f3ff3a4af6
+    m_Address: Assets/Models/Scene/City_Night/mid_house_1_2.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35b0f1d5aadbd0042aa23a08e76985d0
+    m_Address: Assets/Models/Scene/City_Night/factory_building_big_bgr.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39c69faa46b3e834da2678ed3102aeda
+    m_Address: Assets/Models/Scene/City_Night/mid_house_5.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a5032c8bc2567545bc749fd50c0a563
+    m_Address: Assets/Models/Scene/City_Night/office_building_3.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a9b28f17b9756a47859500720485dfd
+    m_Address: Assets/Models/Scene/City_Night/factory_building_small.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c1eaf8bcf1439a43b6ebc70231210db
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_dual_orange.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e4c02719a29aca4092dd29f07fc1a7e
+    m_Address: Assets/Models/Scene/City_Night/highway_support.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3fcde2e81ce840a49aadb258b0776021
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4424c1ff10383e448be8e709503944c8
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_4.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44f78b98bb705704a86127ce68d48b4e
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_4_bgr.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45abaebf87d8ad24cbf98876e6ecdd2f
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-7_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a4197e7c33e5bf4984d931c8f992851
+    m_Address: Assets/Models/Scene/City_Night/small_house_1.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c8c8ac362caa3842a97f75923d9f36d
+    m_Address: Assets/Models/Scene/City_Night/lamp_pole_small.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5048a1cf7d715be43bafc4d676ab5eb3
+    m_Address: Assets/Models/Scene/City_Night/office_building_2_bgr.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 50725c5af3db52f4e9b3560a975e412f
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-3_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52e2970d2b977934194c67572d53ee04
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_1_with_base.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 57eaa8f9a09df71468f5e29ceadf5957
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-4_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5abd6f97766ead84397268c287892e4f
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_3_bgr.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b9dc01bcc3dd784f862f0970ac13fb9
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-9_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5faba2c77bd399043a7ab80d43c53ff5
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 658e1637e781b8d4797e43c26338c9ab
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6757f292accaf4645a20a11f84be58fe
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_2_bgr.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68949ce87b34cf149828599bee4090dd
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-8_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7069fc056197abe428a6bb51e2b9a316
+    m_Address: Assets/Models/Scene/City_Night/office_building_3_bgr.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 750ce5a7c1326544b9c07fe8d862a90a
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7961d5d64350968438e53e5349630794
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_small.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b26d246ced93914e80d1cdf3d152a53
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/concrete_block.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c3197797d339d349a13697bd0f75f73
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-10_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d91f14371d9d0340bb71a07cdd260de
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/building_lamp_white.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 841fda1a8336ebd45a80491910c22305
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_4.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84cdbd9dcb4f91c49b95316c72e1aa80
+    m_Address: Assets/Models/Scene/City_Night/mid_house_1.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8922123bffe3c6341bc1ddf9af970835
+    m_Address: Assets/Models/Scene/City_Night/small_house_3.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8cec6e2279be0304c81454e0c6dc6b79
+    m_Address: Assets/Models/Scene/City_Night/office_building_4.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8dd0dd541acaff5418f32652ee44b2e7
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_single_orange.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e079575efded7b488ca4313fcf6eeac
+    m_Address: Assets/Models/Scene/City_Night/hedge_with_base.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90d284ef85934684a93a8e5a4067911b
+    m_Address: Assets/Models/Scene/City_Night/small_house_2.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91cf861da5ac23e4b8487f79a6dfe551
+    m_Address: Assets/Models/Scene/City_Night/concrete_block.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93b05a0f824ba8748ac94e3c3ed9332e
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/building_lamp_pink.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94222793a7abe614aaf9c43aeb6f4583
+    m_Address: Assets/Models/Scene/City_Night/mid_house_4.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 972492e6e936f8a4b8fd9e008339db74
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_5.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98a20dfe0755490468581b4e910c8a66
+    m_Address: Assets/Scenes/Tracks/City_Night/LightingData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99a025b75cda03942b83aaed7d1f80c3
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-1_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a89042126c1116449739a942cb04132
+    m_Address: Assets/Models/Scene/City_Night/office_building_2.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9bb7d850f09915e418ad6c2416757b9d
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/factory_building_big.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ecaa742c0dee3b41ae5d137db157332
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-0_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ee272c29dc91dc4a94ad4d626058106
+    m_Address: Assets/Models/Scene/City_Night/lamp_pole_dual.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9eeace017892e6e4b936498efff23317
+    m_Address: Assets/Models/Scene/City_Night/tree_3.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a2dd7ebabc38532429e0b24b1e4b2207
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a36c16a0315feb440a09acc1948222f8
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/small_house_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4e2ff6da4c024245b3cb43a957e260e
+    m_Address: Assets/Models/Scene/City_Night/basement_small.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a88c2f2cca199624db19d78b0a471501
+    m_Address: Assets/Scenes/Tracks/City_Night/OcclusionCullingData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a9e47dd43de461745b4874f4a41b2e73
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-11_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: acb6b6d7c15766a4d8d178b7b9298988
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-12.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad9a4cd607991ce44a392cd3a4de9398
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-8.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: adce9d3aecc806e4291b160d931e27a8
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_single_white.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae0223c9215d7af4286fc43d3158b060
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_dual_blue.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0a1991bb786aa547a6667f6343c3359
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/small_house_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0f4bfab0bbc4714d90f5a03e7be3225
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b415aacfae9c097419b5859e99bc6899
+    m_Address: Assets/Models/Scene/City_Night/mid_house_3.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4e4773c241a2434f9ceaa8126b52151
+    m_Address: Assets/Scenes/Tracks/City_Night/City_Night.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5dc924ab0184194c8cdb14e0ba22430
+    m_Address: Assets/Models/Scene/City_Night/bench.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5fa917c55b9369459843f319b04221c
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-13.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b64e7a25ece19a147b10b35a23680ac3
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/demo_city_by_versatile_studio.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b729874d4fc7f7445a6d23b38a481ac3
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7d99e050a268a74393c5e2746a07604
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_4_with_base.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb2fbe10985b8584aae4b5849c7a5ee1
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd90c18828aee314ca349257d59d1542
+    m_Address: Assets/Models/Scene/City_Night/factory_chimney-stalk.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c08d4447b47b6f44aad8742db6978c9e
+    m_Address: Assets/Models/Scene/City_Night/factory_building_small_bgr.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0c91a9589f60cb4d9ea4496da0d98b3
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-6_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4c7ae4b3af25b94f9a373659557c13d
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_3_with_base.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8f94b384e3a3fe458ed103015b68a0e
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-9.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d01805182f1e5994e8e48a4d24894584
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3abfefea8c568940a3bcc305cc5ff65
+    m_Address: Assets/Models/Scene/City_Night/office_building_1_bgr.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d724d064812e74c44a1e31e73e435156
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-7.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7aeb709a3e64ad46b994291949d76e7
+    m_Address: Assets/Models/Scene/City_Night/office_building_4_bgr.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dda42447d741e5c49b0a5461669fdc99
+    m_Address: Assets/Models/Scene/City_Night/tree_1.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: decc49a5103de784e84ab781e9bf158d
+    m_Address: Assets/Models/Scene/City_Night/building_lamp.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df942187e8f6dcd44a932a9ed41112e3
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/tree_2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3cdcd01b3ecc3b4da788a3ff03a9e28
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/bench.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e46b02998d4b44f4eaaf9a29daca8f13
+    m_Address: Assets/Models/Scene/City_Night/lamp_pole_single.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e55db05c354298e419fe7c1c1cb11333
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/mid_house_3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6d71cf139786cd4097958b234bfb029
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb3980b2e480533449deda8fba977044
+    m_Address: Assets/Scenes/Tracks/City_Night/Dark_City_Physic.physicMaterial
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee320aa63aada0e44b3c3a900180121b
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/lamp_pole_single_pink.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0fa6751ecba8a44b87f542ef29ff46f
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/hedge_with_base.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f18a1081a90bda245bdebd580e41d8b7
+    m_Address: Assets/Models/Scene/City_Night/mid_house_2.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f32221640a64f4e469c3209b74f1792d
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/tree_1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4b1e6a5517783e4c8bc71ebfd683604
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/office_building_3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f99be3dce881b214a9a0d83c6b2d0fda
+    m_Address: Assets/Models/Scene/City_Night/demo_city_by_versatile_studio.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc38d6b701798844bb7dd7a95c0afb03
+    m_Address: Assets/Scenes/Tracks/City_Night/ReflectionProbe-11.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc85e0fad1e72ab4ba3e72761baacec4
+    m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-5_comp_light.exr
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff40f4bb80a592a449bd5dc020a38fc0
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/factory_chimney-stalk.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ffa56748ab32eb94abdad75551227af6
+    m_Address: Assets/Models/Scene/City_Night/tree_2.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7183b70a8846efc42929dfe59a2ff5a5, type: 2}
+    - {fileID: 11400000, guid: 8e8bca769dbdd754b9bfb86fc0d6b38d, type: 2}

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Atlas
+  m_Name: Particles
   m_EditorClassIdentifier: 
-  m_GroupName: Atlas
+  m_GroupName: Particles
   m_Data:
     m_SerializedData: []
-  m_GUID: 7602aaa336b9ba1418aaa0e4dd01b410
+  m_GUID: 8313425b80bf56f42bba68e72f9c2341
   m_SerializeEntries:
-  - m_GUID: 3c4df4c8e69b1194b93f6b2e7ce28343
-    m_Address: Assets/Images/Atlas/Icons.spriteatlas
+  - m_GUID: bafe3b28ce202a749a940ce779c3a90d
+    m_Address: Assets/Prefabs/Environment/Particles/Car_Tire_Smoke.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f9976e74eea5b704aa9c22f28b6224de, type: 2}
-    - {fileID: 11400000, guid: 98193c2cedfe2cc4f9fa74b27b950849, type: 2}
+    - {fileID: 11400000, guid: e444ff57f29033944996a97eea34923c, type: 2}
+    - {fileID: 11400000, guid: 18dc6502ae77a0245a3b2fd4fe27a4f8, type: 2}

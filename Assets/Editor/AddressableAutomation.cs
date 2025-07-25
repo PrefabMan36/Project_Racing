@@ -4,13 +4,16 @@ using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 
 public class AddressableAutomation
 {
     private static readonly List<string> targetFolders = new List<string>
     {
         "Assets/Audio/BGM",
-        "Assets/Images/Atlas"
+        "Assets/Images/Atlas",
+        "Assets/Scenes/Tracks",
+        "Assets/Prefabs/Cars/ForPlayer"
     };
 
     /// <summary>
@@ -66,7 +69,7 @@ public class AddressableAutomation
     {
         // 프리팹인 경우에만 종속성을 검사합니다.
         // 만약 다른 에셋 타입(예: Scene)도 종속성 처리를 하고 싶다면 아래 조건을 수정하면 됩니다.
-        if (assetPath.EndsWith(".prefab"))
+        if (assetPath.EndsWith(".prefab") || assetPath.EndsWith(".unity"))
         {
             string[] dependencies = AssetDatabase.GetDependencies(assetPath, true);
             foreach (string depPath in dependencies)
@@ -91,13 +94,27 @@ public class AddressableAutomation
     private static void AddAddressableEntry(AddressableAssetSettings settings, string path)
     {
         string guid = AssetDatabase.AssetPathToGUID(path);
+        if (string.IsNullOrEmpty(guid))
+            return;
 
         string groupName = new DirectoryInfo(Path.GetDirectoryName(path)).Name;
+        AddressableAssetGroup group = settings.FindGroup(groupName);
 
-        AddressableAssetGroup group = settings.FindGroup(groupName) ?? settings.CreateGroup(groupName, false, false, true, null);
+        if (group == null)
+        {
+            group = settings.CreateGroup
+            (
+                groupName,
+                false,
+                false,
+                true,
+                null,
+                typeof(BundledAssetGroupSchema),
+                typeof(ContentUpdateGroupSchema)
+            );
+        }
 
         AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group, false, false);
-
         entry.address = path;
     }
 }

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Meshes
+  m_EditorClassIdentifier: 
+  m_GroupName: Meshes
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 9abc72d0039ac55449f73ea984b3aa78
+  m_SerializeEntries:
+  - m_GUID: 480648689bcacb1429f245e93f814b58
+    m_Address: Assets/Models/Meshes/Tires.FBX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e8a28938e1002c4cb222e32844ab845
+    m_Address: Assets/Models/Meshes/RMCar26.FBX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8dcf477a4933f764e869d8a1a9b0f6d2
+    m_Address: Assets/Models/Meshes/Chev.FBX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d912e0a438ca9414aba1212daa7a43c6
+    m_Address: Assets/Models/Meshes/Wheel_A.FBX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: fc008e9604f503540a22ccb8c94560e2, type: 2}
+    - {fileID: 11400000, guid: 6f031716a8e825441842a13b46581fde, type: 2}

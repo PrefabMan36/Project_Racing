@@ -10,21 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Atlas
+  m_Name: Gizmos
   m_EditorClassIdentifier: 
-  m_GroupName: Atlas
+  m_GroupName: Gizmos
   m_Data:
     m_SerializedData: []
-  m_GUID: 7602aaa336b9ba1418aaa0e4dd01b410
-  m_SerializeEntries:
-  - m_GUID: 3c4df4c8e69b1194b93f6b2e7ce28343
-    m_Address: Assets/Images/Atlas/Icons.spriteatlas
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_GUID: 2ad999ca5ae65fa49a91aaa7b7d379ad
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f9976e74eea5b704aa9c22f28b6224de, type: 2}
-    - {fileID: 11400000, guid: 98193c2cedfe2cc4f9fa74b27b950849, type: 2}
+    - {fileID: 11400000, guid: cab433880c15e7f41a810e2f0dc2f377, type: 2}
+    - {fileID: 11400000, guid: 351e2e6f3354f7e4895b1fbfe9992247, type: 2}

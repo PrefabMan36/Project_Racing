@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Scene
+  m_EditorClassIdentifier: 
+  m_GroupName: Scene
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 46794689834450e4d881cfcb4d3eba30
+  m_SerializeEntries:
+  - m_GUID: 3216e81dc42407948a4889aa3c979c6a
+    m_Address: Assets/Models/Materials/Scene/asphalt_4_tracks.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47791ffc03ec2c64fbd077752860cd51
+    m_Address: Assets/Models/Materials/Scene/blue_light.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 48bf040ff1590a74782bf0210962cdee
+    m_Address: Assets/Models/Materials/Scene/asphalt_extra.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5efcc5a40dd64b14eb818cf6750a395c
+    m_Address: Assets/Models/Materials/Scene/vegetation_non_tp.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 614dd1ad77a3649498945301458c6489
+    m_Address: Assets/Models/Materials/Scene/asphalt_square.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7304ae2ab1b71784c9b6e3e785e4d869
+    m_Address: Assets/Models/Materials/Scene/building_bases.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9413168c9f855e34dbc2ac601af593fe
+    m_Address: Assets/Models/Materials/Scene/vegetation_main.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a1910494df7cf7647bc9378df1e93e16
+    m_Address: Assets/Models/Materials/Scene/white_light.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae52bce8c68a3ea499f06d8068f9ff82
+    m_Address: Assets/Models/Materials/Scene/building_facades.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bc2a974a815d4df4d93d36f57a1a66c3
+    m_Address: Assets/Models/Materials/Scene/building_windows_wet.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bcf074209a5884843b7c5ae3c635ea8f
+    m_Address: Assets/Models/Materials/Scene/props_main.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c57573062fdc7674c8ed160dd5f06f62
+    m_Address: Assets/Models/Materials/Scene/road_sideway_fences.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c6b94b952e067714f807fc7aeb7cbbc0
+    m_Address: Assets/Models/Materials/Scene/highrise_facades.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7040db656dd78e4db434fd7330def51
+    m_Address: Assets/Models/Materials/Scene/building_interior.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6de95fc1051f9e40a1c2b8cfada2c7c
+    m_Address: Assets/Models/Materials/Scene/highway_wall.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dacfa358e9317634f9d90daba2a320f3
+    m_Address: Assets/Models/Materials/Scene/pink_light.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e343388f0f8c8714ca3e19bc022d8f1f
+    m_Address: Assets/Models/Materials/Scene/sideway_tile.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: efba80df10aeb624e82f4d1d32902613
+    m_Address: Assets/Models/Materials/Scene/asphalt_highway.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f96faff657ba0a54d8392a93c22371a9
+    m_Address: Assets/Models/Materials/Scene/asphalt_2_tracks.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: faba0caff81e6d041a9f29d7045d39bf
+    m_Address: Assets/Models/Materials/Scene/orange_light.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd9c9ee73e2d66143b28564b9e869f9a
+    m_Address: Assets/Models/Materials/Scene/asphalt_2-5_tracks.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6da1a47b752450a44af137ed298be880, type: 2}
+    - {fileID: 11400000, guid: 00ea3e80d573d9f46bdbdbb252d1fc27, type: 2}

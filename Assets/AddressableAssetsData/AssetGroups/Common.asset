@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Common
+  m_EditorClassIdentifier: 
+  m_GroupName: Common
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 2b776eb59b4d9ea45a8762ec453844b3
+  m_SerializeEntries:
+  - m_GUID: 0083334c9ef072f4490a547aebfcfc4a
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/RIMS.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24ad3a8db56494f4492c5b1069b9ef23
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/DASH_B.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 294ca01b77b69a64da30870f51d9cd30
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_sidewall.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e9503035b53de04e98670ffcc3c0f42
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/DASH.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3589870149b2c2344b8028d452b3c9f1
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_Seat.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45d7ed4ca5eba5042b3195a296aaaf4e
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_caliper.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4698249be2d3e274a88644b8a9bd1a91
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_tread.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46b26b8eb34144a4391ff02436073fa0
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/Engine.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e9b8c5a72d264f40aa6bc550c5da3d6
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_Wood.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 66f587e5bb5dd3544935d074abc21156
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/TREAD.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 835af0cde1c93ec49ba9da688bf486dd
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_Rim2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 840f1effe0f77bc4a97ef5b3c4b3d229
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/Brakedisc.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91f8140fbd6ac904b8cd8d0782f756cf
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/Seat.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a34f0da026a1c0145a56e8147fa02eb7
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/TREAD_B.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab7884a6b8c6ea244aceed0a71709c7f
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_brackedisk.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1b9fa9557734ef429b6dc7b051e6194
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_Rim.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4c5efc82e102cc45b4896c4a4b9a5d5
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/naonis.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5be0b18adf7eb94f9d612923ae1e65e
+    m_Address: Assets/Models/Materials/Cars/Modern touring car/Common/M_Dash.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c73c6ba7727717b449733b6d99203767
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/Wood.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb4bdc43f176c8d45b99a5a42367896d
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/SIDEWALL.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e0339c30322c76e4a8c3528ae8fa6386
+    m_Address: Assets/Images/Textures/Car/Modern touring car/Common/bkcaliper.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 85b67231889e3c744860f992e4689f73, type: 2}
+    - {fileID: 11400000, guid: 8f80cc3eb6f12ae49a578728c87ad88e, type: 2}

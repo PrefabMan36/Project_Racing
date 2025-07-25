@@ -10,15 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Atlas
+  m_Name: Environment
   m_EditorClassIdentifier: 
-  m_GroupName: Atlas
+  m_GroupName: Environment
   m_Data:
     m_SerializedData: []
-  m_GUID: 7602aaa336b9ba1418aaa0e4dd01b410
+  m_GUID: 64122db7f61710d498842e9dbe87c25c
   m_SerializeEntries:
-  - m_GUID: 3c4df4c8e69b1194b93f6b2e7ce28343
-    m_Address: Assets/Images/Atlas/Icons.spriteatlas
+  - m_GUID: 08e00787136b89944b260e2782e6fef9
+    m_Address: Assets/Prefabs/Environment/CameraPosition.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3bcaaebddd82a845804ca58d7582ccc
+    m_Address: Assets/Prefabs/Environment/BoostEffect.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +31,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f9976e74eea5b704aa9c22f28b6224de, type: 2}
-    - {fileID: 11400000, guid: 98193c2cedfe2cc4f9fa74b27b950849, type: 2}
+    - {fileID: 11400000, guid: 871d431183869434ba9ad0b911b24fb7, type: 2}
+    - {fileID: 11400000, guid: aed0caa591b515e4dae3de4b04e5bc09, type: 2}
