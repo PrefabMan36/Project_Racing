@@ -69,6 +69,8 @@ public class Player_Car : Car
     [Networked] public NetworkInputManager inputData { get; set; }
     private bool localPlayer = false;
 
+    [SerializeField] public short carState = 0;
+
     public override void Spawned()
     {
         if(playerName.Value != "")
@@ -252,6 +254,21 @@ public class Player_Car : Car
             //data.direction.Normalize();
             throttle = data.direction.y;
             Steering(data.direction.x);
+            if(data.direction.x > 0)
+            {
+                right = true;
+                left = false;
+            }
+            else if (data.direction.x < 0)
+            {
+                left = true;
+                right = false;
+            }
+            else
+            {
+                right = false;
+                left = false;
+            }
             sideBraking = data.sideBraking;
             ActivateNitro(data.boosting);
             clutching = data.direction.z;
@@ -438,4 +455,28 @@ public class Player_Car : Car
     }
 
     public bool GetLocalPlayer() { return localPlayer; }
+
+    private void CheckStatForAnimation()
+    {
+        if(flipped)
+            carState = 6;
+        else if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
+            carState = 3;
+        else if(isNitroActive)
+            carState = 4;
+        else if (right && left)
+            carState = 0;
+        else if (right)
+            carState = 2;
+        else if (left)
+            carState = 1;
+        else
+            carState = 0;
+    }
+
+    public short GetCarState()
+    {
+        CheckStatForAnimation();
+        return carState;
+    }
 }

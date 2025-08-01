@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
 public partial class Scene_manager : MonoBehaviour

@@ -152,10 +152,10 @@ public class MainGame_Manager : NetworkBehaviour
         StartCoroutine(LoadCarPrefabsCoroutine());
 
         trackName = SceneManager.GetActiveScene().name;
-        var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
-        var sceneInfo = new NetworkSceneInfo();
-        if (scene.IsValid)
-            sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+        //var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+        //var sceneInfo = new NetworkSceneInfo();
+        //if (scene.IsValid)
+        //    sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
 
         MainCanvas = Shared.ui_Manager.GetMainCanvas();
         parentObjectForUIPanel = Instantiate(parentObjectForUIPanel_Prefab, MainCanvas.transform);
@@ -661,6 +661,12 @@ public class MainGame_Manager : NetworkBehaviour
         }
 
         Destroy(parentObjectForUIPanel);
+
+        if (Shared.CurrentAddressableSceneHandle.IsValid())
+        {
+            Addressables.Release(Shared.CurrentAddressableSceneHandle);
+            Debug.Log("이전 트랙 씬을 메모리에서 해제했습니다.");
+        }
 
         if (resultUI != null) { Destroy(resultUI); }
 

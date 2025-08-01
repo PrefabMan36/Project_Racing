@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 
 public static class Shared
 {
@@ -17,6 +16,8 @@ public static class Shared
     public static Lobby_Manager lobby_Manager;
     public static Lobby_Network_Manager lobby_Network_Manager;
     public static CarSelect_Manager CarSelect_Manager;
+
+    public static AsyncOperationHandle<SceneInstance> CurrentAddressableSceneHandle;
 
     public static float audioVolume;
 

@@ -8,6 +8,7 @@ public partial class Car
     [Header("Body Value")]
     [SerializeField] private GameObject centerMass;
     [SerializeField] private Rigidbody carRB;
+    [SerializeField] protected bool flipped = false;
     #endregion
 
     #region Function Body
@@ -21,6 +22,20 @@ public partial class Car
         carMesh.materials = _CarColor;
     }
     protected void SetSpeedToKMH() { speed = carRB.velocity.magnitude * 3.6f; }
+
+    protected void CheckFlipped()
+    {
+        if (carRB.transform.up.y < 0.5f)
+        {
+            flipped = true;
+            //carRB.isKinematic = true; // 차량이 뒤집혔을 때 물리 엔진을 일시 중지
+        }
+        else
+        {
+            flipped = false;
+            //carRB.isKinematic = false; // 차량이 정상 상태로 돌아오면 물리 엔진을 재개
+        }
+    }
     #endregion
 
     #region AeroDynamicPhysics
