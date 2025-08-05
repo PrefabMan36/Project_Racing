@@ -17,10 +17,13 @@ public class Driver : Object
         Flipped = 6
     }
     [SerializeField] private ESTATE currentState = ESTATE.IDLE;
-    [Networked] private short currentStateNum { get; set; } = 0;
+    [Networked] private int currentStateNum { get; set; } = 0;
+
+    [SerializeField] Animator animator;
 
     [SerializeField] private Player_Car car;
-    [SerializeField] private short carState = 0;
+    [SerializeField] private int carState = 0;
+    [SerializeField] private bool stunned = false;
 
     private void Start()
     {
@@ -31,7 +34,14 @@ public class Driver : Object
             return;
         }
 
+        animator = GetComponent<Animator>();
+
         StartCoroutine(StateChange());
+    }
+
+    private void OnDestroy()
+    {
+        StopCoroutine(StateChange());
     }
 
     public void SetState()
@@ -46,6 +56,24 @@ public class Driver : Object
             currentState = (ESTATE)carState;
         else
             Debug.LogError($"Invalid state: {carState} for {gameObject.name}");
+        if (!stunned)
+        {
+            switch (currentState)
+            {
+                case ESTATE.IDLE:
+                    animator.SetBool("TurnLeft", false);
+                    animator.SetBool("TurnRight", false);
+                    break;
+                case ESTATE.LEFT:
+                    animator.SetBool("TurnLeft", true);
+                    animator.SetBool("TurnRight", false);
+                    break;
+                case ESTATE.RIGHT:
+                    animator.SetBool("TurnLeft", false);
+                    animator.SetBool("TurnRight", true);
+                    break;
+            }
+        }
     }
 
     IEnumerator StateChange()
@@ -57,4 +85,22 @@ public class Driver : Object
             SetState();
         }
     }
+
+    public void Hitted()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Hit");
+            stunned = true;
+        }
+    }
+    public void HitEnd()
+    {
+        stunned = false;
+    }
+
+    public void ShiftUp()
+    { animator.SetTrigger("ShiftUp"); }
+    public void ShiftDown()
+    { animator.SetTrigger("ShiftDown"); }
 }

@@ -1,15 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////
-//  RadialBlur.shader
-//
-//  Upgrade NOTE: replaced 'samplerRECT' with 'sampler2D'
-//  Upgrade NOTE: replaced 'texRECT' with 'tex2D'
-//
-//	original code from: http://forum.unity3d.com/threads/radial-blur.31970/	
-// 
-//  (c)2015 Kim, Hyoun Woo
-///////////////////////////////////////////////////////////////////////////////
-
-Shader "FX/RadialBlur"
+﻿Shader "FX/RadialBlur"
 {
     Properties 
     {

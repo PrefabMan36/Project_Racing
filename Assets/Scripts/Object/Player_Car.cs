@@ -49,7 +49,7 @@ public class Player_Car : Car
     [Networked, SerializeField] private int currentCheckpointIndex { get; set; } = 1;
     [Networked, SerializeField] private short lap { get; set; } = 0;
     [Networked, SerializeField] private float distanceToCheckPoint { get; set; }
-    [SerializeField]private Transform nextCheckPoint;
+    [SerializeField] private Transform nextCheckPoint;
     [SerializeField] private float gameTimer = 0;
     [SerializeField] private float finishedTime = 0f;
     [SerializeField] private bool raceStarted = false;
@@ -62,6 +62,7 @@ public class Player_Car : Car
     private float fov = 30f;
 
     public bool braking, sideBraking, up, down, left, right;
+    [SerializeField]private bool turnLeft, turnRight;
     private bool gearUp, gearDown;
     private byte forceGear;
     private float clutching;
@@ -69,11 +70,11 @@ public class Player_Car : Car
     [Networked] public NetworkInputManager inputData { get; set; }
     private bool localPlayer = false;
 
-    [SerializeField] public short carState = 0;
+    [SerializeField] public int carState = 0;
 
     public override void Spawned()
     {
-        if(playerName.Value != "")
+        if (playerName.Value != "")
         { gameObject.name = playerName.Value; }
         Runner.SetIsSimulated(Object, true);// 시뮬레이션을 활성화합니다.
         gameManager = FindAnyObjectByType<MainGame_Manager>();// 게임 매니저를 찾습니다.
@@ -125,6 +126,7 @@ public class Player_Car : Car
         SetWheels(wheelsModels[2], transform.Find("Wheel_RearLeft").GetComponent<WheelCollider>(), transform.Find("TrailRearLeft").GetComponent<TrailRenderer>(), false);
         SetWheels(wheelsModels[3], transform.Find("Wheel_RearRight").GetComponent<WheelCollider>(), transform.Find("TrailRearRight").GetComponent<TrailRenderer>(), false);
         _data = gameObject.GetComponent<Curve_data>();
+        driver = transform.GetComponentInChildren<Driver>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
         isTCSEnabled = true;
@@ -164,7 +166,7 @@ public class Player_Car : Car
         //    ChangeFriction(drifting);
         //}
         if (Input.GetKeyDown(KeyCode.F)) { HeadLightSwitch(); }
-        
+
         if (Input.GetKeyDown(KeyCode.V))
             firstPerson();
         SetRadialBlur();
@@ -254,20 +256,20 @@ public class Player_Car : Car
             //data.direction.Normalize();
             throttle = data.direction.y;
             Steering(data.direction.x);
-            if(data.direction.x > 0)
+            if (data.direction.x > 0)
             {
-                right = true;
-                left = false;
+                turnRight = true;
+                turnLeft = false;
             }
             else if (data.direction.x < 0)
             {
-                left = true;
-                right = false;
+                turnLeft = true;
+                turnRight = false;
             }
             else
             {
-                right = false;
-                left = false;
+                turnRight = false;
+                turnLeft = false;
             }
             sideBraking = data.sideBraking;
             ActivateNitro(data.boosting);
@@ -368,7 +370,7 @@ public class Player_Car : Car
     {
         if (radialBlur != null)
         {
-            if(isNitroActive)
+            if (isNitroActive)
             {
                 radialBlur.enabled = true;
                 radialBlur.blurStrength = Mathf.Lerp(0f, 1f, GetSpeed() / 200f);
@@ -398,7 +400,7 @@ public class Player_Car : Car
             yield break;
         }
         WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
-        while(true)
+        while (true)
         {
             yield return waitForSeconds;
             distanceToCheckPoint = Vector3.Distance(transform.position, nextCheckPoint.position);
@@ -458,23 +460,25 @@ public class Player_Car : Car
 
     private void CheckStatForAnimation()
     {
-        if(flipped)
+        if (flipped)
             carState = 6;
-        else if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
-            carState = 3;
-        else if(isNitroActive)
-            carState = 4;
-        else if (right && left)
+        else if (hitted)
+            carState = 5;
+        //else if (GetCurrentGear() == eGEAR.eGEAR_REVERSE)
+        //    carState = 3;
+        //else if (isNitroActive)
+        //    carState = 4;
+        else if (turnRight && turnLeft)
             carState = 0;
-        else if (right)
+        else if (turnRight)
             carState = 2;
-        else if (left)
+        else if (turnLeft)
             carState = 1;
         else
             carState = 0;
     }
 
-    public short GetCarState()
+    public int GetCarState()
     {
         CheckStatForAnimation();
         return carState;

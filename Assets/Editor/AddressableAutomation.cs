@@ -16,6 +16,18 @@ public class AddressableAutomation
         "Assets/Prefabs/Cars/ForPlayer"
     };
 
+    // --- 추가된 부분: 제외할 파일 확장자 및 파일명 리스트 ---
+    private static readonly List<string> excludedExtensions = new List<string>
+    {
+        ".cs", ".dll", ".asmdef"
+    };
+
+    private static readonly List<string> excludedFileNames = new List<string>
+    {
+        "PostProcessLayer.png" // 포스트 프로세싱 관련 파일 예시
+    };
+    // --- 추가된 부분 끝 ---
+
     /// <summary>
     /// 에디터 메뉴에서 이 함수를 호출하여 Addressables를 업데이트합니다.
     /// </summary>
@@ -23,7 +35,6 @@ public class AddressableAutomation
     public static void UpdateAllAddressables()
     {
         Debug.Log("Addressable 자동 등록을 시작합니다...");
-
         AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
         if (settings == null)
         {
@@ -32,7 +43,6 @@ public class AddressableAutomation
         }
 
         int processedAssetCount = 0;
-
         foreach (string folder in targetFolders)
         {
             if (!AssetDatabase.IsValidFolder(folder))
@@ -42,11 +52,9 @@ public class AddressableAutomation
             }
 
             string[] guids = AssetDatabase.FindAssets("t:Object", new[] { folder });
-
             foreach (string guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
-
                 if (AssetDatabase.IsValidFolder(path))
                 {
                     continue;
@@ -63,38 +71,44 @@ public class AddressableAutomation
     /// <summary>
     /// 지정된 경로의 에셋과 그 모든 종속성을 Addressable로 만듭니다.
     /// </summary>
-    /// <param name="settings">Addressable 설정</param>
-    /// <param name="assetPath">에셋의 경로</param>
     private static void MakeAssetAddressableWithDependencies(AddressableAssetSettings settings, string assetPath)
     {
-        // 프리팹인 경우에만 종속성을 검사합니다.
-        // 만약 다른 에셋 타입(예: Scene)도 종속성 처리를 하고 싶다면 아래 조건을 수정하면 됩니다.
+        // 프리팹이나 씬인 경우에만 종속성을 검사합니다.
         if (assetPath.EndsWith(".prefab") || assetPath.EndsWith(".unity"))
         {
             string[] dependencies = AssetDatabase.GetDependencies(assetPath, true);
             foreach (string depPath in dependencies)
             {
-                if (!depPath.EndsWith(".cs"))
+                // --- 수정된 부분: 제외 로직을 통과하는 에셋만 추가 ---
+                if (!IsExcludedAsset(depPath))
                 {
                     AddAddressableEntry(settings, depPath);
                 }
+                // --- 수정된 부분 끝 ---
             }
         }
         else
         {
-            AddAddressableEntry(settings, assetPath);
+            // --- 수정된 부분: 단일 에셋도 제외 로직 검사 ---
+            if (!IsExcludedAsset(assetPath))
+            {
+                AddAddressableEntry(settings, assetPath);
+            }
+            // --- 수정된 부분 끝 ---
         }
     }
 
     /// <summary>
     /// 실제로 에셋을 Addressable 그룹에 추가하는 함수입니다.
     /// </summary>
-    /// <param name="settings">Addressable 설정</param>
-    /// <param name="path">에셋의 경로</param>
     private static void AddAddressableEntry(AddressableAssetSettings settings, string path)
     {
         string guid = AssetDatabase.AssetPathToGUID(path);
         if (string.IsNullOrEmpty(guid))
+            return;
+
+        // 이미 어드레서블로 등록되었는지 확인
+        if (settings.FindAssetEntry(guid) != null)
             return;
 
         string groupName = new DirectoryInfo(Path.GetDirectoryName(path)).Name;
@@ -117,4 +131,30 @@ public class AddressableAutomation
         AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group, false, false);
         entry.address = path;
     }
+
+    // --- 추가된 부분: 제외할 에셋인지 판별하는 함수 ---
+    /// <summary>
+    /// 이 에셋이 제외 목록에 포함되는지 확인합니다.
+    /// </summary>
+    /// <param name="path">에셋의 경로</param>
+    /// <returns>제외 대상이면 true, 아니면 false</returns>
+    private static bool IsExcludedAsset(string path)
+    {
+        string fileName = Path.GetFileName(path);
+        if (excludedFileNames.Contains(fileName))
+        {
+            // Debug.Log($"제외(파일명): {path}");
+            return true;
+        }
+
+        string extension = Path.GetExtension(path);
+        if (excludedExtensions.Contains(extension))
+        {
+            // Debug.Log($"제외(확장자): {path}");
+            return true;
+        }
+
+        return false;
+    }
+    // --- 추가된 부분 끝 ---
 }

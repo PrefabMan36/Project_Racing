@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Animation
+  m_EditorClassIdentifier: 
+  m_GroupName: Animation
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 11023b6cd14a6514d9d1162156bb7c61
+  m_SerializeEntries:
+  - m_GUID: 0d0ab162ebea98b48a642f043e436614
+    m_Address: Assets/Prefabs/Human/Animation/HitToIdle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d80396de07b9f74e95726b031afd127
+    m_Address: Assets/Prefabs/Human/Animation/Human.controller
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 706a9cbc826d8854e979088769e87db5
+    m_Address: Assets/Prefabs/Human/Animation/RightToIdle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 794a0770452530b4596bf70b8304f0f5
+    m_Address: Assets/Prefabs/Human/Animation/TurnLeft.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8782c7bc676e13647a2332cf590437e4
+    m_Address: Assets/Prefabs/Human/Animation/TurnRight.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8aa9fd486c7847a439d03c7a1a19af24
+    m_Address: Assets/Prefabs/Human/Animation/Hit.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c72f770f0b3efc468c7e027f0b20fbc
+    m_Address: Assets/Prefabs/Human/Animation/MaskForGearShift.mask
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9f0eb7e42b658f4683b440cb8bb8256
+    m_Address: Assets/Prefabs/Human/Animation/LeftToIdle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1971769abcd34146b5a58eafcd7dc84
+    m_Address: Assets/Prefabs/Human/Animation/Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: feabfebf97a29cc48bd8be908ec28958
+    m_Address: Assets/Prefabs/Human/Animation/ShiftDown.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 762ae31df3d9e8e48907180f6de4ebda, type: 2}
+    - {fileID: 11400000, guid: 1c0e9a588e0bbe64cb4b8a7e84913577, type: 2}

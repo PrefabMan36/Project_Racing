@@ -1,0 +1,205 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Human
+  m_EditorClassIdentifier: 
+  m_GroupName: Human
+  m_Data:
+    m_SerializedData: []
+  m_GUID: b6780125ca78f12408e9992a2840fe67
+  m_SerializeEntries:
+  - m_GUID: 020595137a0acce46828c3c8673bf80c
+    m_Address: Assets/Models/Materials/Human/mtl_npc_hair_06.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 054c1b97af3b9624bb051e702d934d85
+    m_Address: Assets/Images/Textures/Human/npc_hmn_body_01m_01_01_n.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 059bc073b6f3ded4eb8e001243ff23aa
+    m_Address: Assets/Images/Textures/Human/npc_csl_pants_00m_01_01_o.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 05d1b45559398ff43aed0941795db866
+    m_Address: Assets/Images/Textures/Human/npc_hmn_face_01m_01_01_n.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0966cbf582069d44a90efdc982bc3858
+    m_Address: Assets/Images/Textures/Human/npc_hair_01_o.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15b7b4ed423e06547b6e02d940c92aa5
+    m_Address: Assets/Images/Textures/Human/npc_csl_pants_00m_01_01_m.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 17304a7bef9b667498fdd79598c6507a
+    m_Address: Assets/Images/Textures/Human/npc_hair_01_m.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d35e4ca5cce84c489209a330c303156
+    m_Address: Assets/Models/Meshes/Human/npc_haircut_a_01.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1eb1b1bc2fe8e2341aa0790f2c4e6e8f
+    m_Address: Assets/Prefabs/Human/npc_csl_00_character_01m_01.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42e1c4e568819f94295a93832ab4233f
+    m_Address: Assets/Models/Materials/Human/mtl_npc_csl_tshirt_00m_01_01bw.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4350b309aa35d8241b5a918441629bdc
+    m_Address: Assets/Models/Meshes/Human/npc_hmn_01m.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 444656238b316674c9ac36691cf77785
+    m_Address: Assets/Images/Textures/Human/npc_hmn_body_01m_01_01_o.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 449c892dcfb7f3a43a50b2a52522498e
+    m_Address: Assets/Models/Materials/Human/mtl_npc_hmn_body_01m_01_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46c5ec54e9c218c4abd9fbeb01ef1d1b
+    m_Address: Assets/Models/Meshes/Human/npc_csl_00_character_01m.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b5f799eb3bd85f4c944902817771b51
+    m_Address: Assets/Images/Textures/Human/npc_csl_shoe_01_00_01_n.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52b0cb456a1fcdd43b5f9abc55408288
+    m_Address: Assets/Images/Textures/Human/npc_csl_shoe_01_00_01_c.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5318d4e633efc354383bdee78243d714
+    m_Address: Assets/Images/Textures/Human/npc_hmn_body_01m_01_01_m.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58159088b4330c043b756ac278d08403
+    m_Address: Assets/Models/Materials/Human/mtl_npc_hair_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59da40feef9b13d4d90965ef03c97589
+    m_Address: Assets/Images/Textures/Human/npc_hair_01_c.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6754abc2a28f58846be150a3e8c76935
+    m_Address: Assets/Images/Textures/Human/npc_hmn_body_01m_01_01_c.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c23d507eabe8db40899481277eb9884
+    m_Address: Assets/Models/Materials/Human/mtl_npc_csl_shoe_01_00_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74cd5b2609e30324eb45a50f5e087b7d
+    m_Address: Assets/Images/Textures/Human/npc_csl_pants_00m_01_01_n.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 846a97d8aaab99b48880e1f033f3c564
+    m_Address: Assets/Models/Materials/Human/mtl_npc_hmn_face_01m_01_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8588daa8d3c8f3c40ad1c7c1b34b78d9
+    m_Address: Assets/Images/Textures/Human/npc_hair_01_n.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 86cbca3db1fea664fbfd2062465722d6
+    m_Address: Assets/Images/Textures/Human/npc_hmn_face_01m_01_01_o.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91bb9c6f30ef1ac4b9430c2f8008dcc2
+    m_Address: Assets/Images/Textures/Human/npc_csl_tshirt_00m_01_01_n.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98c54b9350e15544c9d651f145214e44
+    m_Address: Assets/Models/Materials/Human/mtl_npc_csl_pants_00m_01_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a53bd095d854b014c85ff9d6b7bccac0
+    m_Address: Assets/Images/Textures/Human/npc_csl_tshirt_00m_01_01bw_c.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5599172c25a6a64bbf6ddef0e201387
+    m_Address: Assets/Images/Textures/Human/npc_hmn_face_01m_01_01_m.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c72f0ff756c7fab4a8a95f3c64bf2350
+    m_Address: Assets/Prefabs/Human/Driver.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9254687ac7335e46a88463817e833f4
+    m_Address: Assets/Images/Textures/Human/npc_csl_shoe_01_00_01_m.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc5a64fd001162a40b7d1cf27ac5652c
+    m_Address: Assets/Images/Textures/Human/npc_csl_tshirt_00m_01_01_o.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dd60e79af5639a6419d1788edef2c78f
+    m_Address: Assets/Images/Textures/Human/npc_hmn_face_01m_01_01_c.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e873a228dc09b8f4794863d68722af4f
+    m_Address: Assets/Images/Textures/Human/npc_csl_pants_00m_01_01_c.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f968756c6232f31428504a70021c2b47
+    m_Address: Assets/Images/Textures/Human/npc_csl_tshirt_00m_01_01_m.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb46aaa6134efbf49bed36f649d37ee3
+    m_Address: Assets/Images/Textures/Human/npc_csl_shoe_01_00_01_o.tif
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a0841aa0c89dc9f4ea142770bd0f0b11, type: 2}
+    - {fileID: 11400000, guid: 3c8cb70c18446204e864d5dc79e3043e, type: 2}

@@ -395,6 +395,7 @@ public partial class Car
                     nextGear = eGEAR.eGEAR_SIXTH;
                     break;
             }
+            driver.ShiftUp();
         }
         else
         {
@@ -419,6 +420,7 @@ public partial class Car
                     nextGear = eGEAR.eGEAR_REVERSE;
                     break;
             }
+            driver.ShiftDown();
         }
     }
     protected void ForceChangeGear(eGEAR _gear)

@@ -15,6 +15,8 @@ public partial class Car : Object_Movable
     [SerializeField] protected Slider nitroBar;
     [SerializeField] protected RPMGauge rpmGauge;
 
+    [SerializeField] protected Driver driver;
+
     public int GetSpeedNum(){ return (int)speed; }
     public float GetSpeed() { return speed; }
     protected IEnumerator Engine()

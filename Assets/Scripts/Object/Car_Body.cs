@@ -7,8 +7,9 @@ public partial class Car
     #region Value Body
     [Header("Body Value")]
     [SerializeField] private GameObject centerMass;
-    [SerializeField] private Rigidbody carRB;
+    [SerializeField] protected Rigidbody carRB;
     [SerializeField] protected bool flipped = false;
+    [SerializeField] protected bool hitted = false;
     #endregion
 
     #region Function Body
@@ -34,6 +35,19 @@ public partial class Car
         {
             flipped = false;
             //carRB.isKinematic = false; // 차량이 정상 상태로 돌아오면 물리 엔진을 재개
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (carRB != null)
+        {
+            if (carRB.velocity.magnitude > 1f)
+            {
+                if (driver != null)
+                {
+                    driver.Hitted();
+                }
+            }
         }
     }
     #endregion
