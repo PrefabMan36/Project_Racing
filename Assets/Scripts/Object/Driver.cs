@@ -16,8 +16,16 @@ public class Driver : Object
         STUNNED = 5,
         Flipped = 6
     }
+
+    [SerializeField] private readonly int turnLeftHash = Animator.StringToHash("TurnLeft");
+    [SerializeField] private readonly int turnRightHash = Animator.StringToHash("TurnRight");
+    [SerializeField] private readonly int hitHash = Animator.StringToHash("Hit");
+    [SerializeField] private readonly int shiftUpHash = Animator.StringToHash("ShiftUp");
+    [SerializeField] private readonly int shiftDownHash = Animator.StringToHash("ShiftDown");
+
     [SerializeField] private ESTATE currentState = ESTATE.IDLE;
-    [Networked] private int currentStateNum { get; set; } = 0;
+    [Networked, OnChangedRender(nameof(OnStateChanged))]
+    private int currentStateNum { get; set; } = 0;
 
     [SerializeField] Animator animator;
 
@@ -35,54 +43,38 @@ public class Driver : Object
         }
 
         animator = GetComponent<Animator>();
-
-        StartCoroutine(StateChange());
     }
 
-    private void OnDestroy()
+    public void SetState(int tempState)
     {
-        StopCoroutine(StateChange());
+        if (currentStateNum == tempState) return;
+
+        currentStateNum = tempState;
     }
 
-    public void SetState()
+    public void OnStateChanged()
     {
-        carState = car.GetCarState();
-
-        if (currentStateNum == carState) return;
-
-        currentStateNum = carState;
-
-        if(Enum.IsDefined(typeof(ESTATE), carState))
-            currentState = (ESTATE)carState;
+        if (Enum.IsDefined(typeof(ESTATE), currentStateNum))
+            currentState = (ESTATE)currentStateNum;
         else
-            Debug.LogError($"Invalid state: {carState} for {gameObject.name}");
+            Debug.LogError($"Invalid state: {currentStateNum} for {gameObject.name}");
         if (!stunned)
         {
             switch (currentState)
             {
                 case ESTATE.IDLE:
-                    animator.SetBool("TurnLeft", false);
-                    animator.SetBool("TurnRight", false);
+                    animator.SetBool(turnLeftHash, false);
+                    animator.SetBool(turnRightHash, false);
                     break;
                 case ESTATE.LEFT:
-                    animator.SetBool("TurnLeft", true);
-                    animator.SetBool("TurnRight", false);
+                    animator.SetBool(turnLeftHash, true);
+                    animator.SetBool(turnRightHash, false);
                     break;
                 case ESTATE.RIGHT:
-                    animator.SetBool("TurnLeft", false);
-                    animator.SetBool("TurnRight", true);
+                    animator.SetBool(turnLeftHash, false);
+                    animator.SetBool(turnRightHash, true);
                     break;
             }
-        }
-    }
-
-    IEnumerator StateChange()
-    {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
-        while (true)
-        {
-            yield return waitForSeconds;
-            SetState();
         }
     }
 
@@ -90,7 +82,7 @@ public class Driver : Object
     {
         if (animator != null)
         {
-            animator.SetTrigger("Hit");
+            animator.SetTrigger(hitHash);
             stunned = true;
         }
     }
@@ -100,7 +92,7 @@ public class Driver : Object
     }
 
     public void ShiftUp()
-    { animator.SetTrigger("ShiftUp"); }
+    { animator.SetTrigger(shiftUpHash); }
     public void ShiftDown()
-    { animator.SetTrigger("ShiftDown"); }
+    { animator.SetTrigger(shiftDownHash); }
 }

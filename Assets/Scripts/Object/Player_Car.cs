@@ -60,6 +60,7 @@ public class Player_Car : Car
     private bool freeLook;
     private float freeLookWaitTime;
     private float fov = 30f;
+    private float cameraFollowDamping = 1.0f;
 
     public bool braking, sideBraking, up, down, left, right;
     [SerializeField]private bool turnLeft, turnRight;
@@ -118,6 +119,22 @@ public class Player_Car : Car
             freeLookWaitTime = 1.0f;
             freeLookCamera.enabled = true;
             localPlayer = true;
+
+            cameraFollowDamping = Setting_Data.CameraFollowDamping;
+            cameraFollowDamping = 0f;
+
+            for (int i = 0; i < 3; i++)
+            {
+                var transposer = freeLookCamera.GetRig(i).GetCinemachineComponent<CinemachineTransposer>();
+                if (transposer != null)
+                {
+                    // Body Damping 값을 설정하여 카메라의 반응성을 조절합니다.
+                    transposer.m_XDamping = cameraFollowDamping;
+                    transposer.m_YDamping = cameraFollowDamping;
+                    transposer.m_ZDamping = cameraFollowDamping;
+                }
+            }
+
             StartCoroutine(CameraUpdate());
             StartCoroutine(UIUpdating());
         }
@@ -247,6 +264,7 @@ public class Player_Car : Car
         Braking();// 브레이크를 적용합니다.
         ApplyAerodynamicDrag();// 공기 저항력을 적용합니다.
         EffectDrift();// 드리프트 효과를 적용합니다.
+        ChangeStatForAnimation();//운전자의 에니메이션 상태를 갱신 합니다.
     }
 
     protected override void GetInputData()
@@ -300,7 +318,7 @@ public class Player_Car : Car
 
     IEnumerator CameraUpdate()
     {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(0.01f);
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
         while (true)
         {
             yield return waitForSeconds;
@@ -337,13 +355,12 @@ public class Player_Car : Car
                 else
                     left = true;
             }
-            //freeLookCamera.m_Lens.FieldOfView = Mathf.Lerp(30f, 65f, GetSpeed()/200f);
             if (firstPersonCameraCheck)
                 freeLookCamera.m_Lens.FieldOfView = fov * 2f;
             else
                 freeLookCamera.m_Lens.FieldOfView =
                     GetIsNitroActive() ?
-                    Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2.5f, Time.deltaTime) :
+                    Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 3.5f, Time.deltaTime) :
                     Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
         }
     }
@@ -458,7 +475,7 @@ public class Player_Car : Car
 
     public bool GetLocalPlayer() { return localPlayer; }
 
-    private void CheckStatForAnimation()
+    private void ChangeStatForAnimation()
     {
         if (flipped)
             carState = 6;
@@ -476,11 +493,7 @@ public class Player_Car : Car
             carState = 1;
         else
             carState = 0;
-    }
 
-    public int GetCarState()
-    {
-        CheckStatForAnimation();
-        return carState;
+        driver.SetState(carState);
     }
 }
