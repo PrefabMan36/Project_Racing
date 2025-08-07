@@ -49,11 +49,11 @@ public class CarSelect_Manager : Manager
             await Task.Yield();
         }
 
-        Debug.Log("[CarSelector] CarData_Manager 데이터 로딩 완료. 차량 프리팹 로드 시작.");
+        Debug.Log($"[CarSelector] CarData_Manager에서 {CarData_Manager.instance.carDatas.Count} 만큼의 데이터 로딩 완료. 차량 프리팹 로드 시작.");
 
         foreach (var carData in CarData_Manager.instance.carDatas)
         {
-            string prefabPath = "Prefabs/Cars/OnlyModel/" + carData.Name;
+            string prefabPath = "Prefabs/Cars/OnlyModel/" + carData.fileName;
             GameObject carPrefab = Resources.Load<GameObject>(prefabPath);
 
             if (carPrefab != null)
@@ -66,7 +66,7 @@ public class CarSelect_Manager : Manager
                 }
                 cars.Add(carInstance);
                 carInstance.gameObject.SetActive(true);
-                Debug.Log($"차량 프리팹 로드 및 스폰 완료: {carData.Name}");
+                Debug.Log($"차량 프리팹 로드 및 스폰 완료: {carData.fileName}");
             }
             else
                 Debug.LogWarning($"경고: 경로 '{prefabPath}'에서 차량 프리팹을 찾을 수 없습니다. Car_spec의 'Name'과 프리팹 이름이 일치하는지 확인하세요.");

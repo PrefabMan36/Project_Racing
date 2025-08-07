@@ -146,9 +146,9 @@ public class Player_Car : Car
         driver = transform.GetComponentInChildren<Driver>();
         SetEngineCurves(_data.horsePower, _data.torque);
         SetSteeringCurve(_data.steer);
-        isTCSEnabled = true;
-        isABSEnabled = true;
-        isEngineBrakingEnabled = true;
+        //isTCSEnabled = true;
+        //isABSEnabled = true;
+        //isEngineBrakingEnabled = true;
         SetNitroInstall(true);
         SetNitroParticles(gameObject.GetComponent<Trail>());
         SetMaxNitroCapacity(100f);
@@ -165,7 +165,7 @@ public class Player_Car : Car
         SetAntiRoll(2.0f);// 안티롤 설정
         SetShiftTiming(0.5f);// 기어 변속 타이밍 설정
         SetBrakePower(3000f);// 브레이크 파워 설정
-        SetDriveAxel(eCAR_DRIVEAXEL.eRWD);// 구동축 설정
+        //SetDriveAxel(eCAR_DRIVEAXEL.eRWD);// 구동축 설정
         SetFriction();// 마찰력 설정
         SpawnSmoke();// 스폰 연기 설정
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.

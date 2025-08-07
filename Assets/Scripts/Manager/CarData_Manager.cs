@@ -29,7 +29,7 @@ public class CarData_Manager : MonoBehaviour
         carDatas = await CSVParser.ParseCSV<CarData>(csvFileName);
         if(carDatas.Count > 0)
         {
-            Debug.Log($"[CSVLoaderExample] '{csvFileName}.csv' 파일에서 총 {carDatas.Count}개의 데이터 레코드를 로드했습니다.");
+            Debug.Log($"[CSVLoaderExample] '{csvFileName}' 파일에서 총 {carDatas.Count}개의 데이터 레코드를 로드했습니다.");
         }
         else
         {

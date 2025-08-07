@@ -1181,6 +1181,7 @@ MonoBehaviour:
   gearTextForUI: {fileID: 0}
   nitroBar: {fileID: 0}
   rpmGauge: {fileID: 0}
+  driver: {fileID: 0}
   centerMass: {fileID: 4880681281052632171}
   carRB: {fileID: 559560253472747298}
   flipped: 0
@@ -1225,7 +1226,7 @@ MonoBehaviour:
   steerWheels: []
   driveWheelsNum: 0
   steerWheelsNum: 0
-  driveAxel: 0
+  driveAxel: 2
   differentialPower: []
   forwardTireGrip: 1.3
   sidewaysTireGrip: 1.3
@@ -1259,8 +1260,8 @@ MonoBehaviour:
   isABSEnabled: 1
   isBrakingIntent: 0
   forceBrake: 0
-  absSlipThreshold: 0.35
-  absBrakeReleaseFactor: 0.3
+  absSlipThreshold: 0.75
+  absBrakeReleaseFactor: 0.7
   engineSound:
   - {fileID: 7795014997106291207}
   startUpSoundObject: {fileID: 0}
@@ -1374,13 +1375,14 @@ MonoBehaviour:
   finishedTime: 0
   raceStarted: 0
   calculateDistance: 0
-  driver: {fileID: 0}
   braking: 0
   sideBraking: 0
   up: 0
   down: 0
   left: 0
   right: 0
+  turnLeft: 0
+  turnRight: 0
   carState: 0
 --- !u!114 &8021030302702733571
 MonoBehaviour:
@@ -1672,7 +1674,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 30
+      value: 18
       inSlope: -0.018936792
       outSlope: -0.018936792
       tangentMode: 0
@@ -2212,7 +2214,7 @@ Transform:
   m_GameObject: {fileID: 1907570275370810806}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000014106499, y: -0, z: 0.00000004371139, w: 1}
-  m_LocalPosition: {x: -0.8, y: 0.2, z: -1.3}
+  m_LocalPosition: {x: -0.8, y: 0.325, z: -1.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2232,7 +2234,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.1
+  m_SuspensionDistance: 0.4
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2283,7 +2285,7 @@ Transform:
   m_GameObject: {fileID: 2103684887527474351}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.8, y: 0.2, z: 1.4}
+  m_LocalPosition: {x: 0.8, y: 0.325, z: 1.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2303,7 +2305,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.1
+  m_SuspensionDistance: 0.4
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -3098,7 +3100,7 @@ Transform:
   m_GameObject: {fileID: 6903111349517352986}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000014106499, y: -0, z: 0.00000004371139, w: 1}
-  m_LocalPosition: {x: 0.8, y: 0.2, z: -1.3}
+  m_LocalPosition: {x: 0.8, y: 0.325, z: -1.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3118,7 +3120,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.1
+  m_SuspensionDistance: 0.4
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -3169,7 +3171,7 @@ Transform:
   m_GameObject: {fileID: 7430563605749152918}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8, y: 0.2, z: 1.4}
+  m_LocalPosition: {x: -0.8, y: 0.325, z: 1.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3189,7 +3191,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0.1
+  m_SuspensionDistance: 0.4
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
