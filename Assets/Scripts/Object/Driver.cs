@@ -76,6 +76,11 @@ public class Driver : Object
                     break;
             }
         }
+        else
+        {
+            animator.SetBool(turnLeftHash, false);
+            animator.SetBool(turnRightHash, false);
+        }
     }
 
     public void Hitted()

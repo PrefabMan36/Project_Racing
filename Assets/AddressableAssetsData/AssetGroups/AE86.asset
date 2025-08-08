@@ -1,0 +1,315 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: AE86
+  m_EditorClassIdentifier: 
+  m_GroupName: AE86
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 89cd80b3c31886b41961ff1ade8191eb
+  m_SerializeEntries:
+  - m_GUID: 0300e057ecd39db4e99403b90b3fb12d
+    m_Address: Assets/Models/Materials/Cars/AE86/BrakeCaliper.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a5da2ba5a815c747a9a2d3ee3d4095e
+    m_Address: Assets/Models/Materials/Cars/AE86/Reflector.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0adaa8b06b74086498bdc07895354678
+    m_Address: Assets/Images/Textures/Car/AE86/Brake_Disc_roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d1802cb1e875f94596bc95800cfdcea
+    m_Address: Assets/Images/Textures/Car/AE86/WatanabeRim_metallic.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 110c9a27a1c996f49bd99b49fec19c1c
+    m_Address: Assets/Images/Textures/Car/AE86/BrakeCaliper_color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 16cc39f8a3ef6ad408260e944d756f04
+    m_Address: Assets/Models/Materials/Cars/AE86/Mirror.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a2897b6a4ba3994f9dfd5c1c2a7dcae
+    m_Address: Assets/Images/Textures/Car/AE86/SteeringWheel_color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ab65f933b0c578488866961a51122d4
+    m_Address: Assets/Images/Textures/Car/AE86/WatanabeRim_roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b6de1dce2d33db42a43997d90088252
+    m_Address: Assets/Images/Textures/Car/AE86/Interior_Bake1_pbr_diffuse.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2450eefc20122434c95cae77a037b764
+    m_Address: Assets/Images/Textures/Car/AE86/Interior1_Base_Color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 264d206f66de8c64e9b2ddb78bc40a22
+    m_Address: Assets/Images/Textures/Car/AE86/internal_ground_ao_texture.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 373e9bfa309b3724da7fc418b4d004d6
+    m_Address: Assets/Images/Textures/Car/AE86/LampCovers_Color.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38fe1659bb2aa0c449202ef1cc442b2d
+    m_Address: Assets/Models/Materials/Cars/AE86/Seatbelt.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 396ebd0ef38249242adc63ee0855113e
+    m_Address: Assets/Models/Materials/Cars/AE86/Brake Disc.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39bc5328dcd9d584ebddb4679c4003a7
+    m_Address: Assets/Images/Textures/Car/AE86/Seatbelt_color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c628cc29d9e18a4781cb3560953d12a
+    m_Address: Assets/Images/Textures/Car/AE86/Seatbelt_normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e3b7e26b97cb6c4e8147d7382dd3193
+    m_Address: Assets/Models/Materials/Cars/AE86/LampCovers.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43cd28cc9a0fa82448be3ef5b7400d94
+    m_Address: Assets/Models/Materials/Cars/AE86/Trim2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4971ef1dd49d52243aac4cc872480cc7
+    m_Address: Assets/Models/Materials/Cars/AE86/Trim1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c1d532c3ae9c4348a3d4c26c5655bbe
+    m_Address: Assets/Images/Textures/Car/AE86/SteeringWheel_metallic.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c53215eda77982469f80b653d286ca4
+    m_Address: Assets/Models/Materials/Cars/AE86/TireMaterial.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ccfec58f2cb35f43b0a7c138b18be6d
+    m_Address: Assets/Models/Materials/Cars/AE86/Trueno.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d9051eee82112340ad0e9b156a27aed
+    m_Address: Assets/Models/Materials/Cars/AE86/LicensePlate.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4fc9446df0a864d47ba8511c07ea6522
+    m_Address: Assets/Models/Materials/Cars/AE86/Windows.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51db110ac2094004bafd855aa8101d1b
+    m_Address: Assets/Models/Materials/Cars/AE86/Secondary.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55465b631da74f24abac00cf5b75e789
+    m_Address: Assets/Images/Textures/Car/AE86/Interior_Bake1_pbr_roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c73237de014d0342bed0d81dd5d1728
+    m_Address: Assets/Images/Textures/Car/AE86/Interior2_Roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5df55ebbff61c7f44932147416d2a6c2
+    m_Address: Assets/Images/Textures/Car/AE86/BrakeCaliper_normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 67bca4a3ad55a0648b266b4878629bfa
+    m_Address: Assets/Models/Materials/Cars/AE86/Interior.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 67f16236d54502f40a76368a63eb1bc6
+    m_Address: Assets/Images/Textures/Car/AE86/Seatbelt_roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 69eb92bf6d870f64cb9da01e23164c11
+    m_Address: Assets/Images/Textures/Car/AE86/LicensePlate_Normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e6adcbd088d5e946a23dab63cbbc84f
+    m_Address: Assets/Models/Materials/Cars/AE86/InteriorPlastic2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e6c1329e3333734e8c3dc8a4cbdb818
+    m_Address: Assets/Images/Textures/Car/AE86/Interior_Bake1_pbr_normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a74a1ac4921f9c469a6569022eee584
+    m_Address: Assets/Images/Textures/Car/AE86/Trim2_roughness.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80e635d36e008d846b29abb176615e4d
+    m_Address: Assets/Images/Textures/Car/AE86/SteeringWheel_normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 866dccb8d3f10c248843286c8759d7d0
+    m_Address: Assets/Images/Textures/Car/AE86/Trim2_Color.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 878d865e2b70ae642b75c89effafc80c
+    m_Address: Assets/Images/Textures/Car/AE86/Interior2_Base_Color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a0d8843a86a2344c8661885f56939e6
+    m_Address: Assets/Images/Textures/Car/AE86/Brake_Disc_metallic.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 92ec5327b5b8dff46afcb409f8350fb6
+    m_Address: Assets/Images/Textures/Car/AE86/Tire_roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9caf550364ce4e9439c8ac35a0f1982e
+    m_Address: Assets/Images/Textures/Car/AE86/WatanabeRim_color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a317b2b0a1f1a124cbd33583f692d158
+    m_Address: Assets/Models/Materials/Cars/AE86/RimMaterial.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a475b68de393a5e4697ed39086662d1f
+    m_Address: Assets/Images/Textures/Car/AE86/Seatbelt_metallic.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a6b59a885ff14b3499a8e24a093b7a44
+    m_Address: Assets/Models/Materials/Cars/AE86/Primary.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7f30386985172e40b68837e49bb1045
+    m_Address: Assets/Images/Textures/Car/AE86/Interior1_Normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5ca22ef31f87d0419cd23251a4599d5
+    m_Address: Assets/Models/Materials/Cars/AE86/SteeringWheel.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b67e280b7f3acef4c8fc90d328726db0
+    m_Address: Assets/Images/Textures/Car/AE86/LampCovers_normal.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c921c22f9d8f01541a2fa519eb96d315
+    m_Address: Assets/Images/Textures/Car/AE86/Tire_normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cca4e529d46e7c640be58791794b71b1
+    m_Address: Assets/Images/Textures/Car/AE86/Trim2_metalness.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d055bed300f93184c87beab864090721
+    m_Address: Assets/Images/Textures/Car/AE86/LicensePlate_Color.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1e9e98264d58cd459a61a63a3c276fb
+    m_Address: Assets/Images/Textures/Car/AE86/WatanabeRim_normal.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d75b463077146414e8f9fb34bf310e90
+    m_Address: Assets/Models/Materials/Cars/AE86/Shadow.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc6cf19d4c9263f438f4489e0e131289
+    m_Address: Assets/Models/Materials/Cars/AE86/InteriorPlastic.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de439375783e59841bc41b3588efd2de
+    m_Address: Assets/Images/Textures/Car/AE86/Interior1_Roughness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dec70209ff3e1694d9a909d6b8f1f59d
+    m_Address: Assets/Models/Materials/Cars/AE86/TailightFrame.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3c274eeccab1fc4db7949ec2e138fca
+    m_Address: Assets/Images/Textures/Car/AE86/Brake_Disc_color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f43b377e1731dac4095cca542c851c27
+    m_Address: Assets/Images/Textures/Car/AE86/Tire_color.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f63f3ecfd9a695c4db722d5be7f4dba4
+    m_Address: Assets/Images/Textures/Car/AE86/Interior_Bake1_pbr_metalness.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8b6628fcbdce51448ed782182b2b054
+    m_Address: Assets/Images/Textures/Car/AE86/Trim2_normal.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1d9c558313b4bd943b3590140a6a9ead, type: 2}
+    - {fileID: 11400000, guid: bfc54faa348e578489643def5cf89a43, type: 2}

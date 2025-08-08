@@ -18,12 +18,17 @@ MonoBehaviour:
   m_GUID: e4823f62d0b686f4b91d8d84c1de83ca
   m_SerializeEntries:
   - m_GUID: 1025e749bf4c01943b04668eae326147
-    m_Address: Assets/Prefabs/Cars/ForPlayer/Charger_Player.prefab
+    m_Address: Assets/Prefabs/Cars/ForPlayer/Charger.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7b367dccc659de64b8c4d882ca0505fc
-    m_Address: Assets/Prefabs/Cars/ForPlayer/Super2000_Player.prefab
+    m_Address: Assets/Prefabs/Cars/ForPlayer/Super2000.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3e2b1162443f984594c57b84392e544
+    m_Address: Assets/Prefabs/Cars/ForPlayer/AE86.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

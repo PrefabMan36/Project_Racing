@@ -79,43 +79,32 @@ public partial class Car
 
     #region Lights
     [Header("Lights Values")]
-    [SerializeField] private Light[] headLight_Object;
-    [SerializeField] private Light[] headLight_SpotLight;
-    [SerializeField] private Light[] tailLamp;
-    [SerializeField] private bool headLightSwitch = true;
-    private void SetLight()
-    {
-        headLight_Object = new Light[2];
-        headLight_SpotLight = new Light[2];
-        tailLamp = new Light[2];
-    }
-    protected void SetLights(Transform _gameObject)
-    {
-        SetLight();
-        headLight_Object[0] = _gameObject.Find("HeadLight_Left").GetComponent<Light>();
-        headLight_Object[1] = _gameObject.Find("HeadLight_Right").GetComponent<Light>();
-        headLight_SpotLight[0] = _gameObject.Find("HeadLight_Left_Spot").GetComponent<Light>();
-        headLight_SpotLight[1] = _gameObject.Find("HeadLight_Right_Spot").GetComponent<Light>();
-        tailLamp[0] = _gameObject.Find("TailLamp_Left").GetComponent<Light>();
-        tailLamp[1] = _gameObject.Find("TailLamp_Right").GetComponent<Light>();
-    }
+    [SerializeField] private Light_Car headLights;
+    [SerializeField] private Light_Car tailLamps;
+    [SerializeField] private bool headLightSwitch = false;
     protected void HeadLightSwitch()
     {
-        if(headLight_Object[0] != null)
+        if(headLights != null)
         {
-            headLightSwitch = !headLightSwitch;
-            foreach (Light light in headLight_Object)
-                light.enabled = headLightSwitch;
-            foreach (Light light in headLight_SpotLight)
-                light.enabled = headLightSwitch;
+            headLightSwitch = !headLightSwitch; // 토글 스위치
+            headLights.lightOn = headLightSwitch; // 라이트 상태 변경
         }
     }
+
+    protected void ForceLightOn()
+    {
+        if(headLights != null)
+        {
+            headLightSwitch = true; // 강제로 라이트 켜기
+            headLights.lightOn = headLightSwitch; // 라이트 상태 변경
+        }
+    }
+
     private void TailLampSwitch(bool _switch)
     {
-        if(tailLamp[0] != null)
+        if(tailLamps != null)
         {
-            foreach(Light light in tailLamp)
-            light.enabled = _switch;
+            tailLamps.lightOn = _switch; // 테일램프 상태 변경
         }
     }
     #endregion

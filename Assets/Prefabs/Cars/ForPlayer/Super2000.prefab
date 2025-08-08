@@ -1040,7 +1040,7 @@ GameObject:
   - component: {fileID: 8658955145431997335}
   - component: {fileID: 5675474093324105284}
   m_Layer: 0
-  m_Name: Super2000_Player
+  m_Name: Super2000
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1085,12 +1085,8 @@ Transform:
   - {fileID: 3075427008653729723}
   - {fileID: 753347276517170065}
   - {fileID: 5463497788012305418}
-  - {fileID: 6676338330634651242}
-  - {fileID: 7450921915786365671}
-  - {fileID: 3059708542196855287}
-  - {fileID: 7415514453950885556}
-  - {fileID: 7110980502021419692}
-  - {fileID: 8188334656674183998}
+  - {fileID: 6995942896958867181}
+  - {fileID: 8405573708613431497}
   - {fileID: 2911851406476919251}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1193,15 +1189,8 @@ MonoBehaviour:
   dragDirection: {x: 0, y: 0, z: 0}
   dragMagnitude: 0
   dragForce: {x: 0, y: 0, z: 0}
-  headLight_Object:
-  - {fileID: 2548393500099216438}
-  - {fileID: 8719057731069453682}
-  headLight_SpotLight:
-  - {fileID: 1469519824543527820}
-  - {fileID: 8208235122908364761}
-  tailLamp:
-  - {fileID: 7466813844690450978}
-  - {fileID: 8175720268926043303}
+  headLights: {fileID: 6074249018923052116}
+  tailLamps: {fileID: 3689246852604561779}
   headLightSwitch: 0
   brakeInput: 0
   steeringCurve:
@@ -1340,6 +1329,7 @@ MonoBehaviour:
   nitroDuration: 1
   nitroPowerReady: 1
   _isNitroActive: 0
+  driftCar: 0
   carNumber: 1
   ID: 0
   playerId:
@@ -2030,7 +2020,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4019951310819650}
+  m_Father: {fileID: 6995942896958867181}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &8719057731069453682
 Light:
@@ -2496,7 +2486,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4019951310819650}
+  m_Father: {fileID: 6995942896958867181}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &2548393500099216438
 Light:
@@ -2726,7 +2716,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4019951310819650}
+  m_Father: {fileID: 8405573708613431497}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &8175720268926043303
 Light:
@@ -2821,6 +2811,69 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4019951310819650}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5073039394700679560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6995942896958867181}
+  - component: {fileID: 6074249018923052116}
+  m_Layer: 0
+  m_Name: HeadLights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6995942896958867181
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5073039394700679560}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3059708542196855287}
+  - {fileID: 7415514453950885556}
+  - {fileID: 7110980502021419692}
+  - {fileID: 8188334656674183998}
+  m_Father: {fileID: 4019951310819650}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6074249018923052116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5073039394700679560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc0edfdc88fb97a4da263e8fd5debc96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  retractable: {fileID: 0}
+  rotation: {x: 0, y: 0, z: 0}
+  targetAngle: 0
+  currentAngle: 0
+  maxAngle: -154.5
+  minAngle: -90
+  retractSpeed: 1
+  retractState: 0
+  coroutine: 0
+  lights:
+  - {fileID: 2548393500099216438}
+  - {fileID: 1469519824543527820}
+  - {fileID: 8719057731069453682}
+  - {fileID: 8208235122908364761}
+  isOn: 0
 --- !u!1 &5297373283718852058
 GameObject:
   m_ObjectHideFlags: 0
@@ -2852,6 +2905,65 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4019951310819650}
   m_LocalEulerAnglesHint: {x: 10, y: 40, z: 0}
+--- !u!1 &5928790128656446297
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8405573708613431497}
+  - component: {fileID: 3689246852604561779}
+  m_Layer: 0
+  m_Name: TailLamps
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8405573708613431497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928790128656446297}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6676338330634651242}
+  - {fileID: 7450921915786365671}
+  m_Father: {fileID: 4019951310819650}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3689246852604561779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928790128656446297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc0edfdc88fb97a4da263e8fd5debc96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  retractable: {fileID: 0}
+  rotation: {x: 0, y: 0, z: 0}
+  targetAngle: 0
+  currentAngle: 0
+  maxAngle: 0
+  minAngle: 0
+  retractSpeed: 1
+  retractState: 0
+  coroutine: 0
+  lights:
+  - {fileID: 7466813844690450978}
+  - {fileID: 8175720268926043303}
+  isOn: 0
 --- !u!1 &6324865190394726210
 GameObject:
   m_ObjectHideFlags: 0
@@ -3005,12 +3117,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6766587460381319406}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.10452846, y: 0, z: 0, w: 0.9945219}
+  m_LocalRotation: {x: 0.10452846, y: -0, z: -0, w: 0.9945219}
   m_LocalPosition: {x: 0.54, y: 0.45, z: 2.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4019951310819650}
+  m_Father: {fileID: 6995942896958867181}
   m_LocalEulerAnglesHint: {x: 12, y: 0, z: 0}
 --- !u!108 &8208235122908364761
 Light:
@@ -3241,12 +3353,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8310881378223974964}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.10452846, y: 0, z: 0, w: 0.9945219}
+  m_LocalRotation: {x: 0.10452846, y: -0, z: -0, w: 0.9945219}
   m_LocalPosition: {x: -0.54, y: 0.45, z: 2.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4019951310819650}
+  m_Father: {fileID: 6995942896958867181}
   m_LocalEulerAnglesHint: {x: 12, y: 0, z: 0}
 --- !u!108 &1469519824543527820
 Light:
@@ -3476,7 +3588,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4019951310819650}
+  m_Father: {fileID: 8405573708613431497}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &7466813844690450978
 Light:

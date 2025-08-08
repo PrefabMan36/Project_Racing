@@ -18,7 +18,8 @@ using TMPro;
 public class Player_Car : Car
 {
     private ChangeDetector changeDetector;
-
+    [Header("PlayerSet")]
+    [SerializeField] private bool driftCar;
     [SerializeField] private int carNumber;
     [SerializeField] private int ID;
     [SerializeField] private NetworkId playerId;
@@ -36,10 +37,16 @@ public class Player_Car : Car
     [SerializeField] private GameObject cameraPositions;
     [SerializeField] private NetworkObject networkObject;
     [SerializeField] private Transform focusPoint;
+    [SerializeField] private Transform dynamicLookAtTarget, lookLeftPoint, lookRightPoint;
     [SerializeField] private CinemachineFreeLook freeLookCamera;
     [SerializeField] private CinemachineFreeLook sideCamera;
     [SerializeField] private Transform firstPersonCamera;
     [SerializeField] private Transform lookBack;
+
+    [SerializeField] private float cameraLockSpeedThreshold = 5f;
+    [Range(0, 1)]
+    [SerializeField] private float cameraLookAtBlend = 0.2f;
+
     [SerializeField] private Camera mainCamera;
     [SerializeField] private RadialBlur radialBlur;
 
@@ -105,15 +112,15 @@ public class Player_Car : Car
         if (HasInputAuthority)
         {
             cameraPositions = Instantiate(cameraData, transform);
+            dynamicLookAtTarget = cameraPositions.transform.Find("DynamicLookAtTarget");
             freeLookCamera = cameraPositions.transform.Find("FreeLookCamera").GetComponent<CinemachineFreeLook>();
-            sideCamera = cameraPositions.transform.Find("ForceSideCamera").GetComponent<CinemachineFreeLook>();
-            firstPersonCamera = cameraPositions.transform.Find("FirstPersonCamera");
+            firstPersonCamera = transform.transform.Find("FirstPersonCamera");
             lookBack = cameraPositions.transform.Find("LookBackCamera");
+            lookLeftPoint = cameraPositions.transform.Find("LookLeftPoint");
+            lookRightPoint = cameraPositions.transform.Find("LookRightPoint");
 
             freeLookCamera.Follow = this.transform;
-            freeLookCamera.LookAt = focusPoint;
-            sideCamera.Follow = this.transform;
-            sideCamera.LookAt = focusPoint;
+            freeLookCamera.LookAt = dynamicLookAtTarget;
 
             freeLookCamera.m_XAxis.Value = 0f;
             freeLookWaitTime = 1.0f;
@@ -135,7 +142,6 @@ public class Player_Car : Car
                 }
             }
 
-            StartCoroutine(CameraUpdate());
             StartCoroutine(UIUpdating());
         }
         SetWheels(wheelsModels[0], transform.Find("Wheel_FrontLeft").GetComponent<WheelCollider>(), transform.Find("TrailFrontLeft").GetComponent<TrailRenderer>(), true);
@@ -158,7 +164,7 @@ public class Player_Car : Car
         ignition = true;
         braking = false;
         //SetEngineSound(transform.Find("EngineSound").GetComponent<AudioSource[]>());
-        HeadLightSwitch();// 헤드라이트 스위치
+        ForceLightOn();// 헤드라이트 스위치
         ForcePlayEngineSound();// 엔진 사운드 강제 재생
         SetBaseEngineAcceleration(5f);// 기본 엔진 가속도 설정
         SetAutoGear(true);// 자동 기어 설정
@@ -166,9 +172,12 @@ public class Player_Car : Car
         SetShiftTiming(0.5f);// 기어 변속 타이밍 설정
         SetBrakePower(3000f);// 브레이크 파워 설정
         //SetDriveAxel(eCAR_DRIVEAXEL.eRWD);// 구동축 설정
+        SetDriveWheels();
         SetFriction();// 마찰력 설정
         SpawnSmoke();// 스폰 연기 설정
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
+        SetDriftMode(driftCar);// 드리프트 모드 설정
+
         StartCoroutine(Engine());// 엔진 코루틴 시작
         StartCoroutine(UpdateNitro());// 부스트 코루틴 시작
         ForceChangeGear(eGEAR.eGEAR_FIRST);// 첫 번째 기어로 강제 변경
@@ -201,12 +210,10 @@ public class Player_Car : Car
             ChangeGear(true);// 기어 업
         if (gearDown)
             ChangeGear(false);// 기어 다운
-        if (sideBraking)
-            SideBrakingDown();
-        else
-            SideBrakingUp();
+
         if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
             clutch = Mathf.Lerp(1, 0, clutching);
+
         switch (forceGear)
         {
             case 1:
@@ -255,7 +262,13 @@ public class Player_Car : Car
         {
             throttle = 0f;
         }
-        ChangeMode(sideBraking);//드리프트 모드 진입
+
+        if (sideBraking)
+            SideBrakingDown();
+        else
+            SideBrakingUp();
+
+        //ChangeMode(sideBraking);//드리프트 모드 진입
 
         UpdatingWheels();
         AntiRollBar();
@@ -267,6 +280,82 @@ public class Player_Car : Car
         ChangeStatForAnimation();//운전자의 에니메이션 상태를 갱신 합니다.
     }
 
+    private void LateUpdate()
+    {
+        if (!localPlayer) return;
+
+        if(Input.GetAxis("Vertical2") < 0)
+        {
+            freeLookCamera.enabled = false;
+            mainCamera.transform.position = lookBack.position;
+            mainCamera.transform.rotation = lookBack.rotation;
+            return;
+        }
+        else if (firstPersonCameraCheck)
+        {
+            freeLookCamera.enabled = false;
+            mainCamera.transform.position = firstPersonCamera.position;
+            mainCamera.transform.rotation = firstPersonCamera.rotation;
+        }
+        else if (Input.GetAxis("Horizontal2") > 0)
+        {
+            freeLookCamera.enabled = false;
+            mainCamera.transform.position = lookRightPoint.position;
+            mainCamera.transform.rotation = lookRightPoint.rotation;
+            return;
+        }
+        else if (Input.GetAxis("Horizontal2") < 0)
+        {
+            freeLookCamera.enabled = false;
+            mainCamera.transform.position = lookRightPoint.position;
+            mainCamera.transform.rotation = lookRightPoint.rotation;
+            return;
+        }
+
+        if (!freeLookCamera.enabled)
+        {
+            freeLookCamera.enabled = true;
+        }
+
+        if (GetSpeed() < cameraLockSpeedThreshold)
+        {
+            // 정지 상태: 자유롭게 둘러보기 (Recenter 비활성화)
+            freeLookCamera.m_XAxis.m_MaxSpeed = 300f; // 마우스 감도
+            freeLookCamera.m_YAxis.m_MaxSpeed = 2f;
+            freeLookCamera.m_XAxis.m_Recentering.m_enabled = false;
+        }
+        else
+        {
+            // 주행 상태: 카메라를 차량 뒤에 고정 (Recenter 강제 활성화)
+            freeLookCamera.m_XAxis.m_MaxSpeed = 0f; // 마우스로 좌우 회전 방지
+            freeLookCamera.m_XAxis.m_Recentering.m_enabled = true;
+            freeLookCamera.m_XAxis.m_Recentering.m_WaitTime = 0f;
+            freeLookCamera.m_XAxis.m_Recentering.m_RecenteringTime = 0.1f; // 매우 빠르게 복귀
+        }
+
+        Vector3 lookDirection;
+        if (carRB.velocity.magnitude < 0.1f)
+        {
+            lookDirection = transform.forward;
+        }
+        else
+        {
+            // 차량의 앞 방향과 실제 운동 방향을 Slerp로 부드럽게 보간
+            Vector3 forwardDir = transform.forward;
+            Vector3 velocityDir = carRB.velocity.normalized;
+            lookDirection = Vector3.Slerp(forwardDir, velocityDir, cameraLookAtBlend);
+        }
+
+        dynamicLookAtTarget.position = transform.position + lookDirection * 20f; // 20f는 임의의 거리
+
+        if (firstPersonCameraCheck)
+            freeLookCamera.m_Lens.FieldOfView = fov * 2f;
+        else
+            freeLookCamera.m_Lens.FieldOfView =
+                GetIsNitroActive() ?
+                Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 3.5f, Time.deltaTime) :
+                Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
+    }
     protected override void GetInputData()
     {
         if (GetInput(out NetworkInputManager data))
@@ -302,6 +391,7 @@ public class Player_Car : Car
     { gameTimer = 0f; }
 
     public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
+    public void SetDriftMode(bool _driftMode) { ChangeFriction(_driftMode); }
 
     public void SetCamera(Camera _camera)
     {
@@ -355,13 +445,7 @@ public class Player_Car : Car
                 else
                     left = true;
             }
-            if (firstPersonCameraCheck)
-                freeLookCamera.m_Lens.FieldOfView = fov * 2f;
-            else
-                freeLookCamera.m_Lens.FieldOfView =
-                    GetIsNitroActive() ?
-                    Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 3.5f, Time.deltaTime) :
-                    Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
+            
         }
     }
     private void firstPerson() { firstPersonCameraCheck = !firstPersonCameraCheck; }

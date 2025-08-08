@@ -52,6 +52,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a4f1c5bc5f39dc48af3e167f9c600db
+    m_Address: Assets/Prefabs/Human/Animation/ShiftUp.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c9f0eb7e42b658f4683b440cb8bb8256
     m_Address: Assets/Prefabs/Human/Animation/LeftToIdle.anim
     m_ReadOnly: 0
