@@ -1,21 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public partial class Car
 {
     #region Value Body
     [Header("Body Value")]
-    [SerializeField] private GameObject centerMass;
+    [SerializeField] protected GameObject centerMass;
     [SerializeField] protected Rigidbody carRB;
     [SerializeField] protected bool flipped = false;
     [SerializeField] protected bool hitted = false;
     #endregion
 
+    #region Value Stabilizer
+    [Header("Stabilizer Value")]
+    [SerializeField] private float instabilityThresholdAngle = 10f;
+    [SerializeField] protected Vector3 loweredCenterOfMass;
+    [SerializeField] private float comLerpSpeed = 5f;
+    [SerializeField] protected Vector3 originalCenterOfMass;
+    [SerializeField] Vector3 targetCoM;
+    [SerializeField] float tiltAngle;
+
+    [SerializeField] Quaternion currentRotation;
+    [SerializeField] Vector3 eulerAngles;
+    [SerializeField] float normalizedX;
+    [SerializeField] float normalizedZ;
+    [SerializeField] float clampedX;
+    [SerializeField] float clampedZ;
+    [SerializeField] Quaternion newRotation;
+    #endregion
+
     #region Function Body
     public void SetCarMass(float _mass) { carRB.mass = _mass; }
     public void SetCarRB(Rigidbody _carRB) { carRB = _carRB; }
-    public void SetCenterMass() { carRB.centerOfMass = centerMass.transform.localPosition; }
+    public void SetCenterMass() { carRB.centerOfMass = Vector3.Lerp(carRB.centerOfMass, targetCoM, Time.fixedDeltaTime * comLerpSpeed); }
     public void ShowCenterMass() { centerMass.transform.position = carRB.centerOfMass; }
     public void SetCarColor(Material[] _CarColor)
     {
@@ -49,6 +65,30 @@ public partial class Car
                 }
             }
         }
+    }
+    #endregion
+
+    #region Function Stabilizer
+    protected void ApplyStabilizer()
+    {
+        tiltAngle = Vector3.Angle(transform.up, Vector3.up);
+
+        if (tiltAngle > instabilityThresholdAngle)
+        {
+            targetCoM = loweredCenterOfMass;
+            //carRB.velocity *= 0.998f;
+        }
+        else
+        {
+            // 안정적인 상태이면 원래 무게 중심으로 설정합니다.
+            targetCoM = originalCenterOfMass;
+        }
+    }
+    private float NormalizeAngle(float angle)
+    {
+        if (angle > 180)
+            angle -= 360;
+        return angle;
     }
     #endregion
 

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Models
+  m_EditorClassIdentifier: 
+  m_GroupName: Models
+  m_Data:
+    m_SerializedData: []
+  m_GUID: cd1d34a7888399d4fa303a1379e4047a
+  m_SerializeEntries:
+  - m_GUID: 0a137320cb1170041a34e81b90fabe33
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Resources/Models/road.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12d78428deb775d448b5cc0326e43380
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Resources/Models/concrete.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ebda0cb17de4a154a806302ef3a464f2
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Resources/Models/poles.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed41ebd2345b5924c90f919f45e87d2b
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Resources/Models/concrete 2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0f8427d32f2da214182612010b15e176, type: 2}
+    - {fileID: 11400000, guid: e153b45f8b30e19459ad3ed0b78f0ff9, type: 2}

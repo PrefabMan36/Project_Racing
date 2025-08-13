@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MapButton : MonoBehaviour
+public class CreateMapButton : MonoBehaviour
 {
     [SerializeField] private CreateRoom createRoomManager;
     [SerializeField] private TextMeshProUGUI mapName;

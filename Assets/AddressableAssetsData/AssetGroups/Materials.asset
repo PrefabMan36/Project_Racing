@@ -22,8 +22,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d245cc5587465c4caa1819a620fdf85
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Resources/Materials/metal02.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9a176ed7e6d96954ba8b748b7e052ca5
     m_Address: Assets/Models/Materials/orange_light_mat.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a60ebed664270c6448f56932f17da7c8
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Resources/Materials/barrierMat.mat
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

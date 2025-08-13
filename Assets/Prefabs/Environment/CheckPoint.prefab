@@ -54,7 +54,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0, y: 5, z: 15}
+  m_Size: {x: 15, y: 5, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4090549688898884965
 MonoBehaviour:
@@ -74,15 +74,15 @@ MonoBehaviour:
   localCheckPointTime: 9999999
   currentLap: 0
   tempTimer: 0
-  checkPointIndex: 0
+  _fastestCheckPointTime:
+    _items: []
+  _checkPointIndex: 0
   nextCheckPoint: {fileID: 0}
   circles:
   - {fileID: 6810034745944225292}
   - {fileID: 6809624033203963774}
   - {fileID: 6809447456692193932}
   - {fileID: 6811521173561283852}
-  _fastestCheckPointTime:
-    _items: []
 --- !u!114 &4878381172788109157
 MonoBehaviour:
   m_ObjectHideFlags: 0

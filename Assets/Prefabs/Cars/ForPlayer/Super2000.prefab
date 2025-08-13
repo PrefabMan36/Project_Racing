@@ -1144,7 +1144,7 @@ Rigidbody:
   m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0.075, z: 0}
+  m_CenterOfMass: {x: 0, y: 0.075, z: 0.1}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -1182,6 +1182,14 @@ MonoBehaviour:
   carRB: {fileID: 559560253472747298}
   flipped: 0
   hitted: 0
+  maxTiltAngle: 20
+  currentRotation: {x: 0, y: 0, z: 0, w: 0}
+  eulerAngles: {x: 0, y: 0, z: 0}
+  normalizedX: 0
+  normalizedZ: 0
+  clampedX: 0
+  clampedZ: 0
+  newRotation: {x: 0, y: 0, z: 0, w: 0}
   dragCoefficient: 0.4
   frontalArea: 2
   airDensity: 1.225
@@ -1350,10 +1358,15 @@ MonoBehaviour:
   cameraPositions: {fileID: 0}
   networkObject: {fileID: 0}
   focusPoint: {fileID: 6842754537859954166}
+  dynamicLookAtTarget: {fileID: 0}
+  lookLeftPoint: {fileID: 0}
+  lookRightPoint: {fileID: 0}
   freeLookCamera: {fileID: 0}
   sideCamera: {fileID: 0}
   firstPersonCamera: {fileID: 0}
   lookBack: {fileID: 0}
+  cameraLockSpeedThreshold: 5
+  cameraLookAtBlend: 0.2
   mainCamera: {fileID: 0}
   radialBlur: {fileID: 0}
   _rank: 0
@@ -2805,7 +2818,7 @@ Transform:
   m_GameObject: {fileID: 4880681281052632171}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.8, z: 0.6}
+  m_LocalPosition: {x: 0, y: 0.075, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

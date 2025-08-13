@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Tree
+  m_EditorClassIdentifier: 
+  m_GroupName: Tree
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 16549a446bf44154eb10e9b91422bb97
+  m_SerializeEntries:
+  - m_GUID: 1de95aafaed1b594b88a317c6a6ac028
+    m_Address: Assets/Prefabs/Environment/Tree/Tree9_Leaf.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58552de7d543f6e4095feb3806e56f4f
+    m_Address: Assets/Images/Textures/Tree/Leafs19.tga
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 760ea8238d6219c42b2739f693d4c834
+    m_Address: Assets/Models/Materials/Tree/bark14.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78e60ad3a8152ec46be748bb6d5a7cdf
+    m_Address: Assets/Images/Textures/Tree/bark14.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 81f1d63919f88a547a8d97fe857cc586
+    m_Address: Assets/Images/Textures/Tree/bark14_N.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 956bd2acf7aae244dac8fc20cf57858d
+    m_Address: Assets/Prefabs/Environment/Tree/Tree9_4.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da780beb78a91484aa965294e12f428e
+    m_Address: Assets/Models/Materials/Tree/Tree9_leafs.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa41cc63b7bd56f4da64009c1c218880
+    m_Address: Assets/Images/Textures/Tree/Leafs19_N.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: add854bd7259f6a44b7236617951520a, type: 2}
+    - {fileID: 11400000, guid: 4040e65193db3374ab3a6ff76227db0d, type: 2}

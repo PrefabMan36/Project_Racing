@@ -7,7 +7,7 @@ public enum eSCENE
     eSCENE_RESULT = 4,
     eSCENE_LOBBY = 5,
     eSCENE_CITY_NIGHT = 6,
-    eSCENE_MOUNT_TRACK = 7
+    eSCENE_SNOW_MOUNTAIN = 7
 }
 
 public enum eSCENE_TYPE

@@ -121,6 +121,7 @@ public class Player_Car : Car
 
             freeLookCamera.Follow = this.transform;
             freeLookCamera.LookAt = dynamicLookAtTarget;
+            //freeLookCamera.LookAt = focusPoint;
 
             freeLookCamera.m_XAxis.Value = 0f;
             freeLookWaitTime = 1.0f;
@@ -177,7 +178,11 @@ public class Player_Car : Car
         SpawnSmoke();// 스폰 연기 설정
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
         SetDriftMode(driftCar);// 드리프트 모드 설정
-
+        if (centerMass != null)
+        {
+            originalCenterOfMass = centerMass.transform.localPosition;
+            loweredCenterOfMass = originalCenterOfMass + new Vector3(0, -0.2f, 0);
+        }
         StartCoroutine(Engine());// 엔진 코루틴 시작
         StartCoroutine(UpdateNitro());// 부스트 코루틴 시작
         ForceChangeGear(eGEAR.eGEAR_FIRST);// 첫 번째 기어로 강제 변경
@@ -277,6 +282,8 @@ public class Player_Car : Car
         Braking();// 브레이크를 적용합니다.
         ApplyAerodynamicDrag();// 공기 저항력을 적용합니다.
         EffectDrift();// 드리프트 효과를 적용합니다.
+        ApplyStabilizer();
+        SetCenterMass();
         ChangeStatForAnimation();//운전자의 에니메이션 상태를 갱신 합니다.
     }
 
@@ -284,7 +291,94 @@ public class Player_Car : Car
     {
         if (!localPlayer) return;
 
-        if(Input.GetAxis("Vertical2") < 0)
+        //CamMoveOld();
+        CamMoveNew();
+    }
+    protected override void GetInputData()
+    {
+        if (GetInput(out NetworkInputManager data))
+        {
+            //data.direction.Normalize();
+            throttle = data.direction.y;
+            Steering(data.direction.x);
+            if (data.direction.x > 0)
+            {
+                turnRight = true;
+                turnLeft = false;
+            }
+            else if (data.direction.x < 0)
+            {
+                turnLeft = true;
+                turnRight = false;
+            }
+            else
+            {
+                turnRight = false;
+                turnLeft = false;
+            }
+            sideBraking = data.sideBraking;
+            ActivateNitro(data.boosting);
+            clutching = data.direction.z;
+            forceGear = data.forceGear;
+            gearUp = data.gearUP;
+            gearDown = data.gearDOWN;
+        }
+    }
+
+    public void ResetTimer()
+    { gameTimer = 0f; }
+
+    public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
+    public void SetDriftMode(bool _driftMode) { ChangeFriction(_driftMode); }
+
+    public void SetCamera(Camera _camera)
+    {
+        mainCamera = _camera;
+        radialBlur = mainCamera.gameObject.GetComponent<RadialBlur>();
+    }
+    public void SetNitroBar(Slider _nitroBar) { nitroBar = _nitroBar; }
+    public void SetRPMGauge(RPMGauge _rpmGauge)
+    {
+        rpmGauge = _rpmGauge;
+        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<TextMeshProUGUI>();
+        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<TextMeshProUGUI>();
+    }
+
+    private void CamMoveOld()
+    {
+        if (Input.GetAxis("Vertical2") < 0)
+        {
+            freeLookCamera.enabled = false;
+            mainCamera.fieldOfView = fov * 2f;
+            mainCamera.transform.position = lookBack.position;
+            mainCamera.transform.rotation = lookBack.rotation;
+        }
+        else if (firstPersonCameraCheck)
+        {
+            freeLookCamera.enabled = false;
+            mainCamera.transform.position = firstPersonCamera.position;
+            mainCamera.transform.rotation = firstPersonCamera.rotation;
+        }
+        else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
+        {
+            freeLookCamera.enabled = true;
+            up = false;
+            down = false;
+            left = false;
+            right = false;
+        }
+        else if (Input.GetAxis("Horizontal2") != 0)
+        {
+            freeLookCamera.enabled = false;
+            if (Input.GetAxis("Horizontal2") > 0)
+                right = true;
+            else
+                left = true;
+        }
+    }
+    private void CamMoveNew()
+    {
+        if (Input.GetAxis("Vertical2") < 0)
         {
             freeLookCamera.enabled = false;
             mainCamera.transform.position = lookBack.position;
@@ -356,98 +450,7 @@ public class Player_Car : Car
                 Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 3.5f, Time.deltaTime) :
                 Mathf.Lerp(freeLookCamera.m_Lens.FieldOfView, fov * 2f, Time.deltaTime);
     }
-    protected override void GetInputData()
-    {
-        if (GetInput(out NetworkInputManager data))
-        {
-            //data.direction.Normalize();
-            throttle = data.direction.y;
-            Steering(data.direction.x);
-            if (data.direction.x > 0)
-            {
-                turnRight = true;
-                turnLeft = false;
-            }
-            else if (data.direction.x < 0)
-            {
-                turnLeft = true;
-                turnRight = false;
-            }
-            else
-            {
-                turnRight = false;
-                turnLeft = false;
-            }
-            sideBraking = data.sideBraking;
-            ActivateNitro(data.boosting);
-            clutching = data.direction.z;
-            forceGear = data.forceGear;
-            gearUp = data.gearUP;
-            gearDown = data.gearDOWN;
-        }
-    }
 
-    public void ResetTimer()
-    { gameTimer = 0f; }
-
-    public void ChangeMode(bool _driftMode) { ChangeFriction(_driftMode); }
-    public void SetDriftMode(bool _driftMode) { ChangeFriction(_driftMode); }
-
-    public void SetCamera(Camera _camera)
-    {
-        mainCamera = _camera;
-        radialBlur = mainCamera.gameObject.GetComponent<RadialBlur>();
-    }
-    public void SetNitroBar(Slider _nitroBar) { nitroBar = _nitroBar; }
-    public void SetRPMGauge(RPMGauge _rpmGauge)
-    {
-        rpmGauge = _rpmGauge;
-        speedTextForUI = rpmGauge.transform.Find("Speed").GetComponent<TextMeshProUGUI>();
-        gearTextForUI = rpmGauge.transform.Find("GearNum").GetComponent<TextMeshProUGUI>();
-    }
-
-    IEnumerator CameraUpdate()
-    {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame60);
-        while (true)
-        {
-            yield return waitForSeconds;
-            if (Input.GetAxis("Vertical2") < 0)
-            {
-                freeLookCamera.enabled = false;
-                sideCamera.enabled = false;
-                mainCamera.fieldOfView = fov * 2f;
-                mainCamera.transform.position = lookBack.position;
-                mainCamera.transform.rotation = lookBack.rotation;
-            }
-            else if (firstPersonCameraCheck)
-            {
-                freeLookCamera.enabled = false;
-                sideCamera.enabled = false;
-                mainCamera.transform.position = firstPersonCamera.position;
-                mainCamera.transform.rotation = firstPersonCamera.rotation;
-            }
-            else if (Input.GetAxis("Horizontal2") + Input.GetAxis("Vertical2") == 0)
-            {
-                freeLookCamera.enabled = true;
-                sideCamera.enabled = false;
-                up = false;
-                down = false;
-                left = false;
-                right = false;
-            }
-            else if (Input.GetAxis("Horizontal2") != 0)
-            {
-                freeLookCamera.enabled = false;
-                sideCamera.enabled = true;
-                if (Input.GetAxis("Horizontal2") > 0)
-                    right = true;
-                else
-                    left = true;
-            }
-            
-        }
-    }
     private void firstPerson() { firstPersonCameraCheck = !firstPersonCameraCheck; }
     private void FreeLookCheck()
     {

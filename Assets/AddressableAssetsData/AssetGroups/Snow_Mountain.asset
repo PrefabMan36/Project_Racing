@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Snow_Mountain
+  m_EditorClassIdentifier: 
+  m_GroupName: Snow_Mountain
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 73faeb784989ff84dae27f6e77e46f6f
+  m_SerializeEntries:
+  - m_GUID: 3c134f408d259304b839b639109847d9
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Snow_MountainSettings.lighting
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55357f48a3e2b4643b0983826b854f64
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Snow_Mountain.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d216ab1bb2f42e44bb0c77a040f8eb11
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/terrain.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7d4b01227bb90c8478a77d9d60bd2f70, type: 2}
+    - {fileID: 11400000, guid: 6bcd0b5aa34b523469871a2316d2c385, type: 2}

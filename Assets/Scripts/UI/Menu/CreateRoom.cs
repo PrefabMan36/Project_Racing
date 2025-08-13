@@ -9,7 +9,7 @@ public class CreateRoom : MonoBehaviour
     [SerializeField] int currentMapIndex = 6;
 
     [SerializeField] GameObject scrollContent;
-    [SerializeField] MapButton mapButtonPrefab;
+    [SerializeField] CreateMapButton mapButtonPrefab;
 
     private void Awake()
     {
@@ -22,7 +22,7 @@ public class CreateRoom : MonoBehaviour
 
     private void CreateButtons()
     {
-        MapButton tempButton;
+        CreateMapButton tempButton;
         TrackSelect tempTrack;
         int mapNum = Shared.room_Manager.GetMapNum();
         Debug.Log(mapNum);
