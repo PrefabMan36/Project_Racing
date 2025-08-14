@@ -17896,6 +17896,7 @@ MonoBehaviour:
   steeringHandle: {fileID: 0}
   maxSteerAngle: 30
   _curSteerAngle: 0
+  currentInput: 0
   steerSpeed: 0
   slipingAngle: 0
   sideBrakeInput: 0
@@ -17911,6 +17912,15 @@ MonoBehaviour:
   steerWheelsNum: 0
   driveAxel: 0
   differentialPower: []
+  isDrift: 0
+  forwardTireGrip_FG: 3
+  forwardTireGrip_RG: 3
+  sidewaysTireGrip_FG: 3.5
+  sidewaysTireGrip_RG: 3.5
+  forwardTireGrip_FD: 1.5
+  forwardTireGrip_RD: 2.5
+  sidewaysTireGrip_FD: 2.2
+  sidewaysTireGrip_RD: 2.2
   forwardTireGrip: 1.8
   sidewaysTireGrip: 2.2
   forwardValue: 1
@@ -18274,7 +18284,7 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 15
+      value: 14
       inSlope: 0
       outSlope: 0
       tangentMode: 136

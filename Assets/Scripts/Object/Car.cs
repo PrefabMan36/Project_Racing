@@ -27,6 +27,7 @@ public partial class Car : Object_Movable
             yield return waitForSecond;
             if (ignition)
             {
+                DetectCounterSteering();
                 GearShifting();
                 CalculateTorque();
                 forceEngineLerp();

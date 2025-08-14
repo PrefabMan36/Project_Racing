@@ -318,7 +318,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 98a20dfe0755490468581b4e910c8a66
-    m_Address: Assets/Scenes/Tracks/City_Night/LightingData.asset
+    m_Address: racks/City_Night/LightingData.assethtingData.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

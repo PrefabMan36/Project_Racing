@@ -64,6 +64,8 @@ public class Player_Car : Car
 
     private bool firstPersonCameraCheck;
 
+    [SerializeField] private bool LHS;
+
     private bool freeLook;
     private float freeLookWaitTime;
     private float fov = 30f;
@@ -120,8 +122,8 @@ public class Player_Car : Car
             lookRightPoint = cameraPositions.transform.Find("LookRightPoint");
 
             freeLookCamera.Follow = this.transform;
-            freeLookCamera.LookAt = dynamicLookAtTarget;
-            //freeLookCamera.LookAt = focusPoint;
+            //freeLookCamera.LookAt = dynamicLookAtTarget;
+            freeLookCamera.LookAt = focusPoint;
 
             freeLookCamera.m_XAxis.Value = 0f;
             freeLookWaitTime = 1.0f;
@@ -276,11 +278,11 @@ public class Player_Car : Car
         //ChangeMode(sideBraking);//드리프트 모드 진입
 
         UpdatingWheels();
-        AntiRollBar();
+        //AntiRollBar();
         SetSlpingAngle();// 슬립 각도를 설정합니다.
         UpdatingFriction();// 마찰력을 업데이트합니다.
         Braking();// 브레이크를 적용합니다.
-        ApplyAerodynamicDrag();// 공기 저항력을 적용합니다.
+        //ApplyAerodynamicDrag();// 공기 저항력을 적용합니다.
         EffectDrift();// 드리프트 효과를 적용합니다.
         ApplyStabilizer();
         SetCenterMass();
@@ -575,9 +577,19 @@ public class Player_Car : Car
         else if (turnRight && turnLeft)
             carState = 0;
         else if (turnRight)
-            carState = 2;
+        {
+            if (LHS)
+                carState = 1;
+            else
+                carState = 2;
+        }
         else if (turnLeft)
-            carState = 1;
+        {
+            if (LHS)
+                carState = 2;
+            else
+                carState = 1;
+        }
         else
             carState = 0;
 
