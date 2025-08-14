@@ -27,7 +27,7 @@ public class Rank : MonoBehaviour
 
     private MainGame_Manager gameManager;
     private NetworkId myPlayerId;
-    private int currentRank = -1;
+    [SerializeField] private int currentRank = -1;
 
     public void Init(MainGame_Manager manager, NetworkId playerId)
     {
@@ -38,8 +38,19 @@ public class Rank : MonoBehaviour
 
         Debug.Log($"{this.myPlayerId.ToString()}의 랭크UI 가 스폰되었습니다.");
 
-        StartCoroutine(ChangePosition());
+        StartCoroutine(CheckRankContinuously());
     }
+
+    private void OnDestroy()
+    {
+        if (gameManager != null)
+        {
+            gameManager = null;
+        }
+        StopAllCoroutines();
+        Debug.Log($"{myPlayerId.ToString()}의 랭크UI 가 제거되었습니다.");
+    }
+
     public void SetPlay(Image _playerIcon, string _playerID)
     {
         backGround = gameObject.GetComponent<Image>();
@@ -51,10 +62,10 @@ public class Rank : MonoBehaviour
     private void PositioningRank()
     {
         startPosition = transform.position;
-        targetNum = gameManager.GetRank(myPlayerId);
-        
-        if(backGround != null)
-            backGround.color = targetNum > 3 ? placeColors[4] : placeColors[targetNum];
+        targetNum = currentRank;
+
+        if (backGround != null)
+            backGround.color = targetNum > 3 ? placeColors[3] : placeColors[targetNum];
         if (targets[targetNum] != null)
             targetPosition = targets[targetNum];
         if (!PositionChanging)
@@ -65,12 +76,25 @@ public class Rank : MonoBehaviour
         }
     }
 
-    IEnumerator ChangePosition()
+    IEnumerator CheckRankContinuously()
     {
         WaitForSeconds wfs = new WaitForSeconds(Shared.frame15);
+        while (true)
+        {
+            if (gameManager != null && gameManager.GetRank(myPlayerId)-1 != currentRank)
+            {
+                currentRank = gameManager.GetRank(myPlayerId)-1;
+                PositioningRank();
+            }
+            yield return wfs;
+        }
+    }
+
+    IEnumerator ChangePosition()
+    {
+        WaitForSeconds wfs = new WaitForSeconds(Shared.frame30);
         while(true)
         {
-            PositioningRank();
             transform.position = Vector3.Lerp(startPosition, targetPosition, time);
             time += 0.04f;
             if (time >= 1f)

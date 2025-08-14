@@ -23,6 +23,7 @@ public class CheckPoint : NetworkBehaviour
     [Networked, SerializeField] private int checkPointIndex { get; set; } = 0;
 
     [SerializeField] private CheckPoint nextCheckPoint;
+    [Networked, SerializeField] private Vector3 nextCheckPointValue { get; set; } = Vector3.zero;
     [SerializeField] private GameObject[] circles;
 
     public override void Spawned()
@@ -92,9 +93,10 @@ public class CheckPoint : NetworkBehaviour
                 currentLap = EnteredPlayer.GetLap();
                 if (!fastestCheckPointTime.ContainsKey(currentLap))
                     fastestCheckPointTime.Add(currentLap, 9999999f);
-                if (EnteredPlayer.GetCheckPoint() == checkPointIndex)
+                if (EnteredPlayer.GetCheckPointIndex() == checkPointIndex)
                 {
                     EnteredPlayer.SetCheckPoint(checkPointIndex + 1);
+                    EnteredPlayer.SetNextCheckPointPosition(nextCheckPointValue);
                     tempTimer = mainGameManager.CheckPointChecked(EnteredPlayer, fastestCheckPointTime[currentLap], localCheckPointTime, checkPointIndex);
                     fastestCheckPointTime.Set(currentLap, fastestCheckPointTime[currentLap] > tempTimer ? tempTimer : fastestCheckPointTime[currentLap]);
                     if(EnteredPlayer.GetLocalPlayer() && tempTimer < localCheckPointTime)
@@ -110,6 +112,7 @@ public class CheckPoint : NetworkBehaviour
     public void SetNextCheckPoint(CheckPoint nextCheckPoint)
     {
         this.nextCheckPoint = nextCheckPoint;
+        nextCheckPointValue = nextCheckPoint.transform.position;
     }
 
     public int GetCheckPointIndex()

@@ -94,8 +94,8 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private List<Rank_Data> rankData = new List<Rank_Data>();
     [SerializeField] private List<Rank_Data> sortedRankData = new List<Rank_Data>();
     [Networked, Capacity(4), SerializeField] private NetworkDictionary<NetworkId, byte> rank => default;
-    private byte tempRank;
-    private bool isRankingStart = false;
+    [SerializeField] private byte tempRank;
+    [SerializeField ]private bool isRankingStart = false;
     [SerializeField] private Dictionary<NetworkId, Rank> rankList = new Dictionary<NetworkId, Rank>();
     [SerializeField] private Vector3[] rankTargetPositions = new Vector3[4];
     #endregion
@@ -275,6 +275,9 @@ public class MainGame_Manager : NetworkBehaviour
             }
         }
 
+        isRankingStart = true;
+        StartCoroutine(UpdatingRankings());
+
         if (!gameStart) gameStart = true;
     }
 
@@ -416,11 +419,7 @@ public class MainGame_Manager : NetworkBehaviour
         SetRank(spawnedCar.Object.Id);
         SetFirstCheckPoint(playerCar);
 
-        if (Object.HasStateAuthority && !isRankingStart)
-        {
-            isRankingStart = true;
-            StartCoroutine(UpdatingRankings());
-        }
+        rank.Add(playerCar.GetComponent<NetworkObject>().Id, 0);
 
         playerCar.Init();
     }
@@ -428,6 +427,7 @@ public class MainGame_Manager : NetworkBehaviour
     public void OnJoinPlayer(NetworkObject networkPlayerObject)
     {
         playersID[playerNumber] = networkPlayerObject.Id;
+        Debug.Log($"Player joined: {networkPlayerObject.Id} at index {playerNumber}");
         rank.Add(networkPlayerObject.Id, 0);
     }
 
@@ -449,9 +449,15 @@ public class MainGame_Manager : NetworkBehaviour
         {
             bool lastcheck = false;
             lastCheckPointIndex = tracksData.Checkpoints.Count - 1;
-            for (int i = 0; i < tracksData.Checkpoints.Count; i++)
+            firstCheckPoint = networkRunner.Spawn(checkPoint_Prefab);
+            CheckPoint checkPoint = firstCheckPoint;
+            checkPoint.SetCheckPointIndex(0 + 1, tracksData.Checkpoints[0].Position, tracksData.Checkpoints[0].Rotation, tracksData.Checkpoints[0].Scale, lastcheck);
+            for (int i = 1; i < tracksData.Checkpoints.Count; i++)
             {
-                CheckPoint checkPoint = networkRunner.Spawn(checkPoint_Prefab);
+                CheckPoint tempCheckPoint = checkPoint;
+                checkPoint = networkRunner.Spawn(checkPoint_Prefab);
+                tempCheckPoint.SetNextCheckPoint(checkPoint);
+
                 if (i == lastCheckPointIndex)
                 { lastcheck = true; }
                 else
@@ -461,6 +467,7 @@ public class MainGame_Manager : NetworkBehaviour
             }
             GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
             lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();
+            lastCheckPoint.SetNextCheckPoint(firstCheckPoint);
             LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
         }
         else
@@ -541,7 +548,7 @@ public class MainGame_Manager : NetworkBehaviour
     public void SetLastCheckPoint(CheckPoint checkPoint) { lastCheckPoint = checkPoint; }
     private void SetFirstCheckPoint(Player_Car _playerCar)
     {
-        _playerCar.SetNextCheckPointPosition(firstCheckPoint);
+        _playerCar.SetNextCheckPointPosition(firstCheckPoint.transform.position);
     }
     public void SetTimer(float _timer) { gameTimer = _timer; }
 
@@ -578,8 +585,21 @@ public class MainGame_Manager : NetworkBehaviour
 
     public int GetRank(NetworkId rankPlayer)
     {
-        if (Object == null || !Object.IsValid || rank.Count == 0) return 0;
-        return rank.ContainsKey(rankPlayer) ? rank[rankPlayer] : 0;
+        if (Object == null || !Object.IsValid || rank.Count == 0)
+        {
+            Debug.LogWarning("GetRank 호출 시 Object가 유효하지 않거나 랭킹이 비어 있습니다.");
+            return 0;
+        }
+        if(rank.ContainsKey(rankPlayer))
+        {
+            //Debug.Log($"GetRank 호출: {rankPlayer}의 랭킹은 {rank[rankPlayer]}입니다.");
+            return rank[rankPlayer];
+        }
+        else
+        {
+            Debug.LogWarning($"GetRank 호출 시 랭킹에 {rankPlayer}가 없습니다.");
+            return 0;
+        }
     }
 
     public void RemoveRank(NetworkId _id)
@@ -759,6 +779,7 @@ public class MainGame_Manager : NetworkBehaviour
                 if (!isRankingStart)
                     yield break;
                 tempRank = (byte)(i + 1);
+                Debug.Log($"플레이어 {sortedRankData[i].playerId}의 랭킹 업데이트: {tempRank}");
                 rank.Set(sortedRankData[i].playerId, tempRank);
             }
         }

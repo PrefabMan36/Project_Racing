@@ -28,8 +28,8 @@ public class Loading_Manager : MonoBehaviour
         runner = Shared.lobby_Network_Manager.GetNetRunner();
 
         nextScene = Shared.scene_Manager.GetNextScene();
-        Debug.Log(Server_Data.serverTrack.mapName);
-        string sceneName = Server_Data.serverTrack.mapName;
+        Debug.Log(Client_Data.clientTrack.mapName);
+        string sceneName = Client_Data.clientTrack.mapName;
         Debug.Log(nextScene);
         nextSceneAddress = $"Assets/Scenes/Tracks/{sceneName}/{sceneName}.unity";
         loadingImage.sprite = Shared.room_Manager.GetSprite(nextScene);

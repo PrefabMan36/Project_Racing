@@ -168,6 +168,7 @@ public class Lobby_Manager : Manager
     {
         currentMapIndex = _mapIndex;
         selectedTrack = Shared.room_Manager.GetTrackByIndex(currentMapIndex);
+        Client_Data.clientTrack = selectedTrack;
         trackImage.sprite = selectedTrack.mapImage;
         trackName.text = selectedTrack.mapName;
     }

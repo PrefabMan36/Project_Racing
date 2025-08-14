@@ -21,4 +21,5 @@ public static class Client_Data
         get => PlayerPrefs.GetInt("Client_LastLobbyID", 0);
         set => PlayerPrefs.SetInt("Client_LastLobbyID", value);
     }
+    public static TrackSelect clientTrack;
 }

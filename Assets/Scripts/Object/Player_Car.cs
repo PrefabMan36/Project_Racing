@@ -57,14 +57,13 @@ public class Player_Car : Car
     [Networked, SerializeField] private short lap { get; set; } = 0;
     [Networked, SerializeField] private float distanceToCheckPoint { get; set; }
     [SerializeField] private Transform nextCheckPoint;
+    [SerializeField] private DirectionToNext navigation;
     [SerializeField] private float gameTimer = 0;
     [SerializeField] private float finishedTime = 0f;
     [SerializeField] private bool raceStarted = false;
     [SerializeField] private bool calculateDistance = false;
 
     private bool firstPersonCameraCheck;
-
-    [SerializeField] private bool LHS;
 
     private bool freeLook;
     private float freeLookWaitTime;
@@ -124,6 +123,7 @@ public class Player_Car : Car
             freeLookCamera.Follow = this.transform;
             //freeLookCamera.LookAt = dynamicLookAtTarget;
             freeLookCamera.LookAt = focusPoint;
+            
 
             freeLookCamera.m_XAxis.Value = 0f;
             freeLookWaitTime = 1.0f;
@@ -337,6 +337,7 @@ public class Player_Car : Car
     {
         mainCamera = _camera;
         radialBlur = mainCamera.gameObject.GetComponent<RadialBlur>();
+        navigation = mainCamera.GetComponent<DirectionToNext>();
     }
     public void SetNitroBar(Slider _nitroBar) { nitroBar = _nitroBar; }
     public void SetRPMGauge(RPMGauge _rpmGauge)
@@ -407,8 +408,7 @@ public class Player_Car : Car
             mainCamera.transform.rotation = lookRightPoint.rotation;
             return;
         }
-
-        if (!freeLookCamera.enabled)
+        else if (!freeLookCamera.enabled)
         {
             freeLookCamera.enabled = true;
         }
@@ -486,12 +486,31 @@ public class Player_Car : Car
                 radialBlur.enabled = false;
         }
     }
-    public void SetCheckPoint(int _checkPoint) { currentCheckpointIndex = _checkPoint; }
-    public int GetCheckPoint() { return currentCheckpointIndex; }
 
-    public void SetNextCheckPointPosition(CheckPoint _nextCheckPoint)
+    public void SetNavigation(DirectionToNext arrow)
     {
-        nextCheckPoint = _nextCheckPoint.transform;
+        if(navigation == null)
+        {
+            navigation = arrow;
+        }
+        else
+        {
+            Debug.LogWarning("Navigation already set.");
+        }
+    }
+
+    public void SetCheckPoint(int _checkPoint) { currentCheckpointIndex = _checkPoint; }
+    public int GetCheckPointIndex() { return currentCheckpointIndex; }
+
+    public void SetNextCheckPointPosition(Vector3 _nextCheckPoint)
+    {
+        if(nextCheckPoint == null)
+            nextCheckPoint = new GameObject("NextCheckPoint").transform;
+        nextCheckPoint.position = _nextCheckPoint;
+        if (navigation != null)
+        {
+            navigation.SetNextCheckPoint(nextCheckPoint);
+        }
         if (!calculateDistance)
         {
             calculateDistance = true;
@@ -550,6 +569,7 @@ public class Player_Car : Car
 
     public Rank_Data GetRankData()
     {
+        rankData.playerId = playerId;
         rankData.lap = lap;
         rankData.currentCheckpointIndex = currentCheckpointIndex;
         rankData.distanceToCheckPoint = distanceToCheckPoint;
@@ -577,19 +597,9 @@ public class Player_Car : Car
         else if (turnRight && turnLeft)
             carState = 0;
         else if (turnRight)
-        {
-            if (LHS)
-                carState = 1;
-            else
-                carState = 2;
-        }
+            carState = 2;
         else if (turnLeft)
-        {
-            if (LHS)
-                carState = 2;
-            else
-                carState = 1;
-        }
+            carState = 1;
         else
             carState = 0;
 

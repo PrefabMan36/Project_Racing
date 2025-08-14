@@ -444,24 +444,25 @@ public partial class Car
                 }
             }
             if (forceBrake) finalBrakeTorque = Mathf.Infinity;
+            if (wheels[i].axel == eAXEL.eAXEL_BACK)
+            {
+                if (sideBrakeInput > 0f)
+                {
+                    finalBrakeTorque += sideBrakePower * sideBrakeInput;
+                }
+            }
+
             wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
         }
+        
     }
     protected void SideBrakingUp()
     {
-        for (int i = 0; i < driveWheelsNum; i++)
-        {
-            if (wheels[i].axel == eAXEL.eAXEL_BACK)
-                wheels[i].wheelCollider.brakeTorque = 0f;
-        }
+        sideBrakeInput = 0f;
     }
     protected void SideBrakingDown()
     {
-        for (int i = 0; i < wheelNum; i++)
-        {
-            if (wheels[i].axel == eAXEL.eAXEL_BACK)
-                wheels[i].wheelCollider.brakeTorque = Mathf.Infinity;
-        }
+        sideBrakeInput = 1f;
     }
     public void SetBrakePower(float _brakePower) { brakePower = _brakePower; }
     #endregion

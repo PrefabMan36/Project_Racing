@@ -11144,6 +11144,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6070243587413900876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4598766594662652667}
+  m_Layer: 0
+  m_Name: FirstPersonCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4598766594662652667
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6070243587413900876}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.1, z: 0.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5414108620589773563}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6092444773513394421
 GameObject:
   m_ObjectHideFlags: 0
@@ -17543,6 +17574,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4598766594662652667}
   - {fileID: 2241699761430367328}
   - {fileID: 3816283882126731411}
   - {fileID: 8600330246063281785}
@@ -17897,9 +17929,14 @@ MonoBehaviour:
   maxSteerAngle: 30
   _curSteerAngle: 0
   currentInput: 0
+  steerInput: 0
   steerSpeed: 0
   slipingAngle: 0
   sideBrakeInput: 0
+  counterSteerThreshold: 0.3
+  counterSteerMultiplier: 2.5
+  counterSteerSumer: 0
+  frictionChangeSpeed: 5
   wheelTransform: []
   tempWheelRotation: {x: 0, y: 0, z: 0, w: 0}
   tempWheelPosition: {x: 0, y: 0, z: 0}
@@ -18070,6 +18107,7 @@ MonoBehaviour:
   _lap: 0
   _distanceToCheckPoint: 0
   nextCheckPoint: {fileID: 0}
+  navigation: {fileID: 0}
   gameTimer: 0
   finishedTime: 0
   raceStarted: 0

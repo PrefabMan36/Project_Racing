@@ -30,6 +30,7 @@ public class Driver : Object
     [SerializeField] Animator animator;
 
     [SerializeField] private Player_Car car;
+    [SerializeField] private bool LHS;
     [SerializeField] private int carState = 0;
     [SerializeField] private bool stunned = false;
 
@@ -41,6 +42,11 @@ public class Driver : Object
             Debug.LogError($"Driver script must be attached to a child of Player_Car: {gameObject.name}");
             return;
         }
+
+        if(transform.localScale.x < 0)
+            LHS = true;
+        else
+            LHS = false;
 
         animator = GetComponent<Animator>();
     }
@@ -58,6 +64,15 @@ public class Driver : Object
             currentState = (ESTATE)currentStateNum;
         else
             Debug.LogError($"Invalid state: {currentStateNum} for {gameObject.name}");
+
+        if(LHS == true)
+        {
+            if (currentState == ESTATE.LEFT)
+                currentState = ESTATE.RIGHT;
+            else if (currentState == ESTATE.RIGHT)
+                currentState = ESTATE.LEFT;
+        }
+
         if (!stunned)
         {
             switch (currentState)
