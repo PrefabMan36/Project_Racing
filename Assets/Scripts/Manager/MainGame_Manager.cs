@@ -829,7 +829,7 @@ public class MainGame_Manager : NetworkBehaviour
         isLapTimeDiffShowing = true;
         lapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
         lapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
-        lapTimeDiffText.text = '+' + string.Format("{0:0.00}", _diffTime);
+        lapTimeDiffText.text = (_diffTime > 0 ? "+" : "") + string.Format("{0:0.00}", _diffTime);
         lapTimeDiffImage.gameObject.SetActive(true);
 
         while (true)
@@ -865,10 +865,10 @@ public class MainGame_Manager : NetworkBehaviour
 
         localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, 1f);
         if (_diffTime < 0)
-            localLapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
-        else
             localLapTimeDiffText.color = new Color(0f, 1f, 0f, 1f);
-        localLapTimeDiffText.text = '+' + string.Format("{0:0.00}", _diffTime);
+        else
+            localLapTimeDiffText.color = new Color(1f, 0f, 0f, 1f);
+        localLapTimeDiffText.text = (_diffTime > 0 ? "+" : "") + string.Format("{0:0.00}", _diffTime);
         localLapTimeDiffImage.gameObject.SetActive(true);
 
         while (true)
@@ -885,9 +885,9 @@ public class MainGame_Manager : NetworkBehaviour
             else if (localLapTimeDiffTimer > 2f)
             {
                 if (_diffTime < 0)
-                    localLapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
-                else
                     localLapTimeDiffText.color = new Color(0f, 1f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
+                else
+                    localLapTimeDiffText.color = new Color(1f, 0f, 0f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
                 localLapTimeDiffImage.color = new Color(0.8f, 0.8f, 0.8f, Mathf.Lerp(1f, 0f, lapTimeDiffTimer - 2f));
             }
         }

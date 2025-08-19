@@ -17,8 +17,23 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 64122db7f61710d498842e9dbe87c25c
   m_SerializeEntries:
-  - m_GUID: 08e00787136b89944b260e2782e6fef9
-    m_Address: Assets/Prefabs/Environment/CameraPosition.prefab
+  - m_GUID: 4ca422cae321bdb4b98f56c0f9208ab9
+    m_Address: Assets/Prefabs/Environment/TailLamps.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bf740571814ec8946883ed3a42a1dbeb
+    m_Address: Assets/Prefabs/Environment/Arrow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d90e1dad373faea478f37e73aedba436
+    m_Address: Assets/Prefabs/Environment/HeadLights.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dab6b0030a18d1847833a6af9f2996db
+    m_Address: Assets/Prefabs/Environment/Navigation_Player.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

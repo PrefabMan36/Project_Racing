@@ -232,6 +232,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fe5f055d4de1bd41a0ac48e50d7a1d2
+    m_Address: Assets/Prefabs/Environment/Scene/City_Night/Roads.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7069fc056197abe428a6bb51e2b9a316
     m_Address: Assets/Models/Scene/City_Night/office_building_3_bgr.fbx
     m_ReadOnly: 0

@@ -1520,6 +1520,12 @@ MonoBehaviour:
   - {fileID: 6835088170788120521}
   - {fileID: 3439589900863390013}
   - {fileID: 1338294999718130702}
+  trailRenderer: []
+  parantRB: {fileID: 0}
+  forwardVelocity: {x: 0, y: 0, z: 0}
+  sidewaysVelocity: {x: 0, y: 0, z: 0}
+  sidewaysSpeed: 0
+  minDriftSpeed: 10
   isOn: 0
 --- !u!1 &6248395253903744782
 GameObject:

@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Navigation_Camera : MonoBehaviour
 {
-    [SerializeField] private GameObject followCamera;
+    [Header("Navigation Camera Settings")]
+    [SerializeField] private FollowCameras navigationCameraObject;
+
+    [SerializeField] private Camera followCamera;
     [SerializeField] private Vector3 baseFollowCameraPosition;
 
-    [SerializeField] private GameObject topDownCamera;
+    [SerializeField] private Camera topDownCamera;
     [SerializeField] private Vector3 baseTopDownCameraPosition;
+    [SerializeField] private RenderTexture renderTexture;
 
     [SerializeField] private Player_Car car;
     [SerializeField] private Transform basePosition;
@@ -20,6 +24,13 @@ public class Navigation_Camera : MonoBehaviour
 
     private void Start()
     {
+        navigationCameraObject = GameObject.FindWithTag("SubCamera").GetComponent<FollowCameras>();
+        navigationCameraObject.transform.SetParent(transform);
+        navigationCameraObject.transform.localPosition = Vector3.zero;
+        navigationCameraObject.transform.localEulerAngles = Vector3.zero;
+        followCamera = navigationCameraObject.followCamera;
+        topDownCamera = navigationCameraObject.followCameraTopDown;
+
         car = transform.GetComponentInParent<Player_Car>();
         baseFollowCameraPosition = followCamera.transform.localPosition;
         baseTopDownCameraPosition = topDownCamera.transform.localPosition;
@@ -27,7 +38,16 @@ public class Navigation_Camera : MonoBehaviour
         basePosition = car.transform;
         transform.SetParent(null);
         transform.Rotate(Vector3.zero,Space.World);
+
         StartCoroutine(Navigation());
+    }
+
+    private void OnDestroy()
+    {
+        if(navigationCameraObject != null)
+        {
+            navigationCameraObject.transform.SetParent(null);
+        }
     }
 
     private void IsRotateCheck()
@@ -65,13 +85,13 @@ public class Navigation_Camera : MonoBehaviour
             }
             if(isTopDown)
             {
-                topDownCamera.SetActive(true);
-                followCamera.SetActive(false);
+                topDownCamera.gameObject.SetActive(true);
+                followCamera.gameObject.SetActive(false);
             }
             else
             {
-                topDownCamera.SetActive(false);
-                followCamera.SetActive(true);
+                topDownCamera.gameObject.SetActive(false);
+                followCamera.gameObject.SetActive(true);
                 rotation.y = basePosition.eulerAngles.y;
                 transform.eulerAngles = rotation;
             }

@@ -17,6 +17,11 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 6682ed8f3e0a4e144ab8c7eb1b58c6ec
   m_SerializeEntries:
+  - m_GUID: 269490de66e33a34dad45a50e3d4c168
+    m_Address: Assets/Images/Textures/Particle/Spark.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4a7a4d39bfaa2f243b901afb4436f250
     m_Address: Assets/Images/Textures/Particle/WeaponTrail.png
     m_ReadOnly: 0

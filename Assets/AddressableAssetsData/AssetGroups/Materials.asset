@@ -17,6 +17,16 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 6a2aeaacbdcdfa94281458d78c76db7a
   m_SerializeEntries:
+  - m_GUID: 15ba5e05aee052e4a886f0d33b35a4e5
+    m_Address: Assets/Models/Materials/Navigation_Player.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72ded5e1b971e7a40b40871c4068531b
+    m_Address: Assets/Models/Materials/Arrow.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 75f9ba3e3beb7e14aa313c3f989a8d4a
     m_Address: Assets/Models/Materials/side_light_mat.mat
     m_ReadOnly: 0
@@ -44,6 +54,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e554111bdd4de5b4bafbebde6d09c7c3
     m_Address: Assets/Models/Materials/No Name.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eaa53b0e2d973fa47816c6d0331552c4
+    m_Address: Assets/Models/Materials/DriftLight.mat
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

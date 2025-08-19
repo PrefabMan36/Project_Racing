@@ -22,6 +22,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41f124081ebd34e4c86b2075f38d1af7
+    m_Address: Assets/Models/Meshes/Arrow.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 480648689bcacb1429f245e93f814b58
     m_Address: Assets/Models/Meshes/Tires.FBX
     m_ReadOnly: 0
@@ -44,6 +49,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d912e0a438ca9414aba1212daa7a43c6
     m_Address: Assets/Models/Meshes/Wheel_A.FBX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de03be4609a572544909b519f3299420
+    m_Address: Assets/Models/Meshes/Wheel_B.FBX
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
