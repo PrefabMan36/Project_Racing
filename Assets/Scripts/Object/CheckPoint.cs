@@ -9,6 +9,8 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private MainGame_Manager mainGameManager;
     [SerializeField] private BoxCollider checkPointCollider;
 
+    [SerializeField] private Pathfinder pathfinder;
+
     [SerializeField] private Transform navigationPoint;
     [SerializeField] private Vector3 navigationPointSize = new Vector3(1f, 1f, 1f);
 
@@ -74,6 +76,7 @@ public class CheckPoint : NetworkBehaviour
         {
             circles[i].transform.localScale = circleSizeVector;
         }
+        pathfinder = mainGameManager.pathfinder;
     }
 
     private void InitCheckPointForClient()
@@ -113,6 +116,9 @@ public class CheckPoint : NetworkBehaviour
                     navigationPoint.localScale = navigationPointSize;
                     EnteredPlayer.SetCheckPoint(checkPointIndex + 1);
                     EnteredPlayer.SetNextCheckPointPosition(nextCheckPoint);
+
+                    pathfinder.UpdatePath(transform.position, nextCheckPointValue);
+
                     tempTimer = mainGameManager.CheckPointChecked(EnteredPlayer, fastestCheckPointTime[currentLap], localCheckPointTime, checkPointIndex);
                     fastestCheckPointTime.Set(currentLap, fastestCheckPointTime[currentLap] > tempTimer ? tempTimer : fastestCheckPointTime[currentLap]);
                     if(EnteredPlayer.GetLocalPlayer() && tempTimer < localCheckPointTime)
@@ -128,7 +134,10 @@ public class CheckPoint : NetworkBehaviour
     public void SetNextCheckPoint(CheckPoint _nextCheckPoint)
     {
         nextCheckPoint = _nextCheckPoint;
+        nextCheckPointValue = _nextCheckPoint.transform.position;
     }
+    public CheckPoint GetNextCheckPoint()
+    { return nextCheckPoint; }
 
     public int GetCheckPointIndex()
     { return checkPointIndex; }

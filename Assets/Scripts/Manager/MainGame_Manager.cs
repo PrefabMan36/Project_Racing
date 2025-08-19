@@ -59,6 +59,8 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private eTRACK_TYPE trackType;
     [Networked, SerializeField] private int maxLaps { get; set; }
     [SerializeField] private bool isNight;
+
+    [SerializeField] public Pathfinder pathfinder;
     #endregion
 
     #region UI Prefabs & References
@@ -153,6 +155,8 @@ public class MainGame_Manager : NetworkBehaviour
     {
         base.Spawned();
         Runner.SetIsSimulated(Object, true);
+
+        pathfinder = transform.GetComponent<Pathfinder>();
 
         StartCoroutine(LoadCarPrefabsCoroutine());
 
@@ -496,10 +500,12 @@ public class MainGame_Manager : NetworkBehaviour
             {
                 case eTRACK_TYPE.eTRACK_TYPE_CIRCUIT:
                     GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+                    pathfinder.UpdatePath(lastCheckPoint.transform.position, firstCheckPoint.transform.position);
                     break;
                 case eTRACK_TYPE.eTRACK_TYPE_SPRINT:
                 case eTRACK_TYPE.eTRACK_TYPE_DRAG:
                     GenerateSpawnPointsFromCheckpoint(firstCheckPoint);
+                    pathfinder.UpdatePath(firstCheckPoint.transform.position, firstCheckPoint.GetNextCheckPoint().transform.position);
                     break;
             }
             lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();

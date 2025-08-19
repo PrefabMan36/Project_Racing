@@ -212,6 +212,56 @@ public partial class Car
             }
         }
     }
+
+    protected void CalculateGearSpeedLimits()
+    {
+        // 1. WheelCollider에서 바퀴의 반지름(radius)을 가져옵니다.
+        //    구동축 바퀴 중 첫 번째 바퀴를 기준으로 계산합니다.
+        if (driveWheels == null || driveWheels.Count == 0)
+        {
+            Debug.LogError("Drive wheels are not set. Cannot calculate speed limits.");
+            return;
+        }
+        float wheelRadius = driveWheels[0].radius;
+        float wheelCircumference = wheelRadius * 2f * Mathf.PI; // 바퀴 둘레 (미터)
+
+        // 2. 기존 최고 속도 데이터를 초기화합니다.
+        gearSpeedLimit.Clear();
+
+        // 3. 모든 기어비에 대해 최고 속도를 계산하고 딕셔너리에 추가합니다.
+        foreach (var gearEntry in gearRatio)
+        {
+            eGEAR currentGear = gearEntry.Key;
+            float currentGearRatio = gearEntry.Value;
+
+            // 중립(N) 기어나 기어비가 0인 경우는 최고 속도를 0으로 처리
+            if (currentGear == eGEAR.eGEAR_NEUTURAL || Mathf.Approximately(currentGearRatio, 0f))
+            {
+                gearSpeedLimit.Add(currentGear, 0f);
+                continue;
+            }
+
+            // 4. 공식 적용
+            // 분당 바퀴 회전수 = 엔진 최대 RPM / (기어비 * 종감속비)
+            float wheelRpmAtMaxEngineRpm = maxEngineRPM / (Mathf.Abs(currentGearRatio) * finalDriveRatio);
+
+            // 분당 이동 거리 (미터) = 분당 바퀴 회전수 * 바퀴 둘레
+            float metersPerMinute = wheelRpmAtMaxEngineRpm * wheelCircumference;
+
+            // 시속 (km/h)으로 변환
+            float kph = metersPerMinute * 60 / 1000;
+
+            gearSpeedLimit.Add(currentGear, kph);
+            Debug.Log($"Gear {currentGear} Max Speed Calculated: {kph:F2} km/h");
+        }
+
+        // 후진 기어의 최고 속도는 별도로 제한하고 싶다면 아래와 같이 설정할 수 있습니다.
+        if (gearSpeedLimit.ContainsKey(eGEAR.eGEAR_REVERSE))
+        {
+            gearSpeedLimit[eGEAR.eGEAR_REVERSE] = Mathf.Min(gearSpeedLimit[eGEAR.eGEAR_REVERSE], 50f); // 예: 최대 50km/h로 제한
+        }
+    }
+
     // 엔진 회전수에 따른 마력 비율 계산하는 함수
     private float GetPowerFactor(float _RPM)
     {
@@ -555,15 +605,16 @@ public partial class Car
     {
         if (!IsGrounded() || currentGear == eGEAR.eGEAR_NEUTURAL || shiftTimer > 0f) return;
 
-        speedThresholdForUpshift =
-            currentGear == eGEAR.eGEAR_FIRST ?
-            gearSpeedLimit[eGEAR.eGEAR_FIRST] / 2f :
-            throttle > 0.9f ?
-            gearSpeedLimit[currentGear] * 0.8f : gearSpeedLimit[currentGear] * 0.6f;
-
+        //speedThresholdForUpshift =
+        //    currentGear == eGEAR.eGEAR_FIRST ?
+        //    gearSpeedLimit[eGEAR.eGEAR_FIRST] / 2f :
+        //    throttle > 0.9f ?
+        //    gearSpeedLimit[currentGear] * 0.8f : gearSpeedLimit[currentGear] * 0.6f;
+        bool isSpeedReadyForUpshift = speed > gearSpeedLimit[currentGear] * 0.9f || speed > perviousMaxSpeed * 1.05f;
         // Up-Shift 조건: 다음 기어로 변속해도 괜찮은 속도 && 현재 RPM이 마력 기반 Up 시점 도달
         // (속도 조건은 급격한 저속 고 RPM 상태에서 불필요한 변속 방지용으로 추가 가능)
-        if (optimalShiftUpRPMs.ContainsKey(currentGear) && currentEngineRPM > optimalShiftUpRPMs[currentGear] && speed > speedThresholdForUpshift)
+        //if (optimalShiftUpRPMs.ContainsKey(currentGear) && currentEngineRPM > optimalShiftUpRPMs[currentGear] && speed > speedThresholdForUpshift)
+        if (optimalShiftUpRPMs.ContainsKey(currentGear) && currentEngineRPM > optimalShiftUpRPMs[currentGear] && isSpeedReadyForUpshift)
         { ChangeGear(true); }
 
         // Down-Shift 조건: 현재 RPM이 마력 기반 Down 시점 미만 && 첫번째 기어가 아님

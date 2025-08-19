@@ -21,7 +21,7 @@ MonoBehaviour:
     value: 270
   sampleCount:
     overrideState: 1
-    value: 8
+    value: 12
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

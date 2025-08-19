@@ -183,6 +183,7 @@ public class Player_Car : Car
         SetWheelsData(wheelData);
         SpawnSmoke();// 스폰 연기 설정
         CalculateOptimalShiftPoints();// 최적 기어 변속 포인트를 계산합니다.
+        CalculateGearSpeedLimits();
         if (centerMass != null)
         {
             originalCenterOfMass = centerMass.transform.localPosition;

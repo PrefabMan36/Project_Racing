@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2251936397002014767}
   - component: {fileID: 4724643925105132534}
   - component: {fileID: 190380100839616690}
+  - component: {fileID: 7621213779240488193}
   m_Layer: 0
   m_Name: MainGame_Manager
   m_TagString: GameController
@@ -152,3 +153,18 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 4724643925105132534}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &7621213779240488193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284401003105587848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6044421f008a383429a9c638ce92b8b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPoint: {fileID: 0}
+  endPoint: {fileID: 0}
+  drivingLinePath: {fileID: 0}

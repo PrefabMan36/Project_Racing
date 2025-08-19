@@ -47,6 +47,7 @@ public class Navigation_Camera : MonoBehaviour
         if(navigationCameraObject != null)
         {
             navigationCameraObject.transform.SetParent(null);
+            StopAllCoroutines();
         }
     }
 
