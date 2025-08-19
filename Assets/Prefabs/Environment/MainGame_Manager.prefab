@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameStart: 0
   networkRunner: {fileID: 0}
+  sceneChangeDelay: 5
   playerCar: {fileID: 0}
   playerCars:
   - {fileID: 0}
@@ -56,6 +57,14 @@ MonoBehaviour:
   localPlayer: {fileID: 0}
   localPlayerCar: {fileID: 0}
   playerNumber: 0
+  playerCarPrefabNames:
+  - Super2000
+  - Super2000
+  - Super2000
+  - Super2000
+  _totalPlayerCount: 0
+  carPrefabBundle: {fileID: 0}
+  areCarPrefabsLoaded: 0
   spawnPosition:
   - {fileID: 0}
   - {fileID: 0}
@@ -63,31 +72,60 @@ MonoBehaviour:
   - {fileID: 0}
   spawnPointSpacing: 2.5
   spawnPointVerticalOffset: 1
-  playerCarPrefab:
-  - {fileID: 1982242415706992608, guid: 7b367dccc659de64b8c4d882ca0505fc, type: 3}
-  - {fileID: 2950555046133427952, guid: 1025e749bf4c01943b04668eae326147, type: 3}
-  playerCarPrefabNames:
-  - Super2000
-  - Super2000
-  - Super2000
-  - Super2000
-  gameTimer: 0
+  _lastCheckPointIndex: 0
+  checkPoint_Prefab: {fileID: 4090549688898884965, guid: 4dca9df325b93df44b0c5f3594bfa19d, type: 3}
+  tempCheckPoint: {fileID: 0}
+  firstCheckPoint: {fileID: 0}
+  lastCheckPoint: {fileID: 0}
+  checkPoint: {fileID: 0}
+  trackType: 0
+  _maxLaps: 0
+  _rank:
+    _items: []
+  isNight: 0
   MainCamera_Prefab: {fileID: 7916578112111094242, guid: ead7127616435bd43bcabcaa12a9bcc9, type: 3}
   rpmGauge_Prefab: {fileID: 1899898029282573489, guid: 45faa3b313ff9314fa64ee051a2a8ddd, type: 3}
+  navigation_Prefab: {fileID: 2193873919346045794, guid: 3223d1aa424299e46b28a12649a0a5d9, type: 3}
   NitroBar_Prefab: {fileID: 8717058668016222255, guid: e8d2fe6a3cf99304f8de0aa0518435bd, type: 3}
+  Timer_Prefab: {fileID: 4071485398521214082, guid: 68714215f57b4674eb9f0144ce0408d5, type: 3}
+  lapTimeDiff_Prefab: {fileID: 3605015200353227365, guid: 111ae863470ede0418596bc1fc9c8941, type: 3}
+  localLapTimeDiff_Prefab: {fileID: 3605015200353227365, guid: 6aaf38d137a55c74984eeaef5c0742b5, type: 3}
+  rank_Prefab: {fileID: 2033209421621909715, guid: 06eff513991954140a2d3deee6d02603, type: 3}
+  resultUI_Prefab: {fileID: 1142691206478491404, guid: 6ec263caf4ec25e429218166478b4402, type: 3}
+  countDown_Prefab:
+    RawGuidValue: 4e8daa8e4ba616849bdb5063aab709e3
+  parentObjectForUIPanel_Prefab: {fileID: 5753768892760090230, guid: 7cca50b510ca204418ebd47cf3df4178, type: 3}
   MainCanvas: {fileID: 0}
   MainCamera: {fileID: 0}
   NitroBar: {fileID: 0}
   rpmGauge: {fileID: 0}
-  Timer_Prefab: {fileID: 4071485398521214082, guid: 68714215f57b4674eb9f0144ce0408d5, type: 3}
-  lapTimeDiff_Prefab: {fileID: 3605015200353227365, guid: 111ae863470ede0418596bc1fc9c8941, type: 3}
-  localLapTimeDiff_Prefab: {fileID: 3605015200353227365, guid: 6aaf38d137a55c74984eeaef5c0742b5, type: 3}
   timerImage: {fileID: 0}
   timerText: {fileID: 0}
   lapTimeDiffImage: {fileID: 0}
-  localLapTimeDiffImage: {fileID: 0}
   lapTimeDiffText: {fileID: 0}
+  localLapTimeDiffImage: {fileID: 0}
   localLapTimeDiffText: {fileID: 0}
+  resultUI: {fileID: 0}
+  raceResultBox: {fileID: 0}
+  countDown: {fileID: 0}
+  parentObjectForUIPanel: {fileID: 0}
+  rankPositons:
+  - {fileID: 1742558439493240191, guid: aefab049b8e0d7e4cbe48091ac0e5ffd, type: 3}
+  - {fileID: 1810342584930335736, guid: 6a808577113301d4abe84431c2dfd6fe, type: 3}
+  - {fileID: 7271866419783269339, guid: b382b3ac49d365c418a75fe504a2eedf, type: 3}
+  - {fileID: 9211215492772712723, guid: 22763078093a35d4c8c868332cacb1e7, type: 3}
+  tempRank: 0
+  isRankingStart: 0
+  rankTargetPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  shouldShowResults: 0
+  _raceEndedByCompletion: 0
+  _raceEndedByTimeout: 0
+  gameTimer: 0
+  didNotFinishCountdownDuration: 10
   isLapTimeDiffShowing: 0
   isLocalLapTimeDiffShowing: 0
   lapTimeDiffTimer: 0
@@ -95,35 +133,6 @@ MonoBehaviour:
   diffTime1: 0
   diffTime2: 0
   bestLapTime: 0
-  _lastCheckPointIndex: 0
-  _rank:
-    _items: []
-  checkPoint_Prefab: {fileID: 4090549688898884965, guid: 4dca9df325b93df44b0c5f3594bfa19d, type: 3}
-  tempCheckPoint: {fileID: 0}
-  firstCheckPoint: {fileID: 0}
-  lastCheckPoint: {fileID: 0}
-  checkPoint: {fileID: 0}
-  maxLaps: 1
-  rank_Prefab: {fileID: 2033209421621909715, guid: 06eff513991954140a2d3deee6d02603, type: 3}
-  rankPositons:
-  - {fileID: 1742558439493240191, guid: aefab049b8e0d7e4cbe48091ac0e5ffd, type: 3}
-  - {fileID: 1810342584930335736, guid: 6a808577113301d4abe84431c2dfd6fe, type: 3}
-  - {fileID: 7271866419783269339, guid: b382b3ac49d365c418a75fe504a2eedf, type: 3}
-  - {fileID: 9211215492772712723, guid: 22763078093a35d4c8c868332cacb1e7, type: 3}
-  rankTargetPositions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  resultUI_Prefab: {fileID: 1142691206478491404, guid: 6ec263caf4ec25e429218166478b4402, type: 3}
-  resultUI: {fileID: 0}
-  raceResultBox: {fileID: 0}
-  sceneChangeDelay: 5
-  countDown_Prefab:
-    RawGuidValue: 4e8daa8e4ba616849bdb5063aab709e3
-  countDown: {fileID: 0}
-  parentObjectForUIPanel_Prefab: {fileID: 5753768892760090230, guid: 7cca50b510ca204418ebd47cf3df4178, type: 3}
-  parentObjectForUIPanel: {fileID: 0}
 --- !u!114 &190380100839616690
 MonoBehaviour:
   m_ObjectHideFlags: 0

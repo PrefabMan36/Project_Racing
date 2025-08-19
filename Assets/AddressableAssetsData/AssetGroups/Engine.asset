@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Engine
+  m_EditorClassIdentifier: 
+  m_GroupName: Engine
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 1b0b0273dec229b45802ce4c8144cb34
+  m_SerializeEntries:
+  - m_GUID: 077f656dfe4373d44a0ed985d1f309fa
+    m_Address: Assets/Audio/SFX/Engine/509626__qopsinonstudios__4a-ge-engine-loop-1.wav
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ee9d0b0ef46e8b847960159aa404cd92, type: 2}
+    - {fileID: 11400000, guid: 56d2b7eccf9e8b740831d99c5a0a6508, type: 2}

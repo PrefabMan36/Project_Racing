@@ -9,8 +9,10 @@ using System.IO;
 public class TrackData_Manager : MonoBehaviour
 {
     public static TrackData_Manager instance { get; private set; }
-    public List<TrackData> trackDatas;
-    [SerializeField] private string csvFileName = "Tracks.csv";
+    public List<TrackCheckPointData> trackCheckpointDatas;
+    public List<TrackStateData> trackStateDatas;
+    [SerializeField] private string trackCheckpointFileName = "Tracks_Checkpoint.csv";
+    [SerializeField] private string trackStateFileName = "Tracks_State.csv";
     private async void Awake()
     {
         if (instance == null)
@@ -34,9 +36,9 @@ public class TrackData_Manager : MonoBehaviour
             Delimiter = "," // Specify the delimiter
         };
 
-        Debug.Log($"[TrackDataLoader] Attempting to load track data from: {csvFileName}");
-        List<TrackData> trackEntries = await CSVParser.ParseCSV<TrackData>(
-            csvFileName,
+        Debug.Log($"[TrackDataLoader] Attempting to load track data from: {trackCheckpointFileName}");
+        List<TrackCheckPointData> trackEntries = await CSVParser.ParseCSV<TrackCheckPointData>(
+            trackCheckpointFileName,
             config,
             context => context.RegisterClassMap<TrackDataMap>()
         );
@@ -51,15 +53,27 @@ public class TrackData_Manager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"[TrackDataLoader] No data loaded from {csvFileName} or file is empty/not found.");
-            trackEntries = new List<TrackData>();
+            Debug.LogWarning($"[TrackDataLoader] No data loaded from {trackCheckpointFileName} or file is empty/not found.");
+            trackEntries = new List<TrackCheckPointData>();
         }
-        trackDatas = trackEntries;
+
+        Debug.Log($"[CSVLoader] StreamingAssets에서 '{trackStateFileName}' 로딩 시작...");
+        List<TrackStateData> trackStateEntries = await CSVParser.ParseCSV<TrackStateData>(trackStateFileName);
+        if (trackStateEntries != null && trackStateEntries.Count > 0)
+        {
+            Debug.Log($"[CSVLoader] '{trackStateFileName}' 파일에서 총 {trackStateEntries.Count}개의 데이터 레코드를 로드했습니다.");
+        }
+        else
+        {
+            Debug.LogWarning($"[CSVLoader] '{trackStateFileName}' 파일 로드에 실패했거나 데이터가 없습니다.");
+        }
+        trackStateDatas = trackStateEntries;
+        trackCheckpointDatas = trackEntries;
     }
 
-    public TrackData GetTrackDataByName(string trackName)
+    public TrackCheckPointData GetTrackCheckpointDataByName(string trackName)
     {
-        foreach (var data in trackDatas)
+        foreach (var data in trackCheckpointDatas)
         {
             if (data.TrackName == trackName)
             {
@@ -67,6 +81,19 @@ public class TrackData_Manager : MonoBehaviour
             }
         }
         Debug.LogWarning($"TrackData with name '{trackName}' not found.");
+        return null;
+    }
+
+    public TrackStateData GetTrackStateDataByName(string trackName)
+    {
+        foreach (var data in trackStateDatas)
+        {
+            if (data.Name == trackName)
+            {
+                return data;
+            }
+        }
+        Debug.LogWarning($"TrackStateData with name '{trackName}' not found.");
         return null;
     }
 }

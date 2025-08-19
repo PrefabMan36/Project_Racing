@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 
@@ -31,7 +29,6 @@ public class Driver : Object
 
     [SerializeField] private Player_Car car;
     [SerializeField] private bool LHS;
-    [SerializeField] private int carState = 0;
     [SerializeField] private bool stunned = false;
 
     private void Start()

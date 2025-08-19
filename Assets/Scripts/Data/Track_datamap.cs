@@ -3,7 +3,7 @@ using CsvHelper;
 using System.Collections.Generic;
 using System.Linq;
 
-public sealed class TrackDataMap : ClassMap<TrackData>
+public sealed class TrackDataMap : ClassMap<TrackCheckPointData>
 {
     public TrackDataMap()
     {

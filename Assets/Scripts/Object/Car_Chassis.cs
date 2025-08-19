@@ -10,13 +10,16 @@ public partial class Car
         eAXEL_FRONT,
         eAXEL_BACK
     }
+
     [Serializable]
     public struct Wheel
     {
         public GameObject wheelModel;
         public WheelCollider wheelCollider;
         public TrailRenderer skidMarks;
+        public eTIRETYPE tireType;
         public eAXEL axel;
+        public bool isLeft;
     }
 
     //-------------------------VALUE-----------------------------
@@ -36,9 +39,9 @@ public partial class Car
 
     [Header("Counter Steer Settings")]
     public float counterSteerThreshold = 0.3f; // 카운터 스티어 감지 임계값
-    public float counterSteerMultiplier = 2.5f; // 카운터 스티어시 마찰 증가 배수
-    public float counterSteerSumer = 0.0f;
-    public float frictionChangeSpeed = 5f;
+    public float counterSteerMultiplier = 3.5f; // 카운터 스티어시 마찰 증가 배수
+    public float currentCounterSteerMultiplier = 1.0f;
+    public float frictionChangeSpeed = 8f;
     private bool isCounterSteering = false;
     #endregion
 
@@ -47,7 +50,6 @@ public partial class Car
     [SerializeField] private List<MeshRenderer> wheelTransform;
     [SerializeField] private Quaternion tempWheelRotation;
     [SerializeField] private Vector3 tempWheelPosition;
-    [SerializeField] private float wheelRadius;
 
     [Header("Real Wheels")]
     [SerializeField] private WheelHit wheelHit; //휠정보
@@ -64,27 +66,71 @@ public partial class Car
 
     #region Value Tire
     [Header("Tire Value")]
-    [SerializeField] private bool isDrift;
-    [SerializeField] private float forwardTireGrip_FG = 3.0f;
-    [SerializeField] private float forwardTireGrip_RG = 3.0f;
-    [SerializeField] private float sidewaysTireGrip_FG = 3.5f;
-    [SerializeField] private float sidewaysTireGrip_RG = 3.5f;
+    [SerializeField] private float wheelMass;
+    [SerializeField] private float wheelRadius;
+    [SerializeField] private eTIRETYPE tireType;
+    [SerializeField] private float suspensionDistanceFront;
+    [SerializeField] private float suspensionDistanceRear;
+    [SerializeField] private float forceAppPointDistanceFront;
+    [SerializeField] private float forceAppPointDistanceRear;
 
-    [SerializeField] private float forwardTireGrip_FD = 2.5f;
-    [SerializeField] private float forwardTireGrip_RD = 2.5f;
-    [SerializeField] private float sidewaysTireGrip_FD = 2.0f;
-    [SerializeField] private float sidewaysTireGrip_RD = 2.0f;
+    [SerializeField] private float forwardextremumSlipFront;
+    [SerializeField] private float forwardextremumValueFront;
+    [SerializeField] private float forwardsasymptoteSlipFront;
+    [SerializeField] private float forwardsasymptoteValueFront;
 
-    [SerializeField] private float forwardTireGrip;
-    [SerializeField] private float sidewaysTireGrip;
+    [SerializeField] private float sidewayextremumSlipFront;
+    [SerializeField] private float sidewayextremumValueFront;
+    [SerializeField] private float sidewaysasymptoteSlipFront;
+    [SerializeField] private float sidewaysasymptoteValueFront;
 
-    [SerializeField] private float forwardValue = 1f;
-    [SerializeField] private float sideValue = 1f;
+    [SerializeField] private float forwardextremumSlipRear;
+    [SerializeField] private float forwardextremumValueRear;
+    [SerializeField] private float forwardsasymptoteSlipRaer;
+    [SerializeField] private float forwardsasymptoteValueRaer;
+
+    [SerializeField] private float sidewayextremumSlipRear;
+    [SerializeField] private float sidewayextremumValueRear;
+    [SerializeField] private float sidewaysasymptoteSlipRear;
+    [SerializeField] private float sidewaysasymptoteValueRear;
+
+    [SerializeField] private float forwardTireGripFront;
+    [SerializeField] private float forwardTireGripRear;
+    [SerializeField] private float sidewaysTireGripFront;
+    [SerializeField] private float sidewaysTireGripRear;
+
+    [SerializeField] private float suspensionSpringFront;
+    [SerializeField] private float suspensionSpringRear;
+    [SerializeField] private float suspensionDamperFront;
+    [SerializeField] private float suspensionDamperRear;
+    [SerializeField] private float suspensionPositionFront;
+    [SerializeField] private float suspensionPositionRear;
+
+    [SerializeField] private float baseForwardTireGrip;
+    [SerializeField] private float baseSidewaysTireGrip;
+
+    //[SerializeField] private float forwardValue = 1f;
+    //[SerializeField] private float sideValue = 1f;
     [SerializeField] private WheelFrictionCurve forwardFriction, sidewaysFriction;
     [SerializeField] private JointSpring suspension;
     [SerializeField] private float[] forwardSlip;
     [SerializeField] private float[] sidewaysSlip;
     [SerializeField] private float[] overallSlip;
+    #endregion
+
+    #region Dynamic Friction Settings
+    [Header("Dynamic Friction Settings")]
+    [Tooltip("가속/감속 시 앞/뒤 타이어 그립 변화량")]
+    [SerializeField] private float longitudinalLoadFactor;
+    [Tooltip("코너링 시 좌/우 타이어 그립 변화량")]
+    [SerializeField] private float lateralLoadFactor;
+    [Tooltip("타이어가 미끄러질 때 전반적인 그립 감소량")]
+    [SerializeField] private float slipGripReductionFactor;
+    [Tooltip("각 바퀴에 가해지는 현재 하중 (디버깅용)")]
+    [SerializeField] private float[] wheelLoads;
+    [SerializeField] private float forwardFrictionMin;
+    [SerializeField] private float sidewaysFrictionMin;
+    private Vector3 lastVelocity;
     #endregion
 
     #region Value AntiRoll
@@ -99,7 +145,6 @@ public partial class Car
 
     #region Value Drift
     [Header("Drift Value")]
-    [Range(0.0f, 0.5f), SerializeField] private float slipLimit = 0.3f;
     [SerializeField] private AudioSource slipSound;
     [SerializeField] private float currentMaxSlip;
     [SerializeField] private float sumSlip;
@@ -108,6 +153,8 @@ public partial class Car
     [SerializeField] private GameObject smokePrefab;
     [SerializeField] private GameObject[] smokes;
     [SerializeField] private ParticleSystem[] smokeParticles;
+    [Networked, Capacity(4), SerializeField] private NetworkArray<NetworkBool> isDrifting => default;
+    [Networked, SerializeField] private float resultSlip { get; set; } = 0f;
     #endregion
 
     #region Function Steer Setting
@@ -131,6 +178,7 @@ public partial class Car
     protected void SetDriveWheels()
     {
         wheelNum = wheels.Count;
+        wheelLoads = new float[wheelNum];
         SetSteerWheelsCount(2);
         switch (driveAxel)
         {
@@ -146,6 +194,12 @@ public partial class Car
         {
             if (wheels[i].axel == eAXEL.eAXEL_FRONT)
                 steerWheels.Add(wheels[i].wheelCollider);
+            if (wheels[i].wheelModel.transform.localPosition.x < 0)
+            {
+                var wheel = wheels[i];
+                wheel.isLeft = true;
+                wheels[i] = wheel;
+            }
             switch (driveAxel)
             {
                 case eCAR_DRIVEAXEL.eFWD:
@@ -163,7 +217,6 @@ public partial class Car
         }
         smokes = new GameObject[wheelNum];
         smokeParticles = new ParticleSystem[wheelNum];
-        wheelRadius = wheels[0].wheelCollider.radius;
         differentialPower = new float[driveWheelsNum];
     }
     #endregion
@@ -171,6 +224,7 @@ public partial class Car
     #region Value Brake
     [Header("Value Brake")]
     [SerializeField] private float brakePower;
+    [SerializeField] private float brakeBias;
     [SerializeField] private float requestedBrakeTorque;
     [SerializeField] private float sideBrakePower;
     [SerializeField] private float targetBrakeTorque;
@@ -201,93 +255,117 @@ public partial class Car
         sidewaysSlip = new float[wheelNum];
         overallSlip = new float[wheelNum];
     }
-    protected void ChangeFriction(bool _mode)
+    protected void SetWheelsData(CarWheelsData wheelsData)
     {
-        isDrift = _mode;
+        wheelMass = wheelsData.wheelMass;
+        wheelRadius = wheelsData.wheelRadius;
+
+        brakePower = wheelsData.brakePower;
+        brakeBias = wheelsData.brakeBias;
+
+        forwardFrictionMin = wheelsData.forwardFrictionMin;
+        sidewaysFrictionMin = wheelsData.sidewaysFrictionMin;
+
+        longitudinalLoadFactor = wheelsData.longitudinalLoadFactor;
+        lateralLoadFactor = wheelsData.lateralLoadFactor;
+        slipGripReductionFactor = wheelsData.slipGripReductionFactor;
+
+        if (System.Enum.TryParse(wheelsData.Type, out eTIRETYPE tireTypeEnum))
+            tireType = tireTypeEnum;
+        else
+        {
+            Debug.LogError($"Invalid tire type: {wheelsData.Type}. Using default value.");
+            tireType = eTIRETYPE.eTIRETYPE_BALANCE; // 기본값 설정
+        }
+
+        suspensionDistanceFront = wheelsData.suspensionDistanceFront;
+        suspensionDistanceRear = wheelsData.suspensionDistanceRear;
+
+        forceAppPointDistanceFront = wheelsData.forceAppPointDistanceFront;
+        forceAppPointDistanceRear = wheelsData.forceAppPointDistanceRear;
+
+        forwardextremumSlipFront = wheelsData.forwardextremumSlipFront;
+        forwardextremumValueFront = wheelsData.forwardextremumValueFront;
+        forwardsasymptoteSlipFront = wheelsData.forwardsasymptoteSlipFront;
+        forwardsasymptoteValueFront = wheelsData.forwardsasymptoteValueFront;
+
+        sidewayextremumSlipFront = wheelsData.sidewayextremumSlipFront;
+        sidewayextremumValueFront = wheelsData.sidewayextremumValueFront;
+        sidewaysasymptoteSlipFront = wheelsData.sidewaysasymptoteSlipFront;
+        sidewaysasymptoteValueFront = wheelsData.sidewaysasymptoteValueFront;
+
+        forwardextremumSlipRear = wheelsData.forwardextremumSlipRear;
+        forwardextremumValueRear = wheelsData.forwardextremumValueRear;
+        forwardsasymptoteSlipRaer = wheelsData.forwardsasymptoteSlipRear;
+        forwardsasymptoteValueRaer = wheelsData.forwardsasymptoteValueRear;
+
+        sidewayextremumSlipRear = wheelsData.sidewayextremumSlipRear;
+        sidewayextremumValueRear = wheelsData.sidewayextremumValueRear;
+        sidewaysasymptoteSlipRear = wheelsData.sidewaysasymptoteSlipRear;
+        sidewaysasymptoteValueRear = wheelsData.sidewaysasymptoteValueRear;
+
+        forwardTireGripFront = wheelsData.forwardTireGripFront;
+        forwardTireGripRear = wheelsData.forwardTireGripRear;
+        sidewaysTireGripFront = wheelsData.sidewaysTireGripFront;
+        sidewaysTireGripRear = wheelsData.sidewaysTireGripRear;
+
+        suspensionSpringFront = wheelsData.suspensionSpringFront;
+        suspensionSpringRear = wheelsData.suspensionSpringRear;
+        suspensionDamperFront = wheelsData.suspensionDamperFront;
+        suspensionDamperRear = wheelsData.suspensionDamperRear;
+        suspensionPositionFront = wheelsData.suspensionPositionFront;
+        suspensionPositionRear = wheelsData.suspensionPositionRear;
+
+        ChangeWheelsData();
+    }
+    private void ChangeWheelsData()
+    {
         for (int i = 0; i < wheelNum; i++)
         {
             forwardFriction = wheels[i].wheelCollider.forwardFriction;
             sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
             suspension = wheels[i].wheelCollider.suspensionSpring;
 
-            /*if(_mode)//Drift mode
+            wheels[i].wheelCollider.mass = wheelMass;
+            wheels[i].wheelCollider.radius = wheelRadius;
+
+            if (wheels[i].axel == eAXEL.eAXEL_FRONT)
             {
-                forwardFriction.extremumSlip = 0.7f;
-                forwardFriction.extremumValue = 1.8f;
-                forwardFriction.asymptoteSlip = 1.2f;
-                forwardFriction.asymptoteValue = 1.0f;
-                sidewaysFriction.extremumSlip = 1.0f;
-                sidewaysFriction.extremumValue = 2.2f;
-                sidewaysFriction.asymptoteSlip = 1.5f;
-                sidewaysFriction.asymptoteValue = 1.2f;
+                wheels[i].wheelCollider.suspensionDistance = suspensionDistanceFront;
+                wheels[i].wheelCollider.forceAppPointDistance = forceAppPointDistanceFront;
+
+                forwardFriction.extremumSlip = forwardextremumSlipFront;
+                forwardFriction.extremumValue = forwardextremumValueFront;
+                forwardFriction.asymptoteSlip = forwardsasymptoteSlipFront;
+                forwardFriction.asymptoteValue = forwardsasymptoteValueFront;
+
+                sidewaysFriction.extremumSlip = sidewayextremumSlipFront;
+                sidewaysFriction.extremumValue = sidewayextremumValueFront;
+                sidewaysFriction.asymptoteSlip = sidewaysasymptoteSlipFront;
+                sidewaysFriction.asymptoteValue = sidewaysasymptoteValueFront;
+
+                suspension.spring = suspensionSpringFront;
+                suspension.damper = suspensionDamperFront;
+                suspension.targetPosition = suspensionPositionFront;
             }
             else
             {
-                forwardFriction.extremumSlip = 0.4f;
-                forwardFriction.extremumValue = 2.0f;
-                forwardFriction.asymptoteSlip = 0.8f;
-                forwardFriction.asymptoteValue = 1.5f;
-                sidewaysFriction.extremumSlip = 0.2f;
-                sidewaysFriction.extremumValue = 2.5f;
-                sidewaysFriction.asymptoteSlip = 0.7f;
-                sidewaysFriction.asymptoteValue = 1.8f;
-            }*/
+                wheels[i].wheelCollider.suspensionDistance = suspensionDistanceRear;
+                wheels[i].wheelCollider.forceAppPointDistance = forceAppPointDistanceRear;
 
-            if (_mode)
-            {
-                if (wheels[i].axel == eAXEL.eAXEL_FRONT)
-                {
-                    forwardFriction.extremumSlip = 0.4f;
-                    forwardFriction.extremumValue = 1.0f;
-                    forwardFriction.asymptoteSlip = 0.8f;
-                    forwardFriction.asymptoteValue = 0.5f;
+                forwardFriction.extremumSlip = forwardextremumSlipRear;
+                forwardFriction.extremumValue = forwardextremumValueRear;
+                forwardFriction.asymptoteSlip = forwardsasymptoteSlipRaer;
+                forwardFriction.asymptoteValue = forwardsasymptoteValueRaer;
 
-                    sidewaysFriction.extremumSlip = 0.2f;
-                    sidewaysFriction.extremumValue = 1.0f;
-                    sidewaysFriction.asymptoteSlip = 0.5f;
-                    sidewaysFriction.asymptoteValue = 0.8f;
+                sidewaysFriction.extremumSlip = sidewayextremumSlipRear;
+                sidewaysFriction.extremumValue = sidewayextremumValueRear;
+                sidewaysFriction.asymptoteSlip = sidewaysasymptoteSlipRear;
+                sidewaysFriction.asymptoteValue = sidewaysasymptoteValueRear;
 
-                    suspension.spring = 30000f;
-                    suspension.damper = 2500f;
-                }
-                else
-                {
-                    forwardFriction.extremumSlip = 0.4f;
-                    forwardFriction.extremumValue = 1.0f;
-                    forwardFriction.asymptoteSlip = 0.8f;
-                    forwardFriction.asymptoteValue = 0.5f;
-
-                    sidewaysFriction.extremumSlip = 0.3f;
-                    sidewaysFriction.extremumValue = 1.0f;
-                    sidewaysFriction.asymptoteSlip = 0.6f;
-                    sidewaysFriction.asymptoteValue = 0.85f;
-
-                    suspension.spring = 22000f;
-                    suspension.damper = 1800f;
-                }
-            }
-            else
-            {
-                forwardFriction.extremumSlip = 0.4f;
-                forwardFriction.extremumValue = 1.0f;
-                forwardFriction.asymptoteSlip = 0.6f;
-                forwardFriction.asymptoteValue = 0.8f;
-
-                sidewaysFriction.extremumSlip = 0.4f;
-                sidewaysFriction.extremumValue = 1.0f;
-                sidewaysFriction.asymptoteSlip = 0.8f;
-                sidewaysFriction.asymptoteValue = 1.9f;
-
-                if (wheels[i].axel == eAXEL.eAXEL_FRONT)
-                {
-                    suspension.spring = 45000f;
-                    suspension.damper = 5000f;
-                }
-                else
-                {
-                    suspension.spring = 48000f;
-                    suspension.damper = 5500f;
-                }
+                suspension.spring = suspensionSpringRear;
+                suspension.damper = suspensionDamperRear;
+                suspension.targetPosition = suspensionPositionRear;
             }
 
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
@@ -308,18 +386,11 @@ public partial class Car
         // 카운터 스티어링 감지 로직
         bool wasCounterSteering = isCounterSteering;
 
-        // 차량이 오른쪽으로 회전하는데 왼쪽으로 스티어링하는 경우
-        if (angularVelocityY > counterSteerThreshold && steerInput < -counterSteerThreshold)
-        {
-            isCounterSteering = true;
-        }
-        // 차량이 왼쪽으로 회전하는데 오른쪽으로 스티어링하는 경우
-        else if (angularVelocityY < -counterSteerThreshold && steerInput > counterSteerThreshold)
-        {
-            isCounterSteering = true;
-        }
-        // 측면 미끄러짐을 이용한 추가 감지
-        else if (Mathf.Abs(sidewaysVelocity) > 2f && Mathf.Sign(sidewaysVelocity) != Mathf.Sign(steerInput) && Mathf.Abs(steerInput) > 0.3f)
+        // 카운터 스티어링 감지 로직
+        // 차량이 오른쪽으로 미끄러지는데 왼쪽으로 스티어링하는 경우 (혹은 그 반대)
+        if ((angularVelocityY > counterSteerThreshold && steerInput < -counterSteerThreshold) ||
+            (angularVelocityY < -counterSteerThreshold && steerInput > counterSteerThreshold) ||
+            (Mathf.Abs(sidewaysVelocity) > 2f && Mathf.Sign(sidewaysVelocity) != Mathf.Sign(steerInput) && Mathf.Abs(steerInput) > 0.1f))
         {
             isCounterSteering = true;
         }
@@ -327,6 +398,10 @@ public partial class Car
         {
             isCounterSteering = false;
         }
+        float targetMultiplier = isCounterSteering ? counterSteerMultiplier : 1.0f;
+
+        // 현재 카운터 스티어 배수를 목표 배수까지 부드럽게 변경
+        currentCounterSteerMultiplier = Mathf.Lerp(currentCounterSteerMultiplier, targetMultiplier, Time.fixedDeltaTime * frictionChangeSpeed);
     }
 
     public void SetDriveAxel(eCAR_DRIVEAXEL _driveAxel)
@@ -346,66 +421,78 @@ public partial class Car
     }
     protected void UpdatingFriction()
     {
+        // 1. 차량의 하중 이동 계산
+        // 차량의 지역 가속도 계산 (전후, 좌우)
+        Vector3 localAcceleration = transform.InverseTransformDirection((carRB.velocity - lastVelocity) / Time.fixedDeltaTime);
+        lastVelocity = carRB.velocity;
+
+        // 전후 하중 이동 계산 (가속 시 뒤로, 감속 시 앞으로)
+        float longitudinalLoad = localAcceleration.z * longitudinalLoadFactor;
+        // 좌우 하중 이동 계산 (코너링 원심력)
+        float lateralLoad = localAcceleration.x * lateralLoadFactor;
+
+        // 2. 각 바퀴의 마찰력 업데이트
         for (int i = 0; i < wheelNum; i++)
         {
             if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                //overallSlip[i] = Mathf.Abs(wheelHit.forwardSlip + wheelHit.sidewaysSlip);
+                // 기본 마찰력 설정
+                baseForwardTireGrip = wheels[i].axel == eAXEL.eAXEL_FRONT ? forwardTireGripFront : forwardTireGripRear;
 
-                if(isDrift)
-                {
-                    if (wheels[i].axel == eAXEL.eAXEL_FRONT)
-                    {
-                        forwardTireGrip = forwardTireGrip_FD;
-                        sidewaysTireGrip = sidewaysTireGrip_FD;
-                    }
-                    else
-                    {
-                        forwardTireGrip = forwardTireGrip_RD;
-                        sidewaysTireGrip = sidewaysTireGrip_RD;
-                    }
-                }
+                baseSidewaysTireGrip = wheels[i].axel == eAXEL.eAXEL_FRONT ? sidewaysTireGripFront : sidewaysTireGripRear;
+
+                // 3. 각 바퀴에 가해지는 최종 하중 계산
+                float currentWheelLoad = 1.425f; // 기본 하중은 1.0
+
+                // 전/후 하중에 따른 변화 적용
+                if (wheels[i].axel == eAXEL.eAXEL_FRONT)
+                    currentWheelLoad -= longitudinalLoad; // 감속 시 앞바퀴 하중 증가
                 else
-                {
-                    if (wheels[i].axel == eAXEL.eAXEL_FRONT)
-                    {
-                        forwardTireGrip = forwardTireGrip_FG;
-                        sidewaysTireGrip = sidewaysTireGrip_FG;
-                    }
-                    else
-                    {
-                        forwardTireGrip = forwardTireGrip_RG;
-                        sidewaysTireGrip = sidewaysTireGrip_RG;
-                    }
-                }
+                    currentWheelLoad += longitudinalLoad; // 가속 시 뒷바퀴 하중 증가
 
-                    forwardFriction = wheels[i].wheelCollider.forwardFriction;
-                forwardFriction.stiffness = forwardTireGrip - overallSlip[i] / forwardValue;
+                // 좌/우 하중에 따른 변화 적용
+                if (wheels[i].isLeft)
+                    currentWheelLoad -= lateralLoad; // 우회전 시 왼쪽(안쪽) 바퀴 하중 감소
+                else
+                    currentWheelLoad += lateralLoad; // 우회전 시 오른쪽(바깥쪽) 바퀴 하중 증가
+
+                wheelLoads[i] = Mathf.Max(0.1f, currentWheelLoad); // 하중이 0 이하로 떨어지지 않도록 함 (디버깅용)
+
+                // 4. 미끄러짐(Slip)에 따른 마찰력 감소 계산
+                overallSlip[i] = Mathf.Sqrt(Mathf.Pow(wheelHit.forwardSlip, 2) + Mathf.Pow(wheelHit.sidewaysSlip, 2));
+                float slipReduction = overallSlip[i] * slipGripReductionFactor;
+
+                // 5. 최종 마찰력(Stiffness) 적용
+                // 기본 마찰력에 (하중 * 미끄러짐 감소)를 적용
+                forwardFriction = wheels[i].wheelCollider.forwardFriction;
+                forwardFriction.stiffness = baseForwardTireGrip * Mathf.Clamp(currentWheelLoad - slipReduction, forwardFrictionMin, 2.0f);
                 wheels[i].wheelCollider.forwardFriction = forwardFriction;
 
                 sidewaysFriction = wheels[i].wheelCollider.sidewaysFriction;
-                sidewaysFriction.stiffness = sidewaysTireGrip - overallSlip[i] / sideValue;
+                sidewaysFriction.stiffness = baseSidewaysTireGrip * Mathf.Clamp(currentWheelLoad - slipReduction, sidewaysFrictionMin, 2.0f);
                 wheels[i].wheelCollider.sidewaysFriction = sidewaysFriction;
 
+                // 슬립 값 저장 (다른 로직에서 사용될 수 있음)
                 forwardSlip[i] = wheelHit.forwardSlip;
                 sidewaysSlip[i] = wheelHit.sidewaysSlip;
-
-                overallSlip[i] = Mathf.Sqrt(forwardSlip[i] * forwardSlip[i] + sidewaysSlip[i] * sidewaysSlip[i]);
             }
         }
     }
     #endregion
 
     #region Funtion Wheels Controll
-    protected void Steering(float _input)
+    private void Steering()
     {
-        currentInput = Mathf.Abs(_input);
-        steerInput = _input;
-        curSteerAngle = Mathf.Lerp(0, steeringCurve.Evaluate(speed) * _input, currentInput);//steeringCurve.Evaluate(speed);
+        curSteerAngle = Mathf.Lerp(0, steeringCurve.Evaluate(speed) * steerInput, currentInput);
         for (int i = 0; i < steerWheelsNum; i++)
             steerWheels[i].steerAngle = curSteerAngle;
         if (steeringHandle != null)
             steeringHandle.localRotation = Quaternion.Euler(0, 0, curSteerAngle * 16f);
+    }
+    protected void SteeringInput(float _input)
+    {
+        currentInput = Mathf.Abs(_input);
+        steerInput = _input;
     }
 
     protected void ForceStop()
@@ -418,8 +505,6 @@ public partial class Car
     {
         requestedBrakeTorque = brakeInput * brakePower;
         isBrakingIntent = brakeInput > 0.05f;
-        
-        TailLampSwitch(isBrakingIntent);
 
         for (int i = 0; i < wheelNum; i++)
         {
@@ -451,7 +536,14 @@ public partial class Car
                     finalBrakeTorque += sideBrakePower * sideBrakeInput;
                 }
             }
-
+            if(wheels[i].axel == eAXEL.eAXEL_FRONT)
+            {
+                finalBrakeTorque *= brakeBias;
+            }
+            else
+            {
+                finalBrakeTorque *= (1f - brakeBias);
+            }
             wheels[i].wheelCollider.brakeTorque = finalBrakeTorque;
         }
         
@@ -511,7 +603,7 @@ public partial class Car
         }
         return false;
     }
-    protected void EffectDrift()
+    protected void CalculateDrift()
     {
         finalMaxSlip = 0f;
         sumSlip = 0f;
@@ -519,12 +611,9 @@ public partial class Car
         {
             if (wheels[i].wheelCollider.GetGroundHit(out wheelHit))
             {
-                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.3f)
+                if (Mathf.Abs(wheelHit.sidewaysSlip) > 0.15f || Mathf.Abs(wheelHit.forwardSlip) > 0.15f)
                 {
-                    wheels[i].skidMarks.emitting = true;
-
-                    var emission = smokeParticles[i].emission;
-                    emission.enabled = true;
+                    isDrifting.Set(i, true);
 
                     currentMaxSlip = MathF.Max(wheelHit.sidewaysSlip, wheelHit.forwardSlip);
                     if(finalMaxSlip < currentMaxSlip)
@@ -535,27 +624,51 @@ public partial class Car
                 }
                 else
                 {
-                    wheels[i].skidMarks.emitting = false;
+                    isDrifting.Set(i, false);
+                }
+            }
+            else
+            {
+                isDrifting.Set(i, false);
+            }
+        }
+        resultSlip = finalMaxSlip;
+    }
 
+    protected void DriftEffect()
+    {
+        for (int i = 0; i < wheelNum; i++)
+        {
+            if (isDrifting.Get(i))
+            {
+                wheels[i].skidMarks.emitting = true;
+                if (smokes[i] == null)
+                {   
+                    SpawnSmoke();
+                }
+                else
+                {
                     var emission = smokeParticles[i].emission;
-                    emission.enabled = false;
+                    emission.enabled = true;
                 }
             }
             else
             {
                 wheels[i].skidMarks.emitting = false;
-
-                var emission = smokeParticles[i].emission;
-                emission.enabled = false;
+                if (smokes[i] != null)
+                {
+                    var emission = smokeParticles[i].emission;
+                    emission.enabled = false;
+                }
             }
         }
-        if(finalMaxSlip > 0.15f)
+        if (resultSlip > 0.15f)
         {
             if (slipSound != null && !slipSound.isPlaying)
                 slipSound.Play();
 
-            slipSound.volume = Mathf.Clamp01(finalMaxSlip * 2);
-            slipSound.pitch = Mathf.Clamp(finalMaxSlip, 0.75f, 1f);
+            slipSound.volume = Mathf.Clamp01(resultSlip * 2);
+            slipSound.pitch = Mathf.Clamp(resultSlip, 0.75f, 1f);
         }
         else
         {
@@ -563,6 +676,7 @@ public partial class Car
                 slipSound.Stop();
         }
     }
+
     protected void SpawnSmoke()
     {
         for (int i = 0; i < wheelNum; i++)
@@ -576,6 +690,8 @@ public partial class Car
                 smokes[i].transform.position = wheels[i].skidMarks.transform.position;
                 smokes[i].transform.rotation = Quaternion.identity;
                 smokes[i].transform.localScale = Vector3.one;
+                var emission = smokeParticles[i].emission;
+                emission.enabled = false;
             }
         }
     }

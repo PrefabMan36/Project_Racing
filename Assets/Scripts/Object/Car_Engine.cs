@@ -10,24 +10,26 @@ public partial class Car
     //차량의 기어 상태를 나타내줄 Enum
     public enum eGEAR
     {
-        eGEAR_NEUTURAL,
-        eGEAR_REVERSE,
-        eGEAR_FIRST,
-        eGEAR_SECOND,
-        eGEAR_THIRD,
-        eGEAR_FOURTH,
-        eGEAR_FIFTH,
-        eGEAR_SIXTH
+        eGEAR_NEUTURAL = 0,
+        eGEAR_REVERSE = -1,
+        eGEAR_FIRST = 1,
+        eGEAR_SECOND = 2,
+        eGEAR_THIRD = 3,
+        eGEAR_FOURTH = 4,
+        eGEAR_FIFTH = 5,
+        eGEAR_SIXTH = 6
     }
 
     #region Value Others
     [Header("Other Value")]
-    protected bool ignition = true;
+    [SerializeField] protected bool ignition = true;
     private bool engineStartUP = false;
     [SerializeField] protected AudioSource[] engineSound;
     [SerializeField] private GameObject startUpSoundObject;
     private GameObject _tempSoundObject;
     private AudioSource startUpSound;
+    [SerializeField] protected float volumeMin, volumeMax;
+    [SerializeField] protected float pitchMin, pitchMax;
 
     [Header("Value TCS")]
     [SerializeField] protected bool isTCSEnabled = true; // TCS 사용 여부
@@ -45,11 +47,13 @@ public partial class Car
     [Header("Engine Value")]
     [SerializeField] private AnimationCurve horsePowerCurve;
     [SerializeField] private AnimationCurve engineTorqueCurve;
+    [SerializeField] private bool isCurveSet = false;
     [SerializeField] protected float throttle;
     [SerializeField] private float baseEngineAcceleration = 5f, currentDynamicEngineAcceleration;
     [SerializeField] private float maxHorsePower = 0f, rpmAtMaxHorsePower = 0f;
     [SerializeField] private float maxEngineRPM, minEngineRPM, targetRPM, tempWheelRPM, currentWheelRPM;
-    [Networked, SerializeField] private float currentEngineRPM { get; set; }
+    [SerializeField] private float currentEngineRPM;
+    [Networked, SerializeField] private float networkRPM { get; set; }
     [SerializeField] private float currentEngineTorque, currentWheelTorque;
     [SerializeField] private float overSpeed;
     [SerializeField] private bool redLine = false;
@@ -62,9 +66,12 @@ public partial class Car
     #region Function Engine setting
     public void SetEngineCurves(AnimationCurve _horsePowerCurve, AnimationCurve _engineTorqueCurve)
     {
-        horsePowerCurve = _horsePowerCurve;
-        engineTorqueCurve = _engineTorqueCurve;
-        CalculateOptimalShiftPoints();
+        if (!isCurveSet)
+        {
+            isCurveSet = true;
+            horsePowerCurve = _horsePowerCurve;
+            engineTorqueCurve = _engineTorqueCurve;
+        }
     }
     public void SetBaseEngineAcceleration(float _engineAcceleration) { baseEngineAcceleration = _engineAcceleration; }
     public void SetEngineRPMLimit(float _maxEngineRPM, float _minEngineRPM) { maxEngineRPM = _maxEngineRPM; minEngineRPM = _minEngineRPM; }
@@ -75,6 +82,14 @@ public partial class Car
         {
             waitingForRaceStart = true;
         }
+    }
+
+    public void EngineSoundSetting(float min, float max)
+    {
+        volumeMin = 0.25f;
+        volumeMax = engineSound[0].volume;
+        pitchMin = min;
+        pitchMax = max;
     }
     #endregion
 
@@ -118,27 +133,84 @@ public partial class Car
     // 엔진 회전수 계산하는 함수
     protected void CalculateOptimalShiftPoints()
     {
-        if (horsePowerCurve == null || horsePowerCurve.length < 2)
+        float maxHorsePower = 0f;
+        float rpmAtMaxHorsePower = maxEngineRPM * 0.8f; // 기본값
+        if (horsePowerCurve != null && horsePowerCurve.length > 0)
         {
-            Debug.LogError("Horsepower curve is not set or invalid. Using default shift points.");
-            maxHorsePower = 100f;
-            rpmAtMaxHorsePower = maxEngineRPM * 0.75f;
-            optimalShiftUpRPM = maxEngineRPM * 0.85f;
-            optimalShiftDownRPM = maxEngineRPM * 0.3f;
-            return;
-        }
-        maxHorsePower = 0f;
-        foreach (var key in horsePowerCurve.keys)
-        {
-            if (key.value > maxHorsePower)
+            foreach (var key in horsePowerCurve.keys)
             {
-                maxHorsePower = key.value;
-                rpmAtMaxHorsePower = key.time;
+                if (key.value > maxHorsePower)
+                {
+                    maxHorsePower = key.value;
+                    rpmAtMaxHorsePower = key.time;
+                }
             }
         }
-        optimalShiftUpRPM = Mathf.Clamp(rpmAtMaxHorsePower * 0.95f, minEngineRPM + 500f, maxEngineRPM - 500f);
-        optimalShiftDownRPM = Mathf.Clamp(rpmAtMaxHorsePower * 0.5f, minEngineRPM + 200f, maxEngineRPM);
-        Debug.Log($"Optimal Shift Points Calculated: MaxHP={maxHorsePower} at RPM={rpmAtMaxHorsePower}, ShiftUpRPM={optimalShiftUpRPM}, ShiftDownRPM={optimalShiftDownRPM}");
+
+        if (engineTorqueCurve == null || engineTorqueCurve.length < 2 || gearRatio.Count == 0)
+        {
+            Debug.LogError("Engine Torque Curve or Gear Ratio is not set. Cannot calculate optimal shift points.");
+            return;
+        }
+
+        optimalShiftUpRPMs.Clear();
+        optimalShiftDownRPMs.Clear();
+
+        float peakTorque = 0f;
+        float rpmAtPeakTorque = 0f;
+        foreach (var key in engineTorqueCurve.keys)
+        {
+            if (key.value > peakTorque)
+            {
+                peakTorque = key.value;
+                rpmAtPeakTorque = key.time;
+            }
+        }
+
+        for (eGEAR currentGear = eGEAR.eGEAR_FIRST; currentGear < lastGear; currentGear++)
+        {
+            eGEAR nextGear = currentGear + 1;
+
+            float optimalRPM = maxEngineRPM * 0.95f; // 기본값은 레드존 직전
+
+            // 현재 RPM을 올려가며 다음 기어의 바퀴 토크가 더 커지는 지점을 탐색
+            for (float currentRPM = rpmAtPeakTorque; currentRPM <= maxEngineRPM; currentRPM += 20f)
+            {
+                // 1. 현재 기어, 현재 RPM에서의 바퀴 토크
+                float currentWheelTorque = engineTorqueCurve.Evaluate(currentRPM) * gearRatio[currentGear];
+
+                // 2. 변속 후 다음 기어에서의 예상 RPM
+                float nextGearRPM = currentRPM * (gearRatio[nextGear] / gearRatio[currentGear]);
+                if (nextGearRPM > maxEngineRPM) break; // 변속 후 RPM이 레드존을 넘으면 무의미
+
+                // 3. 다음 기어, 예상 RPM에서의 바퀴 토크
+                float nextWheelTorque = engineTorqueCurve.Evaluate(nextGearRPM) * gearRatio[nextGear];
+
+                // 4. 다음 기어의 토크가 현재 기어의 토크보다 커지는 첫 지점이 최적의 변속 시점
+                if (nextWheelTorque > currentWheelTorque)
+                {
+                    optimalRPM = currentRPM;
+                    break;
+                }
+            }
+            optimalShiftUpRPMs.Add(currentGear, optimalRPM);
+            float downshiftAggressiveness = 1.2f;
+            // 다운시프트 RPM 계산: 다운시프트 시, 엔진이 최대 토크를 내는 RPM 근처에 도달하도록 설정
+            if (currentGear > eGEAR.eGEAR_FIRST)
+            {
+                eGEAR previousGear = currentGear - 1;
+                float downShiftRPM = rpmAtPeakTorque * (gearRatio[currentGear] / gearRatio[previousGear]) * downshiftAggressiveness;
+                optimalShiftDownRPMs.Add(currentGear, Mathf.Max(downShiftRPM, minEngineRPM));
+            }
+
+            optimalShiftDownRPMs[eGEAR.eGEAR_FIRST] = minEngineRPM + 500f;
+
+            Debug.Log("Optimal Shift Points Calculation Completed.");
+            foreach (var item in optimalShiftUpRPMs)
+            {
+                Debug.Log($"Shift Up from {item.Key} at {item.Value} RPM");
+            }
+        }
     }
     // 엔진 회전수에 따른 마력 비율 계산하는 함수
     private float GetPowerFactor(float _RPM)
@@ -195,8 +267,8 @@ public partial class Car
                         targetRPM,
                         (overSpeed * currentDynamicEngineAcceleration * Runner.DeltaTime) * Mathf.Abs(gearRatio[currentGear])
                     );
-                nitroPowerMultiplier = isNitroActive ? nitroPower : 1f;
-                nitroSpeedMultiplier = isNitroActive ? nitroSpeed : 1f;
+                nitroPowerMultiplier = nitroEnabled ? nitroPower : 1f;
+                nitroSpeedMultiplier = nitroEnabled ? nitroSpeed : 1f;
                 if (speed < gearSpeedLimit[currentGear] * nitroSpeed)
                     currentWheelTorque =
                         (
@@ -230,6 +302,7 @@ public partial class Car
                 if (throttle > 0.1f && currentWheelTorque < 0)
                     currentWheelTorque = 0;
             }
+            networkRPM = MathF.Ceiling(currentEngineRPM * 100) / 100;
         }
         //엔진 토크(Engine Torque) 계산법
         //엔진 토크(Nm) = (엔진 출력(kW) × 9549) / 엔진 회전수(RPM)
@@ -309,8 +382,8 @@ public partial class Car
         {
             if (sound.isPlaying)
             {
-                sound.volume = Mathf.Lerp(0.3f, 0.4f, clutch);
-                sound.pitch = Mathf.Lerp(1.0f, 2.2f, currentEngineRPM / maxEngineRPM);
+                sound.volume = Mathf.Lerp(volumeMin, volumeMax, clutch);
+                sound.pitch = Mathf.Lerp(pitchMin, pitchMax, networkRPM / maxEngineRPM);
             }
         }
     }
@@ -330,12 +403,14 @@ public partial class Car
     #region Value Gear
     [Header("Gear Value")]
     [SerializeField] private eGEAR currentGear = eGEAR.eGEAR_NEUTURAL;
+    [Networked, SerializeField] private short networkGear { get; set; }
     [SerializeField] private eGEAR nextGear = eGEAR.eGEAR_NEUTURAL;
     [SerializeField] protected float clutch;
     [SerializeField] protected bool reverse;
     [SerializeField] private Dictionary<eGEAR, float> gearRatio = new Dictionary<eGEAR, float>();
     [SerializeField] private Dictionary<eGEAR, float> gearSpeedLimit = new Dictionary<eGEAR, float>();
-    [SerializeField] private float optimalShiftUpRPM = 0f, optimalShiftDownRPM = 0f;
+    [SerializeField] private Dictionary<eGEAR, float> optimalShiftUpRPMs = new Dictionary<eGEAR, float>();
+    [SerializeField] private Dictionary<eGEAR, float> optimalShiftDownRPMs = new Dictionary<eGEAR, float>();
     [SerializeField] private float speedThresholdForUpshift;
     [SerializeField] private float perviousMaxSpeed = 0;
     [SerializeField] private float differentialRatio;
@@ -446,6 +521,7 @@ public partial class Car
         else
         {
             currentGear = nextGear;
+            networkGear = (short)currentGear;
             currentEngineRPM = maxEngineRPM / 2 + minEngineRPM;
             shiftTimer = 0;
             switch (currentGear)
@@ -487,12 +563,12 @@ public partial class Car
 
         // Up-Shift 조건: 다음 기어로 변속해도 괜찮은 속도 && 현재 RPM이 마력 기반 Up 시점 도달
         // (속도 조건은 급격한 저속 고 RPM 상태에서 불필요한 변속 방지용으로 추가 가능)
-        if (currentGear >= eGEAR.eGEAR_FIRST && currentGear < lastGear && currentEngineRPM > optimalShiftUpRPM && speed > speedThresholdForUpshift)
+        if (optimalShiftUpRPMs.ContainsKey(currentGear) && currentEngineRPM > optimalShiftUpRPMs[currentGear] && speed > speedThresholdForUpshift)
         { ChangeGear(true); }
 
         // Down-Shift 조건: 현재 RPM이 마력 기반 Down 시점 미만 && 첫번째 기어가 아님
         // (브레이크/감속 중인지 확인하는 로직 추가하면 더 자연스러움)
-        else if (currentGear > eGEAR.eGEAR_FIRST && currentEngineRPM < optimalShiftDownRPM && speed < perviousMaxSpeed)
+        else if (optimalShiftDownRPMs.ContainsKey(currentGear) && currentEngineRPM < optimalShiftDownRPMs[currentGear] && speed < perviousMaxSpeed)
         {/*if(throttle <= 0.1f)*/ ChangeGear(false); }
 
         //자동 중립에서 시작 로직
@@ -524,7 +600,7 @@ public partial class Car
     [SerializeField] private bool isNitroInstalled;
     [SerializeField] private bool powerMode = false;
     [SerializeField] private float maxNitroCapacity = 100f;
-    [SerializeField] private float currentNitroAmount;
+    [Networked, SerializeField] private float currentNitroAmount { get; set; }
     [SerializeField] private float nitroConsumptionRate = 10f;
     [SerializeField] private float nitroRechargeRate = 5f;
     [SerializeField] private float nitroRechargeDelay = 2f;
@@ -538,7 +614,8 @@ public partial class Car
     [SerializeField] private float nitroDuration = 1f;//파워모드 지속시간
     //[SerializeField] private float nitroDurationTimer = 0f;//파워모드 지속시간 타이머
     [SerializeField] private bool nitroPowerReady = true;//파워모드 지속시간 타이머 최대값
-    [Networked, SerializeField] protected bool isNitroActive { get; set; } = false;
+    [Networked, SerializeField] protected bool nitroInput { get; set; } = false;
+    [SerializeField] protected bool nitroEnabled = false;
     #endregion
 
     #region Function Nitro setting
@@ -560,29 +637,62 @@ public partial class Car
     #endregion
 
     #region Function Nitro
-    protected void ActivateNitro(bool _activate)
+    protected void ActivateNitro()
     {
         if (!isNitroInstalled) return;
         if (powerMode && !nitroPowerReady) return;
-        if (_activate && currentNitroAmount > 0f)
+        if (nitroInput && currentNitroAmount > 0f)
         {
-            isNitroActive = true;
+            nitroEnabled = true;
             if (nitroSoundEffect != null && !nitroSoundEffect.isPlaying)
             { nitroSoundEffect.Play(); }
         }
         else
         {
-            isNitroActive = false;
+            nitroEnabled = false;
             if (nitroSoundEffect != null && nitroSoundEffect.isPlaying)
             { nitroSoundEffect.Stop(); }
         }
     }
-
+    protected void UpdateNitro()
+    {
+        if (nitroInput)
+        {
+            currentNitroAmount -= nitroConsumptionRate * Time.deltaTime;
+            currentNitroAmount = Mathf.Max(0f, currentNitroAmount);
+            nitroRechargeDelayTimer = 0f;
+            nitroAdjustBlurWidth = 1f;
+            if (currentNitroAmount <= 0f)
+            {
+                nitroEnabled = false;
+                if (powerMode)
+                    nitroPowerReady = false;
+            }
+        }
+        else
+        {
+            nitroAdjustBlurWidth = 0f;
+            if (nitroRechargeDelayTimer < nitroRechargeDelay)
+            { nitroRechargeDelayTimer += Time.deltaTime; }
+            else
+            {
+                currentNitroAmount += nitroRechargeRate * nitroRechargeAmount * Time.deltaTime;
+                currentNitroAmount = Mathf.Min(maxNitroCapacity, currentNitroAmount);
+                if (currentNitroAmount >= maxNitroCapacity)
+                {
+                    currentNitroAmount = maxNitroCapacity;
+                    nitroRechargeDelayTimer = 0f;
+                    if (powerMode)
+                        nitroPowerReady = true;
+                }
+            }
+        }
+    }
     private void NitroEffect()
     {
         if (nitroTrail != null)
         {
-            if (isNitroActive)
+            if (nitroEnabled)
             {
                 if (!nitroTrail.enabled)
                     nitroTrail.enabled = true;
@@ -619,7 +729,7 @@ public partial class Car
     public float GetMaxNitroAmount() { return maxNitroCapacity; }
     public float GetNitroBlurWidth() { return nitroAdjustBlurWidth; }
     public bool GetPowerMode() { return powerMode; }
-    public bool GetIsNitroActive() { return isNitroActive; }
+    public bool GetIsNitroActive() { return nitroEnabled; }
     public void RefillNitro(float _amount)
     {
         currentNitroAmount += _amount;

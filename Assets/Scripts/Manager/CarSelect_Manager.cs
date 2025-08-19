@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CarSelect_Manager : Manager
 {
+    [SerializeField] private bool corutineRunning = false;
+
     [Header("Rotate Value")]
     [SerializeField] private Transform coreTransform;
     [SerializeField] private Transform ShowTransform;
@@ -12,7 +14,6 @@ public class CarSelect_Manager : Manager
     [SerializeField] private float radiusPerCar = 0.5f;
     [SerializeField] private float calculatedRadius;
 
-    [SerializeField] private float rotateSpeed = 4f;
     [SerializeField] private float rotateTime = 0f;
 
     [Header("Car select")]
@@ -33,6 +34,7 @@ public class CarSelect_Manager : Manager
     void Start()
     {
         InitializeCarsAsync();
+        StartSelect();
     }
 
     /// <summary>
@@ -84,8 +86,11 @@ public class CarSelect_Manager : Manager
 
         currentCarIndex = Client_Data.CarID;
         DeselectAll();
-
-        StartCoroutine(UpdateRotation());
+        if(!corutineRunning)
+        {
+            corutineRunning = true;
+            StartCoroutine(UpdateRotation());
+        }
     }
 
     /// <summary>
@@ -97,6 +102,15 @@ public class CarSelect_Manager : Manager
         if (calculatedRadius < baseRadius) calculatedRadius = baseRadius; // 최소 반지름 보장
     }
 
+    private void OnDisable()
+    {
+        DeselectAll();
+    }
+    private void OnDestroy()
+    {
+        StopCoroutine(UpdateRotation());
+        DeselectAll();
+    }
 
     /// <summary>
     /// 차량들을 부모 오브젝트를 기준으로 원형으로 배치합니다.
@@ -114,7 +128,7 @@ public class CarSelect_Manager : Manager
             float z = calculatedRadius * Mathf.Cos(Mathf.Deg2Rad * angle);
 
             cars[i].transform.localPosition = new Vector3(x, 0, z); // 부모를 기준으로 로컬 위치 설정
-            cars[i].transform.localRotation = Quaternion.Euler(0, -angle, 0); // 차량이 바깥쪽을 바라보도록 회전
+            cars[i].transform.localRotation = Quaternion.Euler(0, angle, 0); // 차량이 바깥쪽을 바라보도록 회전
             cars[i].SetInitialRotation();
         }
     }
@@ -132,7 +146,7 @@ public class CarSelect_Manager : Manager
 
         if (cars.Count > 0)
         {
-            float targetAngle = currentCarIndex * (360f / cars.Count);
+            float targetAngle = (currentCarIndex - 1) * (360f / cars.Count);
             endRotation = Quaternion.Euler(0, -targetAngle, 0);
             coreTransform.localRotation = endRotation; // 초기 위치로 바로 설정
         }
@@ -183,7 +197,7 @@ public class CarSelect_Manager : Manager
     /// </summary>
     public void SelectNextCar()
     {
-        SelectNextCarInternal(1);
+        SelectNextCarInternal(-1);
     }
 
     /// <summary>
@@ -191,7 +205,7 @@ public class CarSelect_Manager : Manager
     /// </summary>
     public void SelectPreviousCar()
     {
-        SelectNextCarInternal(-1);
+        SelectNextCarInternal(1);
     }
 
     public void ConfirmCurrentCar()
@@ -212,9 +226,9 @@ public class CarSelect_Manager : Manager
     private void UpdateTargetRotation()
     {
         rotateTime = 0;
-        targetAngle = currentCarIndex * (360f / cars.Count);
+        targetAngle = (currentCarIndex - 1) * (360f / cars.Count);
         startRotation = coreTransform.localRotation;
-        endRotation = Quaternion.Euler(0, targetAngle, 0);
+        endRotation = Quaternion.Euler(0, -targetAngle + 180, 0);
     }
 
     IEnumerator UpdateRotation()

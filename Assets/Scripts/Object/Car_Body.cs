@@ -1,3 +1,5 @@
+using Fusion;
+using System.Collections;
 using UnityEngine;
 
 public partial class Car
@@ -16,7 +18,7 @@ public partial class Car
     [SerializeField] protected Vector3 loweredCenterOfMass;
     [SerializeField] private float comLerpSpeed = 5f;
     [SerializeField] protected Vector3 originalCenterOfMass;
-    [SerializeField] Vector3 targetCoM;
+    [SerializeField] Vector3 targetCoM { get; set; }
     [SerializeField] float tiltAngle;
 
     [SerializeField] Quaternion currentRotation;
@@ -121,31 +123,24 @@ public partial class Car
     [Header("Lights Values")]
     [SerializeField] private Light_Car headLights;
     [SerializeField] private Light_Car tailLamps;
-    [SerializeField] private bool headLightSwitch = false;
-    protected void HeadLightSwitch()
+    [Networked, SerializeField] private NetworkBool headLightSwitch { get; set; } = false;
+    [Networked, SerializeField] private NetworkBool tailLampSwitch { get; set; } = false;
+    protected void HeadLightSwitch() { headLightSwitch = !headLightSwitch; }
+    protected void ForceLightOn() { headLightSwitch = true; }
+
+    private void UpdateLight()
     {
-        if(headLights != null)
+        if (isBrakingIntent != tailLampSwitch)
+            tailLampSwitch = isBrakingIntent;
+        if (headLights != null)
         {
-            headLightSwitch = !headLightSwitch; // 토글 스위치
-            headLights.lightOn = headLightSwitch; // 라이트 상태 변경
+            headLights.lightOn = headLightSwitch;
+        }
+        if (tailLamps != null)
+        {
+            tailLamps.lightOn = tailLampSwitch;
         }
     }
 
-    protected void ForceLightOn()
-    {
-        if(headLights != null)
-        {
-            headLightSwitch = true; // 강제로 라이트 켜기
-            headLights.lightOn = headLightSwitch; // 라이트 상태 변경
-        }
-    }
-
-    private void TailLampSwitch(bool _switch)
-    {
-        if(tailLamps != null)
-        {
-            tailLamps.lightOn = _switch; // 테일램프 상태 변경
-        }
-    }
     #endregion
 }

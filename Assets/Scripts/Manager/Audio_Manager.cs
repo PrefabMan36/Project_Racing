@@ -70,7 +70,7 @@ public class Audio_Manager : Manager
     {
         if (bgmDataDictionary.TryGetValue(sceneType, out List<BGMData> bgmList) && bgmList.Count > 0)
         {
-            int num = sceneType != eSCENE_TYPE.eSCENE_MAINGAME ? Random.Range(0, bgmList.Count) : 1;
+            int num = Random.Range(0, bgmList.Count);
             var bgmData = bgmList[num];
             StartCoroutine(LoadAndPlayAudioAddressable(bgmData.FileName));
         }

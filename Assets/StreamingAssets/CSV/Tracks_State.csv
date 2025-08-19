@@ -1,0 +1,3 @@
+Name,Type,LoopCount,isNight
+City_Night,eTRACK_TYPE_CIRCUIT,3,TRUE
+Snow_Mountain,eTRACK_TYPE_SPRINT,1,FALSE

@@ -9,11 +9,15 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private MainGame_Manager mainGameManager;
     [SerializeField] private BoxCollider checkPointCollider;
 
+    [SerializeField] private Transform navigationPoint;
+    [SerializeField] private Vector3 navigationPointSize = new Vector3(1f, 1f, 1f);
+
     [SerializeField] private Player_Car EnteredPlayer;
     [Networked, Capacity(16), SerializeField] private NetworkDictionary<short, float> fastestCheckPointTime => default;
     [SerializeField] private float localCheckPointTime = 9999999f;
     [SerializeField] private short currentLap = 0;
     [SerializeField] private float tempTimer;
+    [SerializeField] private bool isNavigationPoint = false;
 
     [Networked] Vector3 position { get; set; }
     [Networked] Vector3 rotation { get; set; }
@@ -33,9 +37,20 @@ public class CheckPoint : NetworkBehaviour
         localCheckPointTime = 9999999f;
         currentLap = 0;
         tempTimer = 0;
+        navigationPointSize = navigationPoint.localScale;
         mainGameManager = GameObject.FindAnyObjectByType<MainGame_Manager>();
         if(!HasStateAuthority)
             InitCheckPointForClient();
+    }
+
+    public void SelecteByNaviPoint()
+    {
+        isNavigationPoint = true;
+        if(navigationPoint != null)
+        {
+            isNavigationPoint = false;
+            navigationPoint.localScale = navigationPointSize * 2;
+        }   
     }
 
     public void SetCheckPointIndex(int index, Vector3 _position, Vector3 _rotation, Vector3 _boxSize, bool _last)
@@ -95,8 +110,9 @@ public class CheckPoint : NetworkBehaviour
                     fastestCheckPointTime.Add(currentLap, 9999999f);
                 if (EnteredPlayer.GetCheckPointIndex() == checkPointIndex)
                 {
+                    navigationPoint.localScale = navigationPointSize;
                     EnteredPlayer.SetCheckPoint(checkPointIndex + 1);
-                    EnteredPlayer.SetNextCheckPointPosition(nextCheckPointValue);
+                    EnteredPlayer.SetNextCheckPointPosition(nextCheckPoint);
                     tempTimer = mainGameManager.CheckPointChecked(EnteredPlayer, fastestCheckPointTime[currentLap], localCheckPointTime, checkPointIndex);
                     fastestCheckPointTime.Set(currentLap, fastestCheckPointTime[currentLap] > tempTimer ? tempTimer : fastestCheckPointTime[currentLap]);
                     if(EnteredPlayer.GetLocalPlayer() && tempTimer < localCheckPointTime)
@@ -109,10 +125,9 @@ public class CheckPoint : NetworkBehaviour
         }
     }
 
-    public void SetNextCheckPoint(CheckPoint nextCheckPoint)
+    public void SetNextCheckPoint(CheckPoint _nextCheckPoint)
     {
-        this.nextCheckPoint = nextCheckPoint;
-        nextCheckPointValue = nextCheckPoint.transform.position;
+        nextCheckPoint = _nextCheckPoint;
     }
 
     public int GetCheckPointIndex()

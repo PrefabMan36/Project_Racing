@@ -12,6 +12,12 @@ public class Light_Car : MonoBehaviour
 
     [SerializeField] private Light[] lights;
 
+    [SerializeField] private TrailRenderer[] trailRenderer;
+    [SerializeField] private Rigidbody parantRB;
+    [SerializeField] private Vector3 forwardVelocity, sidewaysVelocity;
+    [SerializeField] private float sidewaysSpeed;
+    [SerializeField] private float minDriftSpeed = 10f;
+
     [SerializeField] private bool isOn = false;
     [SerializeField] public bool lightOn
     {
@@ -40,6 +46,7 @@ public class Light_Car : MonoBehaviour
 
     private void Awake()
     {
+        parantRB = transform.GetComponentInParent<Rigidbody>();
         if (lights != null)
         {
             foreach (Light light in lights)
@@ -47,6 +54,8 @@ public class Light_Car : MonoBehaviour
                 light.enabled = false;
             }
         }
+        if (trailRenderer != null)
+            StartCoroutine(DriftLighting());
     }
 
     private void SetLight(bool _isOn)
@@ -89,5 +98,40 @@ public class Light_Car : MonoBehaviour
         }
         if(targetAngle == maxAngle)
             SetLight(true);
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
+    private IEnumerator DriftLighting()
+    {
+        WaitForSeconds wait = new WaitForSeconds(Shared.frame15);
+        while (true)
+        {
+            yield return wait;
+            forwardVelocity = Vector3.Dot(parantRB.velocity, transform.forward) * transform.forward;
+            sidewaysVelocity = parantRB.velocity - forwardVelocity;
+
+            // 옆방향 속도의 크기(magnitude)를 측정
+            sidewaysSpeed = sidewaysVelocity.magnitude;
+
+            // 옆방향 속도가 설정된 값보다 클 때
+            if (sidewaysSpeed > minDriftSpeed)
+            {
+                for (int i = 0; i < trailRenderer.Length; i++)
+                {
+                    trailRenderer[i].emitting = true;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < trailRenderer.Length; i++)
+                {
+                    trailRenderer[i].emitting = false;
+                }
+            }
+        }
     }
 }

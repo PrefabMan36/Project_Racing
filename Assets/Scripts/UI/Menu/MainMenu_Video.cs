@@ -11,5 +11,16 @@ public class MainMenu_Video : MonoBehaviour
     {
         video = GetComponent<VideoPlayer>();
         video.time = 1;
+        StartCoroutine(CheckStoped());
+    }
+
+    private IEnumerator CheckStoped()
+    {
+        WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame15);
+        yield return waitForSeconds;
+        if (!video.isPlaying)
+        {
+            video.Play();
+        }
     }
 }

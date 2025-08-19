@@ -33,6 +33,8 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private Dictionary<int, Player_Car> playerCarPrefabs = new Dictionary<int, Player_Car>();
     [SerializeField] private string[] playerCarPrefabNames;
     [SerializeField] private CarData carData;
+    [SerializeField] private CarWheelsData carWheelData;
+    [SerializeField] private EngineCurveData engineCurveData;
     [Networked, SerializeField] private int totalPlayerCount { get; set; } = 0;
 
     [SerializeField] private AssetBundle carPrefabBundle;
@@ -46,20 +48,24 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private float spawnPointSpacing = 2.5f;
     [SerializeField] private float spawnPointVerticalOffset = 1.0f;
     private string trackName = "eSCENE_CITY_NIGHT";
-    [SerializeField] private TrackData tracksData;
+    [SerializeField] private TrackCheckPointData tracksCheckpointData;
+    [SerializeField] private TrackStateData tracksStateData;
     [Networked, SerializeField] private int lastCheckPointIndex { get; set; } = 0;
     [SerializeField] private CheckPoint checkPoint_Prefab;
     [SerializeField] private CheckPoint tempCheckPoint;
     [SerializeField] private CheckPoint firstCheckPoint;
     [SerializeField] private CheckPoint lastCheckPoint;
     [SerializeField] private CheckPoint checkPoint;
-    [SerializeField] private int maxLaps = 1;
+    [SerializeField] private eTRACK_TYPE trackType;
+    [Networked, SerializeField] private int maxLaps { get; set; }
+    [SerializeField] private bool isNight;
     #endregion
 
     #region UI Prefabs & References
     [Header("UI Prefabs & References")]
     [SerializeField] private Camera MainCamera_Prefab;
     [SerializeField] private RPMGauge rpmGauge_Prefab;
+    [SerializeField] private GameObject navigation_Prefab;
     [SerializeField] private Slider NitroBar_Prefab;
     [SerializeField] private GameObject Timer_Prefab;
     [SerializeField] private GameObject lapTimeDiff_Prefab;
@@ -114,7 +120,6 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private bool shouldShowResults;
     [Networked, Capacity(4)] private NetworkDictionary<NetworkId, float> finishedPlayerTimes => default;
     [Networked, Capacity(4)] private NetworkDictionary<NetworkId, string> finishedPlayerNames => default;
-    private bool isResultPanelActiveLocally = false;
     [Networked, SerializeField] private bool raceEndedByCompletion { get; set; } = false;
     [Networked, SerializeField] private bool raceEndedByTimeout { get; set; } = false;
     #endregion
@@ -152,6 +157,7 @@ public class MainGame_Manager : NetworkBehaviour
         StartCoroutine(LoadCarPrefabsCoroutine());
 
         trackName = SceneManager.GetActiveScene().name;
+        Shared.CarSelect_Manager.enabled = false;
         //var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         //var sceneInfo = new NetworkSceneInfo();
         //if (scene.IsValid)
@@ -255,7 +261,7 @@ public class MainGame_Manager : NetworkBehaviour
                         Runner.Despawn(car.Object);
                     }
                 }
-
+                Shared.CarSelect_Manager.enabled = true;
                 RPC_CleanupAndReturnToLobby();
             }
         }
@@ -367,9 +373,14 @@ public class MainGame_Manager : NetworkBehaviour
                 rpmGauge = Instantiate(rpmGauge_Prefab, parentObjectForUIPanel.transform);
                 playerCar.SetRPMGauge(rpmGauge);
             }
+            Instantiate(navigation_Prefab, parentObjectForUIPanel.transform);
         }
-
+        carWheelData = CarData_Manager.instance.GetCarWheelsDataByNumber(playerCar.GetCarNumber());
+        playerCar.SetCarWheelData(carWheelData);
         carData = CarData_Manager.instance.GetCarDataByNumber(playerCar.GetCarNumber());
+        engineCurveData = CarData_Manager.instance.GetEngineCurveDataByName(carData.Name);
+        playerCar.SetEngineCurves(engineCurveData.HorsepowerCurve, engineCurveData.TorqueCurve);
+        playerCar.EngineSoundSetting(carData.pitchMin, carData.pitchMax);
         playerCar.SetCarMass(carData.Mass);
         playerCar.SetDragCoefficient(carData.dragCoefficient);
         playerCar.SetBaseEngineAcceleration(carData.baseEngineAcceleration);
@@ -444,28 +455,53 @@ public class MainGame_Manager : NetworkBehaviour
 
     private void LoadAndSetupTrack()
     {
-        tracksData = TrackData_Manager.instance.GetTrackDataByName(trackName);
-        if (tracksData != null)
+        tracksCheckpointData = TrackData_Manager.instance.GetTrackCheckpointDataByName(trackName);
+        tracksStateData = TrackData_Manager.instance.GetTrackStateDataByName(trackName);
+        maxLaps = tracksStateData.LoopCount;
+        isNight = tracksStateData.isNight;
+        if (tracksCheckpointData != null)
         {
             bool lastcheck = false;
-            lastCheckPointIndex = tracksData.Checkpoints.Count - 1;
+            lastCheckPointIndex = tracksCheckpointData.Checkpoints.Count - 1;
             firstCheckPoint = networkRunner.Spawn(checkPoint_Prefab);
             CheckPoint checkPoint = firstCheckPoint;
-            checkPoint.SetCheckPointIndex(0 + 1, tracksData.Checkpoints[0].Position, tracksData.Checkpoints[0].Rotation, tracksData.Checkpoints[0].Scale, lastcheck);
-            for (int i = 1; i < tracksData.Checkpoints.Count; i++)
+            checkPoint.SetCheckPointIndex(0 + 1, tracksCheckpointData.Checkpoints[0].Position, tracksCheckpointData.Checkpoints[0].Rotation, tracksCheckpointData.Checkpoints[0].Scale, lastcheck);
+            for (int i = 1; i < tracksCheckpointData.Checkpoints.Count; i++)
             {
                 CheckPoint tempCheckPoint = checkPoint;
                 checkPoint = networkRunner.Spawn(checkPoint_Prefab);
-                tempCheckPoint.SetNextCheckPoint(checkPoint);
 
                 if (i == lastCheckPointIndex)
                 { lastcheck = true; }
                 else
                 { lastcheck = false; }
 
-                checkPoint.SetCheckPointIndex(i + 1, tracksData.Checkpoints[i].Position, tracksData.Checkpoints[i].Rotation, tracksData.Checkpoints[i].Scale, lastcheck);
+                checkPoint.SetCheckPointIndex(i + 1, tracksCheckpointData.Checkpoints[i].Position, tracksCheckpointData.Checkpoints[i].Rotation, tracksCheckpointData.Checkpoints[i].Scale, lastcheck);
+                tempCheckPoint.SetNextCheckPoint(checkPoint);
             }
-            GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+            switch (tracksStateData.Type)
+            {
+                case "eTRACK_TYPE_CIRCUIT":
+                    trackType = eTRACK_TYPE.eTRACK_TYPE_CIRCUIT;
+                    break;
+                case "eTRACK_TYPE_SPRINT":
+                    trackType = eTRACK_TYPE.eTRACK_TYPE_SPRINT;
+                    break;
+                case "eTRACK_TYPE_DRAG":
+                    trackType = eTRACK_TYPE.eTRACK_TYPE_DRAG;
+                    break;
+            }
+            Debug.Log($"Track Type: {trackType}, Max Laps: {maxLaps}, Is Night: {isNight}");
+            switch (trackType)
+            {
+                case eTRACK_TYPE.eTRACK_TYPE_CIRCUIT:
+                    GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
+                    break;
+                case eTRACK_TYPE.eTRACK_TYPE_SPRINT:
+                case eTRACK_TYPE.eTRACK_TYPE_DRAG:
+                    GenerateSpawnPointsFromCheckpoint(firstCheckPoint);
+                    break;
+            }
             lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();
             lastCheckPoint.SetNextCheckPoint(firstCheckPoint);
             LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
@@ -548,10 +584,10 @@ public class MainGame_Manager : NetworkBehaviour
     public void SetLastCheckPoint(CheckPoint checkPoint) { lastCheckPoint = checkPoint; }
     private void SetFirstCheckPoint(Player_Car _playerCar)
     {
-        _playerCar.SetNextCheckPointPosition(firstCheckPoint.transform.position);
+        _playerCar.SetNextCheckPointPosition(firstCheckPoint);
     }
     public void SetTimer(float _timer) { gameTimer = _timer; }
-
+    public bool GetIsNight() { return isNight; }
 
     #endregion
 
@@ -779,7 +815,7 @@ public class MainGame_Manager : NetworkBehaviour
                 if (!isRankingStart)
                     yield break;
                 tempRank = (byte)(i + 1);
-                Debug.Log($"플레이어 {sortedRankData[i].playerId}의 랭킹 업데이트: {tempRank}");
+                //Debug.Log($"플레이어 {sortedRankData[i].playerId}의 랭킹 업데이트: {tempRank}");
                 rank.Set(sortedRankData[i].playerId, tempRank);
             }
         }

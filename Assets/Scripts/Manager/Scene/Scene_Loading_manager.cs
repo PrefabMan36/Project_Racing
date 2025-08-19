@@ -15,6 +15,7 @@ public partial class Scene_manager : MonoBehaviour
     {
         if (curScene == _nextScene)
             return;
+        Shared.ui_Manager.OnClickNo();
         Shared.ui_Manager.OnLoadInGame();
         nextScene = (int)_nextScene;
         

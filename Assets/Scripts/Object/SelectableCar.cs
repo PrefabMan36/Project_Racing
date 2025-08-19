@@ -8,6 +8,13 @@ public class SelectableCar : MonoBehaviour
     [SerializeField] private Quaternion initialRotation;
     [SerializeField] private bool rotating;
 
+    private void Start()
+    {
+        if (transform.parent != null)
+        {
+            transform.LookAt(transform.parent);
+        }
+    }
     public void SetInitialRotation()
     {
         initialRotation = transform.rotation;
@@ -36,11 +43,14 @@ public class SelectableCar : MonoBehaviour
     IEnumerator ObjectRotate()
     {
         WaitForSeconds waitForSeconds = new WaitForSeconds(Shared.frame30);
-        while(rotating)
+        while (rotating)
         {
             yield return waitForSeconds;
             transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.Self);
         }
-        transform.rotation = initialRotation;
+        if (transform.parent != null)
+        {
+            transform.LookAt(transform.parent);
+        }
     }
 }

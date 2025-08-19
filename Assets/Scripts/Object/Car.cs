@@ -1,5 +1,5 @@
-using System.Collections;
 using Fusion;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +21,7 @@ public partial class Car : Object_Movable
     public float GetSpeed() { return speed; }
     protected IEnumerator Engine()
     {
-        WaitForSeconds waitForSecond = new WaitForSeconds(0.01f);
+        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame30);
         while (true)
         {
             yield return waitForSecond;
@@ -29,11 +29,11 @@ public partial class Car : Object_Movable
             {
                 DetectCounterSteering();
                 GearShifting();
+                UpdateNitro();
                 CalculateTorque();
                 forceEngineLerp();
                 TorqueToWheel();
                 if (autoGear) AutoGear();
-                EngineSoundUpdate();
             }
             else
             {
@@ -44,50 +44,69 @@ public partial class Car : Object_Movable
             }
         }
     }
-    protected IEnumerator UpdateNitro()
+    protected IEnumerator UpdateWheels()
     {
-        WaitForSeconds wfs = new WaitForSeconds(0.02f);
-        if (!isNitroInstalled) yield break;
+        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame30);
         while (true)
         {
-            yield return wfs;
-            if (isNitroActive)
-            {
-                currentNitroAmount -= nitroConsumptionRate * Time.deltaTime;
-                currentNitroAmount = Mathf.Max(0f, currentNitroAmount);
-                nitroRechargeDelayTimer = 0f;
-                nitroAdjustBlurWidth = 1f;
-                if (currentNitroAmount <= 0f)
-                {
-                    ActivateNitro(false);
-                    if (powerMode)
-                        nitroPowerReady = false;
-                }
-            }
-            else
-            {
-                nitroAdjustBlurWidth = 0f;
-                if (nitroRechargeDelayTimer < nitroRechargeDelay)
-                { nitroRechargeDelayTimer += Time.deltaTime; }
-                else
-                {
-                    currentNitroAmount += nitroRechargeRate * nitroRechargeAmount * Time.deltaTime;
-                    currentNitroAmount = Mathf.Min(maxNitroCapacity, currentNitroAmount);
-                    if (currentNitroAmount >= maxNitroCapacity)
-                    {
-                        currentNitroAmount = maxNitroCapacity;
-                        nitroRechargeDelayTimer = 0f;
-                        if (powerMode)
-                            nitroPowerReady = true;
-                    }
-                }
-            }
+            yield return waitForSecond;
+            AntiRollBar();
+            SetSlpingAngle();// 슬립 각도를 설정합니다.
+            Steering();
+            Braking();// 브레이크를 적용합니다.
+            UpdatingFriction();
+            CalculateDrift();
+        }
+    }
+    protected IEnumerator UpdateBody()
+    {
+        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame30);
+        while (true)
+        {
+            yield return waitForSecond;
+            SetCenterMass();
+            ApplyStabilizer();
+            ApplyAerodynamicDrag();
+        }
+    }
+
+    protected void PhysicsForNetworkUpdate()
+    {
+        DetectCounterSteering();
+        GearShifting();
+        UpdateNitro();
+        CalculateTorque();
+        forceEngineLerp();
+        TorqueToWheel();
+        if (autoGear) AutoGear();
+        AntiRollBar();
+        SetSlpingAngle();// 슬립 각도를 설정합니다.
+        Steering();
+        Braking();// 브레이크를 적용합니다.
+        UpdatingFriction();
+        CalculateDrift();
+        SetCenterMass();
+        ApplyStabilizer();
+        ApplyAerodynamicDrag();
+    }
+
+    protected IEnumerator UpdateVisual()
+    {
+        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame15);
+        while (true)
+        {
+            yield return waitForSecond;
+            EngineSoundUpdate();
+            UpdatingWheels();
+            UpdateLight();
+            ActivateNitro();
             NitroEffect();
+            DriftEffect();
         }
     }
     protected IEnumerator UIUpdating()
     {
-        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame15);
+        WaitForSeconds waitForSecond = new WaitForSeconds(Shared.frame30);
         while(true)
         {
             yield return waitForSecond;
@@ -101,7 +120,7 @@ public partial class Car : Object_Movable
         {
             speedInt = (int)speed;
             speedTextForUI.text = speedInt.ToString();
-            rpmGauge.SetValue(Mathf.Lerp(0f, 0.375f, currentEngineRPM / maxEngineRPM));
+            rpmGauge.SetValue(Mathf.Lerp(0f, 0.375f, networkRPM / maxEngineRPM));
         }
         else
             Debug.LogWarning("RPM Gauge is not assigned in the inspector");
@@ -109,35 +128,34 @@ public partial class Car : Object_Movable
         if (nitroBar != null)
             nitroBar.value = currentNitroAmount / maxNitroCapacity;
         //현재 기어를 확인하고 기어를 나타내는 텍스트 변경
-        switch (currentGear)
+        switch (networkGear)
         {
-            case eGEAR.eGEAR_NEUTURAL:
+            case 0:
                 gearTextForUI.text = "N";
                 break;
-            case eGEAR.eGEAR_REVERSE:
+            case -1:
                 gearTextForUI.text = "R";
                 break;
-            case eGEAR.eGEAR_FIRST:
+            case 1:
                 gearTextForUI.text = "1";
                 break;
-            case eGEAR.eGEAR_SECOND:
+            case 2:
                 gearTextForUI.text = "2";
                 break;
-            case eGEAR.eGEAR_THIRD:
+            case 3:
                 gearTextForUI.text = "3";
                 break;
-            case eGEAR.eGEAR_FOURTH:
+            case 4:
                 gearTextForUI.text = "4";
                 break;
-            case eGEAR.eGEAR_FIFTH:
+            case 5:
                 gearTextForUI.text = "5";
                 break;
-            case eGEAR.eGEAR_SIXTH:
+            case 6:
                 gearTextForUI.text = "6";
                 break;
         }
     }
-
     public void EngineStop()
     {
         if(LobbyPlayer.localPlayer.finished)

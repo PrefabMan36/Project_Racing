@@ -378,7 +378,7 @@ public class UI_Manager : Manager
         }
         else
         {
-            Debug.LogError($"팝업 스택이 비어있습니다. Popup Count: {UIs.Count}");
+            Debug.LogWarning($"팝업 스택이 비어있습니다. Popup Count: {UIs.Count}");
         }
     }
     

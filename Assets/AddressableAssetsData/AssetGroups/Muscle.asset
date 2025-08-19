@@ -1,0 +1,145 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Muscle
+  m_EditorClassIdentifier: 
+  m_GroupName: Muscle
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 0176be5cd683f94408fd743720940da7
+  m_SerializeEntries:
+  - m_GUID: 31d401b201c2e3e4e9e5464c64a8d20f
+    m_Address: Assets/Models/Materials/Cars/Muscle/RIMMUSCLE_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b8dcb8f22138694894a53fc3de3a7a0
+    m_Address: Assets/Images/Textures/Car/Muscle/Riverside88_lights_dif.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ee8339439ea5b44d82a1ec962ed1fd5
+    m_Address: Assets/Images/Textures/Car/Muscle/GEN4DR_INTERIOR_Met.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44c18a9857107a24280f385424f2d42d
+    m_Address: Assets/Models/Materials/Cars/Muscle/UCB_BOTTOM.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a7c33175db83d145b302a70adf8fb0f
+    m_Address: Assets/Images/Textures/Car/Muscle/UCB_BOTTOM_nrm.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 518afc5a91b7f42428dcd191f4d7d691
+    m_Address: Assets/Images/Textures/Car/Muscle/GEN4DR_INTERIOR_Rough.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5bf9d6d3271c36f4db64e453d5ef4b70
+    m_Address: Assets/Images/Textures/Car/Muscle/RIMMUSCLE_01_NRM.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 613ef0585aa7c1542bc3cc1bf97f34a2
+    m_Address: Assets/Images/Textures/Car/Muscle/UCB_BOTTOM_rough.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65530a057dddee249959a73e7b5e42e1
+    m_Address: Assets/Images/Textures/Car/Muscle/GENERIC_BADGES_DIF.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 770676cb032cded47890211a534df31f
+    m_Address: Assets/Models/Materials/Cars/Muscle/Riverside88_lights.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 782c7dc7c769f71468ddbf88b756d690
+    m_Address: Assets/Models/Materials/Cars/Muscle/body.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b27aa4cd85319d43aae8a021bdcb4bf
+    m_Address: Assets/Images/Textures/Car/Muscle/Numberplates_dif.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 834b8269c918b044991dcd1e45a804d1
+    m_Address: Assets/Models/Materials/Cars/Muscle/UCB_GLASS_CLEAN.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a5a470aa95aed24ebaa067705722def
+    m_Address: Assets/Images/Textures/Car/Muscle/UCB_BOTTOM_DIF.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b81ff0efb1a9ed47b68ba340a8bb5d6
+    m_Address: Assets/Images/Textures/Car/Muscle/RIMMUSCLE_01_DIF.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a078b253999d1bc4cbde92a750df46bf
+    m_Address: Assets/Images/Textures/Car/Muscle/UCB_BOTTOM_met.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a762a09ce3e25214ba14f00c41674ba0
+    m_Address: Assets/Images/Textures/Car/Muscle/GEN4DR_INTERIOR_dif.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b503f1d23b491304cb1f8caf584fcd6f
+    m_Address: Assets/Images/Textures/Car/Muscle/UCB_GLASS_CLEAN_dif.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c740babae8a7d184e8ee07c999337ecb
+    m_Address: Assets/Models/Materials/Cars/Muscle/GEN4DR_INTERIOR.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d94cf2cb7291b994b9f0a88cc391556a
+    m_Address: Assets/Models/Materials/Cars/Muscle/Numberplates.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e570327a77e6c5c48be55fa26d6243ac
+    m_Address: Assets/Models/Materials/Cars/Muscle/GENERIC_BADGES.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2bcd8a394593d44882e76070c8d5300
+    m_Address: Assets/Images/Textures/Car/Muscle/GEN4DR_INTERIOR_Nrm.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f31a558334140644fbc74c752bf78c97
+    m_Address: Assets/Images/Textures/Car/Muscle/RIMMUSCLE_01_ROUGH.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa5c38f5624e3ce4d845eef6cfa0eebf
+    m_Address: Assets/Images/Textures/Car/Muscle/RIMMUSCLE_01_MET.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 20e9b6bc6fd9d044db3a891670c09621, type: 2}
+    - {fileID: 11400000, guid: 13ca0fee92be19d4a8eaaea4c2adc36d, type: 2}

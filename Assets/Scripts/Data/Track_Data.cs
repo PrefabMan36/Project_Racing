@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CsvHelper.Configuration.Attributes;
 
-public class TrackData
+public class TrackCheckPointData
 {
     [Index(0)]
     public string TrackName { get; set; }
@@ -24,4 +24,12 @@ public class TrackData
             }
         }
     }
+}
+
+public class TrackStateData
+{
+    public string Name { get; set; }
+    public string Type { get; set; }
+    public int LoopCount { get; set; }
+    public bool isNight { get; set; }
 }

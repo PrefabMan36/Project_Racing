@@ -7,6 +7,10 @@ public class CarData // 클래스 이름 변경 (선택적이지만 권장)
     public int Num { get; set; } // Num 열 추가 (CSV에 있으므로)
     public string Name { get; set; }
     public string fileName { get; set; }
+
+    public float pitchMin { get; set; }
+    public float pitchMax { get; set; }
+
     public float Mass { get; set; } // CSV는 정수(Mass)지만 float으로 받기 가능
 
     [Name("dragCoefficient")] // 명확성을 위해 추가 (선택적)

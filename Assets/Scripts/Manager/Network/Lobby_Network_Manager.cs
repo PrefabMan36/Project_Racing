@@ -174,11 +174,13 @@ public class Lobby_Network_Manager : Manager, INetworkRunnerCallbacks
         var inputData = new NetworkInputManager();
         inputData.direction.x = Input.GetAxis("Horizontal");
         inputData.direction.y = Input.GetAxis("Vertical");
-        inputData.direction.z = Input.GetAxis("Clutch");
+        inputData.direction.z = Input.GetAxis("Vertical2");
+        inputData.clutch = Input.GetAxis("Clutch");
         inputData.sideBraking = Input.GetAxis("Jump") > 0 ? true : false;
         inputData.boosting = Input.GetKey(KeyCode.RightShift);
         inputData.gearUP = Input.GetKey(KeyCode.LeftShift);
         inputData.gearDOWN = Input.GetKey(KeyCode.LeftControl);
+        inputData.headLight = Input.GetKey(KeyCode.H);
         inputData.forceGear = 0;
         if (Input.GetKey(KeyCode.Keypad0))
             inputData.forceGear = 1;

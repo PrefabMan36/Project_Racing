@@ -90,3 +90,16 @@ public enum eGAMESTATE
     GAMECUTSCENE,
     GAMEREADY
 }
+public enum eTIRETYPE
+{
+    eTIRETYPE_BALANCE,
+    eTIRETYPE_GRIP,
+    eTIRETYPE_DRIFT,
+}
+
+public enum eTRACK_TYPE
+{
+    eTRACK_TYPE_CIRCUIT,
+    eTRACK_TYPE_SPRINT,
+    eTRACK_TYPE_DRAG,
+}

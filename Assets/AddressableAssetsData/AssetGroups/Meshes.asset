@@ -17,6 +17,11 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 9abc72d0039ac55449f73ea984b3aa78
   m_SerializeEntries:
+  - m_GUID: 28b9fe185b1bd9e4fa1d32b59ec59e6d
+    m_Address: Assets/Models/Meshes/Muscle.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 480648689bcacb1429f245e93f814b58
     m_Address: Assets/Models/Meshes/Tires.FBX
     m_ReadOnly: 0

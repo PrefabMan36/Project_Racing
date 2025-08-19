@@ -147,7 +147,7 @@ Transform:
   m_GameObject: {fileID: 10130813}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 24, y: 0, z: 0}
+  m_LocalPosition: {x: 24, y: 3000, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -179,7 +179,7 @@ Transform:
   m_GameObject: {fileID: 24899291}
   serializedVersion: 2
   m_LocalRotation: {x: 0.17364816, y: -0, z: -0, w: 0.9848078}
-  m_LocalPosition: {x: 24, y: 5.51, z: -12}
+  m_LocalPosition: {x: 24, y: 3005.51, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -767,12 +767,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b0347eef597e3f4dbfebb7ae687a947, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  corutineRunning: 0
   coreTransform: {fileID: 0}
   ShowTransform: {fileID: 10130814}
   baseRadius: 5
   radiusPerCar: 0.5
   calculatedRadius: 0
-  rotateSpeed: 4
   rotateTime: 0
   cars: []
   currentCarIndex: 0
@@ -788,7 +788,7 @@ Transform:
   m_GameObject: {fileID: 976453768}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3000, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -995,7 +995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9776156b5ac5a045a8351196b0b3265, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curve_Datas: []
+  carWheelsDatas: []
 --- !u!4 &1589279917
 Transform:
   m_ObjectHideFlags: 0
@@ -1085,7 +1085,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f240ba121739a84c8bec23b3208fab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  csvFileName: Tracks.csv
+  trackCheckpointFileName: Tracks_Checkpoint.csv
+  trackStateFileName: Tracks_State.csv
 --- !u!4 &1692034837
 Transform:
   m_ObjectHideFlags: 0
