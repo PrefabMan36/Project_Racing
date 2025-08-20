@@ -24,7 +24,8 @@ public class AddressableAutomation
 
     private static readonly List<string> excludedFileNames = new List<string>
     {
-        "PostProcessLayer.png" // 포스트 프로세싱 관련 파일 예시
+        "PostProcessLayer.png", // 포스트 프로세싱 관련 파일 예시
+        "NavMeshSurface Icon.png"
     };
     // --- 추가된 부분 끝 ---
 

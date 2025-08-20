@@ -17,6 +17,11 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 64122db7f61710d498842e9dbe87c25c
   m_SerializeEntries:
+  - m_GUID: 08e00787136b89944b260e2782e6fef9
+    m_Address: Assets/Prefabs/Environment/CameraPosition.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ca422cae321bdb4b98f56c0f9208ab9
     m_Address: Assets/Prefabs/Environment/TailLamps.prefab
     m_ReadOnly: 0

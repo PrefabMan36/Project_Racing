@@ -439,9 +439,9 @@ MonoBehaviour:
   car: {fileID: 0}
   basePosition: {fileID: 0}
   rotation: {x: 0, y: 0, z: 0}
-  isRotate: 0
+  isRotate: 1
   rotateState: 0
-  isTopDown: 0
+  isTopDown: 1
   topDownHeight: 200
 --- !u!1 &2900558800646610730
 GameObject:

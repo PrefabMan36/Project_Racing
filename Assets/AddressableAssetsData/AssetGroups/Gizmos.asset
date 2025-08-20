@@ -10,21 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Video
+  m_Name: Gizmos
   m_EditorClassIdentifier: 
-  m_GroupName: Video
+  m_GroupName: Gizmos
   m_Data:
     m_SerializedData: []
-  m_GUID: 48f63f8f15b7ffb45b1c4cf6f99bf225
-  m_SerializeEntries:
-  - m_GUID: c10da909f88309f4f9f55cea6a945bbd
-    m_Address: Assets/Video/Navigation.renderTexture
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_GUID: 3535c0c463b5abb47bb2d927a2dd9e52
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: bf3539e3f9e91a64ea867bd9a825c5c2, type: 2}
-    - {fileID: 11400000, guid: f22ac72b2cb6d9d4e894c662853f19c9, type: 2}
+    - {fileID: 11400000, guid: 604e3eaecca054043a3e2e15153d444f, type: 2}
+    - {fileID: 11400000, guid: aa62cc1df1069c44db3f671f8a2c410a, type: 2}

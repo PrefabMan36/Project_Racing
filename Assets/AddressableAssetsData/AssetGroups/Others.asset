@@ -17,6 +17,16 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: a909fe081ff9c4442a9e006374cf88e3
   m_SerializeEntries:
+  - m_GUID: 77bd2362056c7924b89316842d643b6c
+    m_Address: Assets/Models/Materials/Others/Invisible.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ea5c694f7076b84fb2a4cd1f9f9c46a
+    m_Address: Assets/Models/Materials/Others/RacingLine.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b82d3704ee96d4641b99a3d974b2af45
     m_Address: Assets/Models/Materials/Others/TrailMaterial.mat
     m_ReadOnly: 0

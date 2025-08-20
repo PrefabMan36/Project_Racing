@@ -380,8 +380,12 @@ public class MainGame_Manager : NetworkBehaviour
             Instantiate(navigation_Prefab, parentObjectForUIPanel.transform);
         }
         carWheelData = CarData_Manager.instance.GetCarWheelsDataByNumber(playerCar.GetCarNumber());
+        if(carWheelData != null)
+            Debug.Log($"CarWheelData loaded for car number {playerCar.GetCarNumber()}");
         playerCar.SetCarWheelData(carWheelData);
         carData = CarData_Manager.instance.GetCarDataByNumber(playerCar.GetCarNumber());
+        if(carData != null)
+            Debug.Log($"CarData loaded for car number {playerCar.GetCarNumber()}");
         engineCurveData = CarData_Manager.instance.GetEngineCurveDataByName(carData.Name);
         playerCar.SetEngineCurves(engineCurveData.HorsepowerCurve, engineCurveData.TorqueCurve);
         playerCar.EngineSoundSetting(carData.pitchMin, carData.pitchMax);
