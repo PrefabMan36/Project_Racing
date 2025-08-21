@@ -880,6 +880,7 @@ GameObject:
   - component: {fileID: 1088013342952417745}
   - component: {fileID: 4991735481261032214}
   - component: {fileID: 4962875830779219018}
+  - component: {fileID: 1676040935567769756}
   m_Layer: 0
   m_Name: AE86
   m_TagString: Player
@@ -1130,6 +1131,7 @@ MonoBehaviour:
   volumeMax: 0
   pitchMin: 0
   pitchMax: 0
+  charger: {fileID: 0}
   isTCSEnabled: 0
   tcsSlipThreshold: 0.25
   tcsTorqueReductionFactor: 1
@@ -1163,6 +1165,7 @@ MonoBehaviour:
   tempWheelRPM: 0
   currentWheelRPM: 0
   currentEngineRPM: 0
+  chargeMultiplier: 0
   _networkRPM: 0
   currentEngineTorque: 0
   currentWheelTorque: 0
@@ -1584,8 +1587,34 @@ MonoBehaviour:
   cautionColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   dangerColor: {r: 1, g: 0, b: 0, a: 1}
   pathfinder: {fileID: 0}
-  offPathThreshold: 10
+  offPathThreshold: 5
   recalculationCooldown: 2
+--- !u!114 &1676040935567769756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5707395150834336106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2f57777faaff1742b26188e1c950ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boosterType: 2
+  superchargerMaxBoost: 1.4
+  turboMaxBoost: 1.8
+  turboSpoolRate: 0.5
+  turboMinRpmRatio: 0.5
+  superchargerWhineSound_Prefab: {fileID: 6661320240579715109, guid: 3f92441cdf4444c479975d5d74dacfd2, type: 3}
+  turboSpoolSound_Prefab: {fileID: 7904991723168830144, guid: 3d60ba56f88ae1f47bf0414a759412d2, type: 3}
+  turboBlowOffSound_Prefab: {fileID: 1604734623248907808, guid: 7b33770047fda8e4a8f39723a3b66a93, type: 3}
+  engineSound: {fileID: 0}
+  superchargerWhineSound: {fileID: 0}
+  turboSpoolSound: {fileID: 0}
+  turboBlowOffSound: {fileID: 0}
+  minPitch: 0.2
+  maxPitch: 0.8
 --- !u!1 &5719468449993373217
 GameObject:
   m_ObjectHideFlags: 0

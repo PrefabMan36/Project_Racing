@@ -180,7 +180,8 @@ public class Lobby_Network_Manager : Manager, INetworkRunnerCallbacks
         inputData.boosting = Input.GetKey(KeyCode.RightShift);
         inputData.gearUP = Input.GetKey(KeyCode.LeftShift);
         inputData.gearDOWN = Input.GetKey(KeyCode.LeftControl);
-        inputData.headLight = Input.GetKey(KeyCode.H);
+        if (Input.GetKeyDown(KeyCode.H))
+            inputData.headLight.Set(1,true);
         inputData.forceGear = 0;
         if (Input.GetKey(KeyCode.Keypad0))
             inputData.forceGear = 1;

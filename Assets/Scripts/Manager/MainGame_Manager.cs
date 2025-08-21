@@ -56,7 +56,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private CheckPoint firstCheckPoint;
     [SerializeField] private CheckPoint lastCheckPoint;
     [SerializeField] private CheckPoint checkPoint;
-    [SerializeField] private eTRACK_TYPE trackType;
+    [SerializeField] private eTRACKTYPE trackType;
     [Networked, SerializeField] private int maxLaps { get; set; }
     [SerializeField] private bool isNight;
 
@@ -490,24 +490,24 @@ public class MainGame_Manager : NetworkBehaviour
             switch (tracksStateData.Type)
             {
                 case "eTRACK_TYPE_CIRCUIT":
-                    trackType = eTRACK_TYPE.eTRACK_TYPE_CIRCUIT;
+                    trackType = eTRACKTYPE.eTRACK_TYPE_CIRCUIT;
                     break;
                 case "eTRACK_TYPE_SPRINT":
-                    trackType = eTRACK_TYPE.eTRACK_TYPE_SPRINT;
+                    trackType = eTRACKTYPE.eTRACK_TYPE_SPRINT;
                     break;
                 case "eTRACK_TYPE_DRAG":
-                    trackType = eTRACK_TYPE.eTRACK_TYPE_DRAG;
+                    trackType = eTRACKTYPE.eTRACK_TYPE_DRAG;
                     break;
             }
             Debug.Log($"Track Type: {trackType}, Max Laps: {maxLaps}, Is Night: {isNight}");
             switch (trackType)
             {
-                case eTRACK_TYPE.eTRACK_TYPE_CIRCUIT:
+                case eTRACKTYPE.eTRACK_TYPE_CIRCUIT:
                     GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
                     pathfinder.UpdatePath(lastCheckPoint.transform.position, firstCheckPoint.transform.position);
                     break;
-                case eTRACK_TYPE.eTRACK_TYPE_SPRINT:
-                case eTRACK_TYPE.eTRACK_TYPE_DRAG:
+                case eTRACKTYPE.eTRACK_TYPE_SPRINT:
+                case eTRACKTYPE.eTRACK_TYPE_DRAG:
                     GenerateSpawnPointsFromCheckpoint(firstCheckPoint);
                     pathfinder.UpdatePath(firstCheckPoint.transform.position, firstCheckPoint.GetNextCheckPoint().transform.position);
                     break;

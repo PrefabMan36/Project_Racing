@@ -172,6 +172,7 @@ public class Player_Car : Car
         if(gameManager.GetIsNight())
             ForceLightOn();// 헤드라이트 스위치
 
+        TryGetComponent(out charger);
         ForcePlayEngineSound();// 엔진 사운드 강제 재생
         SetBaseEngineAcceleration(5f);// 기본 엔진 가속도 설정
         SetAutoGear(true);// 자동 기어 설정
@@ -202,6 +203,7 @@ public class Player_Car : Car
         }
         StartCoroutine(UpdateVisual());
         ForceChangeGear(eGEAR.eGEAR_FIRST);// 첫 번째 기어로 강제 변경
+        SetUpFinished = true;// 차량 설정 완료 상태로 변경
     }
 
     public void SetCarWheelData(CarWheelsData wheelsData)
@@ -240,8 +242,6 @@ public class Player_Car : Car
             ChangeGear(true);// 기어 업
         if (gearDown)
             ChangeGear(false);// 기어 다운
-        if(light)
-            HeadLightSwitch();// 헤드라이트 스위치
         if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
             clutch = Mathf.Lerp(1, 0, clutching);
 
@@ -342,7 +342,8 @@ public class Player_Car : Car
             else
                 nitroInput = false;
             // = MathF.Round(Mathf.Lerp(clutch, data.direction.z, Time.deltaTime * 4));
-            light = data.headLight;
+            if (data.headLight.IsSet(1))
+                HeadLightSwitch();
             clutching = data.clutch;
             forceGear = data.forceGear;
             gearUp = data.gearUP;

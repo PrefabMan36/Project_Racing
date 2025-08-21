@@ -10,6 +10,6 @@ public struct NetworkInputManager : INetworkInput
     public bool gearUP;
     public bool gearDOWN;
 
-    public bool headLight;
+    public NetworkButtons headLight;
     public byte forceGear;
 }

@@ -8,6 +8,8 @@ public partial class Car : Object_Movable
 {
     protected float speed;
 
+    public bool SetUpFinished { get; set; } = false;
+
     private bool waitingForRaceStart = false;
     [Networked] private int speedInt { get; set; }
     [SerializeField] protected TextMeshProUGUI speedTextForUI;

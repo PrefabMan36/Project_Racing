@@ -30,6 +30,7 @@ public partial class Car
     private AudioSource startUpSound;
     [SerializeField] protected float volumeMin, volumeMax;
     [SerializeField] protected float pitchMin, pitchMax;
+    [SerializeField] protected Charger charger;
 
     [Header("Value TCS")]
     [SerializeField] protected bool isTCSEnabled = true; // TCS 사용 여부
@@ -53,6 +54,7 @@ public partial class Car
     [SerializeField] private float maxHorsePower = 0f, rpmAtMaxHorsePower = 0f;
     [SerializeField] private float maxEngineRPM, minEngineRPM, targetRPM, tempWheelRPM, currentWheelRPM;
     [SerializeField] private float currentEngineRPM;
+    [SerializeField] private float chargeMultiplier;
     [Networked, SerializeField] private float networkRPM { get; set; }
     [SerializeField] private float currentEngineTorque, currentWheelTorque;
     [SerializeField] private float overSpeed;
@@ -131,7 +133,7 @@ public partial class Car
         }
     }
     // 엔진 회전수 계산하는 함수
-    protected void CalculateOptimalShiftPoints()
+    public void CalculateOptimalShiftPoints()
     {
         float maxHorsePower = 0f;
         float rpmAtMaxHorsePower = maxEngineRPM * 0.8f; // 기본값
@@ -173,19 +175,25 @@ public partial class Car
 
             float optimalRPM = maxEngineRPM * 0.95f; // 기본값은 레드존 직전
 
-            // 현재 RPM을 올려가며 다음 기어의 바퀴 토크가 더 커지는 지점을 탐색
             for (float currentRPM = rpmAtPeakTorque; currentRPM <= maxEngineRPM; currentRPM += 20f)
             {
-                // 1. 현재 기어, 현재 RPM에서의 바퀴 토크
-                float currentWheelTorque = engineTorqueCurve.Evaluate(currentRPM) * gearRatio[currentGear];
+                float currentWheelTorque;
+                float nextWheelTorque;
 
-                // 2. 변속 후 다음 기어에서의 예상 RPM
-                float nextGearRPM = currentRPM * (gearRatio[nextGear] / gearRatio[currentGear]);
-                if (nextGearRPM > maxEngineRPM) break; // 변속 후 RPM이 레드존을 넘으면 무의미
-
-                // 3. 다음 기어, 예상 RPM에서의 바퀴 토크
-                float nextWheelTorque = engineTorqueCurve.Evaluate(nextGearRPM) * gearRatio[nextGear];
-
+                if (charger != null)
+                {
+                    currentWheelTorque = charger.GetBoostedTorque(currentRPM, engineTorqueCurve, maxEngineRPM) * gearRatio[currentGear];
+                    float nextGearRPM = currentRPM * (gearRatio[nextGear] / gearRatio[currentGear]);
+                    if (nextGearRPM > maxEngineRPM) break;
+                    nextWheelTorque = charger.GetBoostedTorque(nextGearRPM, engineTorqueCurve, maxEngineRPM) * gearRatio[nextGear];
+                }
+                else
+                {
+                    currentWheelTorque = engineTorqueCurve.Evaluate(currentRPM) * gearRatio[currentGear];
+                    float nextGearRPM = currentRPM * (gearRatio[nextGear] / gearRatio[currentGear]);
+                    if (nextGearRPM > maxEngineRPM) break;
+                    nextWheelTorque = engineTorqueCurve.Evaluate(nextGearRPM) * gearRatio[nextGear];
+                }
                 // 4. 다음 기어의 토크가 현재 기어의 토크보다 커지는 첫 지점이 최적의 변속 시점
                 if (nextWheelTorque > currentWheelTorque)
                 {
@@ -194,13 +202,16 @@ public partial class Car
                 }
             }
             optimalShiftUpRPMs.Add(currentGear, optimalRPM);
-            float downshiftAggressiveness = 1.2f;
+            float downshiftAggressiveness = 1.6f;
             // 다운시프트 RPM 계산: 다운시프트 시, 엔진이 최대 토크를 내는 RPM 근처에 도달하도록 설정
-            if (currentGear > eGEAR.eGEAR_FIRST)
+            Debug.Log($"Calculating Optimal Shift Points for Gear: {currentGear}");
+            if (currentGear != eGEAR.eGEAR_FIRST)
             {
                 eGEAR previousGear = currentGear - 1;
                 float downShiftRPM = rpmAtPeakTorque * (gearRatio[currentGear] / gearRatio[previousGear]) * downshiftAggressiveness;
+                Debug.Log($"Calculated Downshift RPM for {currentGear}: {downShiftRPM} rpmAtPeakTorque : {rpmAtPeakTorque}");
                 optimalShiftDownRPMs.Add(currentGear, Mathf.Max(downShiftRPM, minEngineRPM));
+                Debug.Log($"Optimal Downshift RPM for {currentGear}: {optimalShiftDownRPMs[currentGear]}");
             }
 
             optimalShiftDownRPMs[eGEAR.eGEAR_FIRST] = minEngineRPM + 500f;
@@ -319,10 +330,14 @@ public partial class Car
                     );
                 nitroPowerMultiplier = nitroEnabled ? nitroPower : 1f;
                 nitroSpeedMultiplier = nitroEnabled ? nitroSpeed : 1f;
+
+                chargeMultiplier = (charger != null) ? charger.currentChargeMultiplier : 1f;
+
                 if (speed < gearSpeedLimit[currentGear] * nitroSpeed)
                     currentWheelTorque =
                         (
                             engineTorqueCurve.Evaluate(currentEngineRPM) *
+                            chargeMultiplier *
                             nitroPowerMultiplier * (gearRatio[currentGear] * finalDriveRatio)
                             * clutch
                         );
@@ -822,5 +837,12 @@ public partial class Car
         }
         return (driveWheelsFound > 0) ? totalSidewaysSlip / driveWheelsFound : 0f;
     }
+    #endregion
+
+    #region Function For External Access
+    public float GetCurrentRPM() { return currentEngineRPM; }
+    public float GetMaxRPM() { return maxEngineRPM; }
+    public float GetThrottleInput() { return throttle; }
+    public AnimationCurve GetEngineTorqueCurve() { return engineTorqueCurve; }
     #endregion
 }

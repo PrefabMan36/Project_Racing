@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a2f57777faaff1742b26188e1c950ff4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - superchargerWhineSound_Prefab: {fileID: 6661320240579715109, guid: 3f92441cdf4444c479975d5d74dacfd2, type: 3}
+  - turboSpoolSound_Prefab: {fileID: 7904991723168830144, guid: 3d60ba56f88ae1f47bf0414a759412d2, type: 3}
+  - turboBlowOffSound_Prefab: {fileID: 1604734623248907808, guid: 7b33770047fda8e4a8f39723a3b66a93, type: 3}
+  - engineSound: {instanceID: 0}
+  - superchargerWhineSound: {instanceID: 0}
+  - turboSpoolSound: {instanceID: 0}
+  - turboBlowOffSound: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
