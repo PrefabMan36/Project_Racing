@@ -237,6 +237,7 @@ public class Player_Car : Car
 
     public override void FixedUpdateNetwork()
     {
+        //입력부분
         GetInputData();
         if (gearUp)
             ChangeGear(true);// 기어 업
@@ -244,7 +245,7 @@ public class Player_Car : Car
             ChangeGear(false);// 기어 다운
         if (GetCurrentGear() != eGEAR.eGEAR_NEUTURAL)
             clutch = Mathf.Lerp(1, 0, clutching);
-
+        //강제 기어 변경
         switch (forceGear)
         {
             case 1:
@@ -269,6 +270,7 @@ public class Player_Car : Car
                 ForceChangeGear(eGEAR.eGEAR_SIXTH);
                 break;
         }
+        //스로틀 입력
         if (ignition)
         {
             brakeInput = 0f;
@@ -293,18 +295,19 @@ public class Player_Car : Car
         {
             throttle = 0f;
         }
-
+        //헨드브레이크
         if (sideBraking)
             SideBrakingDown();
         else
             SideBrakingUp();
 
+        //호스트일 경우만 물리계산
         if(HasStateAuthority)
         {
             PhysicsForNetworkUpdate();
         }
 
-        ChangeDriverAnimation();//운전자의 에니메이션 상태를 갱신 합니다.
+        ChangeDriverAnimation();//운전자의 에니메이션 상태 갱신
     }
 
     private void LateUpdate()

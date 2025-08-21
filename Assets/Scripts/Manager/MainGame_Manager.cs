@@ -128,9 +128,10 @@ public class MainGame_Manager : NetworkBehaviour
 
     #region Countdown & Timers
     [Header("Countdown & Timers")]
-    [SerializeField] private float gameTimer;
     [SerializeField] private TimeSpan gameTimeSpan;
     [SerializeField] private DateTime gameTime;
+    [SerializeField] private float gameTimer;
+
     [Networked] private bool raceFinishCountdownTriggered { get; set; } = false;
     [Networked] private TickTimer didNotFinishTimer { get; set; }
     [SerializeField] private float didNotFinishCountdownDuration = 10f;

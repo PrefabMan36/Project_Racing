@@ -74,22 +74,22 @@ public partial class Car : Object_Movable
 
     protected void PhysicsForNetworkUpdate()
     {
-        DetectCounterSteering();
-        GearShifting();
-        UpdateNitro();
-        CalculateTorque();
-        forceEngineLerp();
-        TorqueToWheel();
-        if (autoGear) AutoGear();
-        AntiRollBar();
-        SetSlpingAngle();// 슬립 각도를 설정합니다.
-        Steering();
-        Braking();// 브레이크를 적용합니다.
-        UpdatingFriction();
-        CalculateDrift();
-        SetCenterMass();
-        ApplyStabilizer();
-        ApplyAerodynamicDrag();
+        DetectCounterSteering();//카운터 스티어 감지
+        GearShifting(); //기어변경
+        UpdateNitro(); //부스터 갱신
+        CalculateTorque(); //엔진 토크 계산
+        forceEngineLerp(); //엔진회전수보정
+        TorqueToWheel(); //계산된 토크 바퀴로 전달
+        if (autoGear) AutoGear(); //자동 기어
+        AntiRollBar(); //뒤집힘 방지
+        SetSlpingAngle();// 슬립 각도를 설정
+        Steering(); //차량 회전
+        Braking();// 브레이크
+        SetCenterMass(); //질량 중심 설정
+        UpdatingFriction(); //마찰값 계산
+        CalculateDrift(); //드리프트 상태 계산
+        ApplyStabilizer();  //뒤집힘 방지(강제)
+        ApplyAerodynamicDrag(); //공기저항 적용
     }
 
     protected IEnumerator UpdateVisual()
