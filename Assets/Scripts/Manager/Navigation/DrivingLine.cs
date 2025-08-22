@@ -28,7 +28,7 @@ public class DrivingLine : MonoBehaviour
     {
         path = GameObject.FindAnyObjectByType<WaypointPath>();
         pathfinder = GameObject.FindAnyObjectByType<Pathfinder>();
-        car = transform;
+        car = transform.parent;
         carRigidbody = car.GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
         // 라인 렌더러의 월드 공간 좌표 사용 설정
@@ -70,7 +70,7 @@ public class DrivingLine : MonoBehaviour
 
             // 현재 위치에서 경로의 최종 목적지까지 가는 길을 다시 탐색
             Vector3 destination = path.waypoints[path.waypoints.Count - 1].position;
-            pathfinder.UpdatePath(car.position, destination);
+            pathfinder.UpdatePath(car.position + Vector3.up * 0.4f, destination);
 
             // 쿨다운 타이머 초기화
             timeSinceLastRecalc = 0f;

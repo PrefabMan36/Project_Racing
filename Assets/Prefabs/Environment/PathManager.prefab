@@ -48,3 +48,6 @@ MonoBehaviour:
   cornerCurvatureThreshold: 0.05
   waypoints: []
   recommendedSpeeds: []
+  trackLayer:
+    serializedVersion: 2
+    m_Bits: 128

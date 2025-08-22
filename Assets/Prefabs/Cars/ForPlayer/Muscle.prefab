@@ -654,7 +654,6 @@ GameObject:
   - component: {fileID: 4926982104924607330}
   - component: {fileID: 534513842848098868}
   - component: {fileID: 4361805419663874186}
-  - component: {fileID: 4149886607917005214}
   - component: {fileID: 3933090572794752455}
   - component: {fileID: 8687413661813443478}
   m_Layer: 0
@@ -1268,32 +1267,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &4149886607917005214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5580236464076335258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2f57777faaff1742b26188e1c950ff4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boosterType: 1
-  superchargerMaxBoost: 1.4
-  turboMaxBoost: 1.8
-  turboSpoolRate: 0.5
-  turboMinRpmRatio: 0.5
-  superchargerWhineSound_Prefab: {fileID: 6661320240579715109, guid: 3f92441cdf4444c479975d5d74dacfd2, type: 3}
-  turboSpoolSound_Prefab: {fileID: 7904991723168830144, guid: 3d60ba56f88ae1f47bf0414a759412d2, type: 3}
-  turboBlowOffSound_Prefab: {fileID: 1604734623248907808, guid: 7b33770047fda8e4a8f39723a3b66a93, type: 3}
-  engineSound: {fileID: 0}
-  superchargerWhineSound: {fileID: 0}
-  turboSpoolSound: {fileID: 0}
-  turboBlowOffSound: {fileID: 0}
-  minPitch: 0.1
-  maxPitch: 1
 --- !u!120 &3933090572794752455
 LineRenderer:
   serializedVersion: 2
@@ -1405,7 +1378,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5580236464076335258}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95345c0e3a74c9b45812b697fcdd4d13, type: 3}
   m_Name: 

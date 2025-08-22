@@ -15,6 +15,10 @@ public class WaypointPath : MonoBehaviour
     public List<Transform> waypoints = new List<Transform>();
     public List<float> recommendedSpeeds = new List<float>();
 
+    [Header("Ground Snap Settings")]
+    [Tooltip("지면 인식을 위한 트랙의 레이어를 선택해주세요.")]
+    public LayerMask trackLayer;
+
     void Awake()
     {
         // 자식 오브젝트들을 순서대로 웨이포인트로 등록
@@ -215,7 +219,44 @@ public class WaypointPath : MonoBehaviour
             waypoints.Add(wp.transform);
         }
 
+
         CalculateRecommendedSpeeds();
         GenerateRacingLine();
+        ProjectWaypointsToGround();
+    }
+
+    /// <summary>
+    /// 모든 웨이포인트를 레이캐스트를 사용해 trackLayer에 해당하는 지면에 스냅합니다.
+    /// </summary>
+    private void ProjectWaypointsToGround()
+    {
+        if (trackLayer == 0) // LayerMask가 설정되지 않았으면 경고 후 종료
+        {
+            Debug.LogWarning("Track Layer가 설정되지 않았습니다! 웨이포인트 높이 보정을 건너뜁니다.");
+            return;
+        }
+
+        foreach (Transform waypoint in waypoints)
+        {
+            // 웨이포인트 위치에서 위쪽으로 레이를 쏴서 시작점 확보 (언덕 아래에서도 감지되도록)
+            Vector3 rayOrigin = waypoint.position + Vector3.up * 10f;
+
+            // 레이캐스트 발사
+            if (Physics.Raycast(rayOrigin, -Vector3.up, out RaycastHit hit, 50f, trackLayer))
+            {
+                // 레이가 지면에 닿았다면, 웨이포인트의 위치를 충돌 지점(hit.point)으로 업데이트
+                waypoint.position = hit.point;
+                waypoint.position += Vector3.up * 0.4f; // 약간 위로 올려서 지면 위에 위치하도록
+            }
+            else
+            {
+                // 혹시 모르니 위쪽으로도 한번 더 쏴서 다리 등을 감지
+                if (Physics.Raycast(waypoint.position - Vector3.up * 10f, Vector3.up, out hit, 50f, trackLayer))
+                {
+                    waypoint.position = hit.point;
+                    waypoint.position += Vector3.up * 0.4f; // 약간 위로 올려서 다리 위에 위치하도록
+                }
+            }
+        }
     }
 }

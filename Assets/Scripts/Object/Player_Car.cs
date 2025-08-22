@@ -147,7 +147,7 @@ public class Player_Car : Car
                     transposer.m_YawDamping = cameraFollowDamping;
                 }
             }
-
+            transform.Find("DrivingLine").GetComponent<DrivingLine>().enabled = true;// 주행 라인 컴포넌트를 활성화합니다.
         }
         SetWheels(wheelsModels[0], transform.Find("Wheel_FrontLeft").GetComponent<WheelCollider>(), transform.Find("TrailFrontLeft").GetComponent<TrailRenderer>(), true);
         SetWheels(wheelsModels[1], transform.Find("Wheel_FrontRight").GetComponent<WheelCollider>(), transform.Find("TrailFrontRight").GetComponent<TrailRenderer>(), true);

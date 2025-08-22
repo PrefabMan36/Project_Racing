@@ -107,11 +107,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2eb71d0484e70014ea0ee990b42c5b8c
-    m_Address: Assets/Scenes/Tracks/City_Night/City_Night/NavMesh-RoadForNavi.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2fa00f3931e486b42bd4d57611f47051
     m_Address: Assets/Scenes/Tracks/City_Night/Lightmap-2_comp_light.exr
     m_ReadOnly: 0

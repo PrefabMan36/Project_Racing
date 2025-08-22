@@ -225,12 +225,12 @@ public class Charger : MonoBehaviour
             case ECHARGERTYPE.eCHARGERTYPE_SUPERCHARGER:
                 superchargerWhineSound = Instantiate(superchargerWhineSound_Prefab, transform).GetComponent<AudioSource>();
                 superchargerWhineSound.transform.localPosition = engineSound.transform.localPosition;
-                superchargerWhineSound.volume = engineSound.volume;
+                superchargerWhineSound.volume = engineSound.volume*2;
                 break;
             case ECHARGERTYPE.eCHARGERTYPE_TURBOCHARGER:
                 turboSpoolSound = Instantiate(turboSpoolSound_Prefab, transform).GetComponent<AudioSource>();
                 turboSpoolSound.transform.localPosition = engineSound.transform.localPosition;
-                turboSpoolSound.volume = engineSound.volume;
+                turboSpoolSound.volume = 0.8f;
                 turboBlowOffSound = Instantiate(turboBlowOffSound_Prefab, transform).GetComponent<AudioSource>();
                 turboBlowOffSound.transform.localPosition = turboBlowOffSound.transform.localPosition;
                 break;
