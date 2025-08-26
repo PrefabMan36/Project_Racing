@@ -62,6 +62,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9aa3f662bed2e8e42891ae07a5cef529
+    m_Address: Assets/Prefabs/Cars/Object/RMCar26/Wheel_C.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a9201237ba84d194592f279e70a85fed
     m_Address: Assets/Models/Materials/Cars/RMCar26/RMCar26PaintAo.tga
     m_ReadOnly: 0

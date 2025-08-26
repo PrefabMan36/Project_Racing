@@ -30,9 +30,9 @@ public partial class Car
     [SerializeField] private AnimationCurve steeringCurve;
     [SerializeField] private Transform steeringHandle;
     [SerializeField] private float maxSteerAngle = 30f;
-    [Networked, SerializeField] private float curSteerAngle { get; set; } = 0f;
+    [Networked, SerializeField] protected float curSteerAngle { get; set; } = 0f;
     [SerializeField] private float currentInput;
-    [SerializeField] private float steerInput;
+    [SerializeField] protected float steerInput;
     [SerializeField] private float steerSpeed;
     [SerializeField] private float slipingAngle;
     [SerializeField] private float sideBrakeInput;
@@ -145,7 +145,7 @@ public partial class Car
 
     #region Value Drift
     [Header("Drift Value")]
-    [SerializeField] private AudioSource slipSound;
+    [SerializeField] protected AudioSource slipSound;
     [SerializeField] private float currentMaxSlip;
     [SerializeField] private float sumSlip;
     [SerializeField] private float finalMaxSlip;
@@ -160,6 +160,18 @@ public partial class Car
     #region Function Steer Setting
     public void SetSteeringCurve(AnimationCurve _steeringCurve) { steeringCurve  = _steeringCurve; }
     protected void SetSteerWheelsCount(int _steerWheelsCount) { steerWheelsNum = _steerWheelsCount; }
+    public float GetSteeringAngle()
+    {
+        return curSteerAngle;
+    }
+    public float GetMaxSteering()
+    {
+        return steeringCurve.Evaluate(0);
+    }
+    public float GetSteeringInput()
+    {
+        return steerInput;
+    }
     #endregion
 
     #region Fuction Wheels Setting

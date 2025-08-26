@@ -19,26 +19,6 @@ public class WaypointPath : MonoBehaviour
     [Tooltip("지면 인식을 위한 트랙의 레이어를 선택해주세요.")]
     public LayerMask trackLayer;
 
-    void Awake()
-    {
-        // 자식 오브젝트들을 순서대로 웨이포인트로 등록
-        GetWaypoints();
-    }
-
-    // 자식 Transform을 기반으로 웨이포인트를 자동으로 찾아 리스트에 추가
-    private void GetWaypoints()
-    {
-        waypoints.Clear();
-        // 자신의 자식 개수만큼 반복
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            waypoints.Add(transform.GetChild(i));
-        }
-
-        // 경로의 곡률을 기반으로 각 지점의 권장 속도를 계산 (예시)
-        CalculateRecommendedSpeeds();
-    }
-
     // 각 웨이포인트 지점의 권장 속도를 계산하는 함수 (고급 기능)
     public void CalculateRecommendedSpeeds()
     {
@@ -82,27 +62,79 @@ public class WaypointPath : MonoBehaviour
         recommendedSpeeds.Add(maxSpeed);
     }
 
-    // 외부에서 웨이포인트 배열을 직접 설정할 수 있도록 하는 함수
-    public void SetPath(Vector3[] newPath)
+    /// <summary>
+    /// 새로운 경로를 설정하고, 설정된 경로를 부드럽게 보간(Catmull-Rom)하며 레이싱 라인을 생성합니다.
+    /// </summary>
+    /// <param name="newPathCorners">WaypointManager로부터 받은 원본 경로 코너들</param>
+    /// <param name="segmentResolution">경로를 얼마나 잘게 쪼갤지에 대한 값 (m 단위)</param>
+    public void SetAndRefinePath(List<Vector3> newPathCorners, bool isCircuit, float segmentResolution = 2.0f)
     {
-        // 기존 자식 웨이포인트 삭제
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-        waypoints.Clear();
+        if (newPathCorners.Count < 2) return;
 
-        // 새로운 경로점들로 웨이포인트 생성
-        for (int i = 0; i < newPath.Length; i++)
+        foreach (Transform child in transform) Destroy(child.gameObject);
+        waypoints.Clear();
+        
+        List<Vector3> refinedPoints = new List<Vector3>();
+
+        // 캣멀롬 스플라인 보간을 위한 제어점 리스트 생성
+        List<Vector3> controlPoints = new List<Vector3>(newPathCorners);
+
+        if (isCircuit)
+        {
+            // 서킷인 경우: 경로가 끊김없이 이어지도록 앞뒤로 점들을 추가
+            // 맨 앞에 마지막 두 개의 점을, 맨 뒤에 처음 두 개의 점을 추가하여 완벽한 루프를 만듭니다.
+            controlPoints.Insert(0, newPathCorners[newPathCorners.Count - 1]);
+            controlPoints.Add(newPathCorners[0]);
+            controlPoints.Add(newPathCorners[1]);
+        }
+        else
+        {
+            // 서킷이 아닌 경우(스프린트 등): 경로의 시작과 끝이 끊어지도록 처리
+            controlPoints.Insert(0, newPathCorners[0]); // 시작점 한번 더 추가
+            controlPoints.Add(newPathCorners[newPathCorners.Count - 1]); // 끝점 한번 더 추가
+        }
+
+        if (newPathCorners.Count < 4) // 점이 4개 미만이면 보간 없이 직선 연결
+        {
+            refinedPoints.AddRange(newPathCorners);
+        }
+        else // 캣멀롬 스플라인 보간으로 부드러운 곡선 생성
+        {
+            for (int i = 1; i < controlPoints.Count - 2; i++)
+            {
+                Vector3 p0 = controlPoints[i - 1];
+                Vector3 p1 = controlPoints[i];
+                Vector3 p2 = controlPoints[i + 1];
+                Vector3 p3 = controlPoints[i + 2];
+
+                float segmentDistance = Vector3.Distance(p1, p2);
+                int divisions = Mathf.Max(1, Mathf.CeilToInt(segmentDistance / segmentResolution));
+
+                for (int j = 0; j < divisions; j++)
+                {
+                    float t = (float)j / divisions;
+                    Vector3 pointOnCurve = 0.5f * (
+                        (2f * p1) +
+                        (-p0 + p2) * t +
+                        (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
+                        (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t);
+                    refinedPoints.Add(pointOnCurve);
+                }
+            }
+            refinedPoints.Add(controlPoints[controlPoints.Count - 2]);
+        }
+
+        for (int i = 0; i < refinedPoints.Count; i++)
         {
             GameObject wp = new GameObject($"Waypoint {i}");
-            wp.transform.position = newPath[i];
+            wp.transform.position = refinedPoints[i];
             wp.transform.parent = this.transform;
             waypoints.Add(wp.transform);
         }
 
-        // 새로운 경로에 맞춰 권장 속도 재계산
         CalculateRecommendedSpeeds();
+        GenerateRacingLine();
+        ProjectWaypointsToGround();
     }
 
     /// <summary>
@@ -161,68 +193,6 @@ public class WaypointPath : MonoBehaviour
             // 곡률이 셀수록(코너가 급할수록) 더 강하게 안쪽으로 밀어냅니다.
             waypoints[i].position += offsetDirection * racingLineOffset * pushIntensity;
         }
-    }
-
-    /// <summary>
-    /// 새로운 경로를 설정하고, 설정된 경로를 부드럽게 보간합니다.
-    /// </summary>
-    /// <param name="newPathCorners">NavMesh로부터 받은 원본 경로 코너들</param>
-    /// <param name="segmentResolution">경로를 얼마나 잘게 쪼갤지에 대한 값 (m 단위)</param>
-    public void SetAndRefinePath(Vector3[] newPathCorners, float segmentResolution = 2.0f)
-    {
-        if (newPathCorners.Length < 2) return;
-
-        // 기존 웨이포인트 정리
-        foreach (Transform child in transform) Destroy(child.gameObject);
-        waypoints.Clear();
-
-        // 보간된 포인트를 저장할 새 리스트
-        List<Vector3> refinedPoints = new List<Vector3>();
-
-        List<Vector3> controlPoints = new List<Vector3>(newPathCorners);
-        controlPoints.Insert(0, newPathCorners[0]);
-        controlPoints.Add(newPathCorners[newPathCorners.Length - 1]);
-
-        for (int i = 1; i < controlPoints.Count - 2; i++)
-        {
-            Vector3 p0 = controlPoints[i - 1];
-            Vector3 p1 = controlPoints[i];
-            Vector3 p2 = controlPoints[i + 1];
-            Vector3 p3 = controlPoints[i + 2];
-
-            float segmentDistance = Vector3.Distance(p1, p2);
-            int divisions = Mathf.Max(1, Mathf.CeilToInt(segmentDistance / segmentResolution));
-
-            for (int j = 0; j < divisions; j++)
-            {
-                float t = (float)j / divisions;
-
-                // 캣멀롬 스플라인 공식
-                Vector3 pointOnCurve = 0.5f * (
-                    (2f * p1) +
-                    (-p0 + p2) * t +
-                    (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
-                    (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t
-                );
-
-                refinedPoints.Add(pointOnCurve);
-            }
-        }
-        refinedPoints.Add(controlPoints[controlPoints.Count - 2]);
-
-        // 세분화된 경로로 웨이포인트 GameObject 생성
-        for (int i = 0; i < refinedPoints.Count; i++)
-        {
-            GameObject wp = new GameObject($"Waypoint {i}");
-            wp.transform.position = refinedPoints[i];
-            wp.transform.parent = this.transform;
-            waypoints.Add(wp.transform);
-        }
-
-
-        CalculateRecommendedSpeeds();
-        GenerateRacingLine();
-        ProjectWaypointsToGround();
     }
 
     /// <summary>

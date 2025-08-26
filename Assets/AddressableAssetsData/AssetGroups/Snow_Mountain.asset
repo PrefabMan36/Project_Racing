@@ -17,6 +17,11 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 73faeb784989ff84dae27f6e77e46f6f
   m_SerializeEntries:
+  - m_GUID: 22cbcf68fb1459f47bed8f3777629efb
+    m_Address: Assets/Scenes/Tracks/Snow_Mountain/Snow_Mountain/NavMesh-RoadForNavi.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c134f408d259304b839b639109847d9
     m_Address: Assets/Scenes/Tracks/Snow_Mountain/Snow_MountainSettings.lighting
     m_ReadOnly: 0

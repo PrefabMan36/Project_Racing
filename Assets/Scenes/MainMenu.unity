@@ -505,10 +505,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70deaf7acc4d28341ae9bb68af6d4be1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapEnum: 0600000007000000
+  mapEnum: 060000000700000008000000
   mapImages:
   - {fileID: 21300000, guid: 14d294016dff8e241a100d8747973a23, type: 3}
   - {fileID: 21300000, guid: a929477cc839eea44aad7777e6fa4e63, type: 3}
+  - {fileID: 21300000, guid: ae07d290580e1d647b108c2b9bd095a1, type: 3}
   sessionID: 
 --- !u!1 &571482917
 GameObject:
@@ -1398,6 +1399,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1754657748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1754657750}
+  - component: {fileID: 1754657749}
+  m_Layer: 0
+  m_Name: Waypoint_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1754657749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754657748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7d4fc294da05fa42959bbb5b3ebd542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypointCsvFile: {fileID: 0}
+  isLoaded: 0
+--- !u!4 &1754657750
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754657748}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1843233917
 GameObject:
   m_ObjectHideFlags: 0
@@ -1562,6 +1609,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1692034837}
+  - {fileID: 1754657750}
   - {fileID: 1589279917}
   - {fileID: 1710152510}
   - {fileID: 472920664}

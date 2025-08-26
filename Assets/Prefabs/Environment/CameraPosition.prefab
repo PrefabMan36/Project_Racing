@@ -1785,8 +1785,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 610099886737406013, guid: dab6b0030a18d1847833a6af9f2996db, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 610099886737406013, guid: dab6b0030a18d1847833a6af9f2996db, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 610099886737406013, guid: dab6b0030a18d1847833a6af9f2996db, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 610099886737406013, guid: dab6b0030a18d1847833a6af9f2996db, type: 3}
       propertyPath: m_Materials.Array.data[0]

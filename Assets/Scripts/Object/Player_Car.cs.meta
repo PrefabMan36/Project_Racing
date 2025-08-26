@@ -5,30 +5,40 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - body: {instanceID: 0}
-  - steeringHandle: {instanceID: 0}
-  - smokePrefab: {instanceID: 0}
-  - tempWheelColliderForBrake: {instanceID: 0}
   - speedTextForUI: {instanceID: 0}
   - gearTextForUI: {instanceID: 0}
   - nitroBar: {instanceID: 0}
   - rpmGauge: {instanceID: 0}
+  - driver: {instanceID: 0}
   - centerMass: {instanceID: 0}
   - carRB: {instanceID: 0}
+  - headLights: {instanceID: 0}
+  - tailLamps: {instanceID: 0}
+  - steeringHandle: {instanceID: 0}
+  - slipSound: {instanceID: 0}
+  - smokePrefab: {fileID: 100000, guid: bafe3b28ce202a749a940ce779c3a90d, type: 3}
+  - tempWheelColliderForBrake: {instanceID: 0}
   - startUpSoundObject: {instanceID: 0}
+  - charger: {instanceID: 0}
   - nitroSoundEffect: {instanceID: 0}
-  - nitroParticles: {instanceID: 0}
+  - nitroStartSoundEffect: {instanceID: 0}
+  - nitroEffect: {instanceID: 0}
+  - nitroTrail: {instanceID: 0}
   - _data: {instanceID: 0}
   - cameraData: {fileID: 2618143904914634885, guid: 08e00787136b89944b260e2782e6fef9, type: 3}
   - cameraPositions: {instanceID: 0}
   - networkObject: {instanceID: 0}
   - focusPoint: {instanceID: 0}
-  - freeLookCamera: {instanceID: 0}
-  - sideCamera: {instanceID: 0}
+  - dynamicLookAtTarget: {instanceID: 0}
+  - lookLeftPoint: {instanceID: 0}
+  - lookRightPoint: {instanceID: 0}
+  - raceCamera: {instanceID: 0}
   - firstPersonCamera: {instanceID: 0}
   - lookBack: {instanceID: 0}
   - mainCamera: {instanceID: 0}
   - radialBlur: {instanceID: 0}
   - nextCheckPoint: {instanceID: 0}
+  - navigation: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

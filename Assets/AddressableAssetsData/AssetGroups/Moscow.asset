@@ -1,0 +1,495 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Moscow
+  m_EditorClassIdentifier: 
+  m_GroupName: Moscow
+  m_Data:
+    m_SerializedData: []
+  m_GUID: cd0ee6239a28ed3438972a862af70ffa
+  m_SerializeEntries:
+  - m_GUID: 0284fbf42da2e414b92154324f78222a
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0606f729f3f38cc4fbfa0f3e3ae5a2f8
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_zhibei_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0eb9812de9db11649999e9437a5a257a
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_14SnowD.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14f147357d0a18f4f9ae4ed3bc2c4871
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_qiang_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 173745c6beb7c6747883b981575b6c00
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_tiezhalan_4.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 177965a025335cb4faa551f4029d1d85
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_jiaotang_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19f888835fed3334fbdfc3b284b72fdd
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_zhishipai1_A.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b60710fa627c7348aef3255fb8adbef
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_9.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c913e1691be0d249bae4d44390b8b23
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_tiezhalan_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1de7fe65260575347b5e9aa2ce2a7d0a
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_15.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e62b67c0b3b85540ba9b201c335602c
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_jiaotang_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1f1de494845fadc46bf325a4f47d326d
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_9.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1fa1d64a6a2fd7f4db68aff27ce22254
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_6.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 224da133bd2daea4a8e1c8117d782ff5
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_deng_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 287576ff13d1e924d89d4cc7fa4ce3c3
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_7.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c4326dd942a42e4192f9ce147cca2bc
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_tiezhalan_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f12155d567d7c24e812845b16b46281
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_tong_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3358b6587ad1dab42a83068d6e0a98ec
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ad1f3f9b5b4af848a64cb6898a11700
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_lujian_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3bee6fc2fb80a414abdd99d45a1e352d
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_guanggao_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 402291a39680b4640995b435c4a8cb8a
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_lujian_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 467c5808f930d5848ac2fafc23655789
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_tiezhalan_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 487580cbe28c33f4aae0835fc75e32b2
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b121df122127144592e6cc9644f2c3a
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_tong_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c8f860e8007de647b88b884ab3216d3
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4cd4b9861bf175245896a020b7e7da70
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_tiezhalan_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d54dff180170ed48b73773ceedfec6e
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_14.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f23e9ec64d7abc4e8786235cd4bcac6
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_qiang_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 509007640622d854ab66c5843aea8684
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51ea412c1af0d0148907c8f095719e68
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_cao_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5255b92c30a110144b316a86f8a2d755
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_xue_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53c70ad27e34b94488484693e291d0f6
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_7.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 581c47e4ba1b8e840a73cd026122340c
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_9.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58448584924b3944781c1fcc8bbb0cbb
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_jiaotang_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5dceadb34b5169b46a0c32d5366ea36d
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_7SnowD.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e3fca501b0ead34ea5450d90f3a6d0e
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_jiaotang_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6289612a0e027434c8aa3d7d0409b1d1
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_zhibei_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65cdcf308dab65a40a0aa06ee2d21917
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_xue_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6aba501af0b22a044ac7ffa25edf41e4
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_6.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70faeb8d2e8272943b1b758b66d00533
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_shui_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 781450cb5060c704796da5508c5b0556
+    m_Address: Assets/Models/Meshes/Moscow/MosikeDay.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 794b1520e87f62a45af4f6034bc5758a
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7adf5a73a06ee2244a3d695e376efd74
+    m_Address: Assets/Images/Textures/Scene/Moscow/huatan_1_snowD.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b09107a102815245829918180ac3227
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e1552809262f0b4ab78b4cbf4316bc2
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_huatan_1_snowD.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f3aa1f1a64edc04caef27a35d0e4186
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_lujian_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 816da8397c666c04b9c105279fff4445
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 844af505347578c44b915d5b2f701f6e
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_lujian_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8abfe527dfcd50e4c9accbf958220684
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_9.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b1c00f01b76a194396f0e665d054b14
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_5.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9499fddb287a3c446b998416914c3b83
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_shan_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96d51c39a6ffd424b92ddb03e4aa3eb6
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_shan_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9809ab25fbe832c47803dc2f131d8bd9
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_deng_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99226b44e6775f0469f2dc1233e625ed
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_8.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9af5c6051fe3ea14aa146ea6b85b30c9
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_qiang_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c1ab9dddaa99464abb5e0744d08c365
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9dfe4648f0e24b247a9bed126310b1d4
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_tiezhalan_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e12adc72f4bd8c44b912e6db522a296
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_cao_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9fc472104ec84d7499dfca2358cd5005
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_7snowD.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0b57a86db26baf449be44c7bc7ada31
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_hongqiang_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a157a9470153bab47aecdd62a4387f16
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_7.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a20c4df79142fd94ba8e94b1079439e2
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a41ea1985664f2448877c1c1ba3a7f9c
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_hulang_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a801c65dfdf2a8f46b6ca11a7406bc98
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_4.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab9509d4eb981a34cabcd4e8bf527423
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_guanggao_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0b6f175261286243a100b15e6e1a3ca
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_suidao_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b88d3f1c322c34b418be2a827b4b6c0d
+    m_Address: Assets/Images/Textures/Scene/Moscow/zhishibiao_1_D.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b91729bec92ec93458d84a2c23e6bcd0
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_jiaotang_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b972dba858a384740a28f37dd27378d6
+    m_Address: Assets/Scenes/Tracks/Moscow/Moscow.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9990f508fe25c340a97b294d6026fa6
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_suidao_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9ab30466cc1b5c4a977309545ae7123
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_tiezhalan_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd5de0b8c7b03d343acd8bcf3c74ae8d
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_zhibei_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be12032915454ba4b9ee32fca013cfb6
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_qiang_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c3de53ba1746cea40a9298e7cedaac40
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4d2f05e85e8eba40b00530229a97fa2
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_dibiao_15.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ccb752c712840a244bc967f1a012acdb
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_8.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cda02391bc4d10c4fa24cc46973038c1
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_shui_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce681d57e0cb88e49ba253e95debc210
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_jiaotang_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d59fcb08f622f8a40b610955b75f67d7
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_2_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6027297887ecc943a1b4109ec452aab
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da5f66c39a79800429a74641288598c9
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_men_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc65e2dc5a0cd3a47800bbd3ecf530de
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_zhibei_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e213472900900794ba61d9133ba48a06
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_zhishipai1_B.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e757a8684673ba6459ba6e53c82b5c21
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_qiang_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e7661d9c355ad624c896eda50df14400
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_hulang_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9d0020350188484d81307cb4020bc14
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_7.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec541b8f0bb34944eaedfa2b77a0ab1c
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_peilou_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f02e1feb5eeb6544bab3c6b7d217ac72
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_1_2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1e4462bce54dab4fa5c613d12405a2f
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_peilou_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f467aece4dbd2ab44bcfbb4882278f16
+    m_Address: Assets/Images/Textures/Scene/Moscow/D_qiang_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f657d9cdda91eaf4b9463dcbc948cd33
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_hongqiang_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f6e25ab3de0e2e54aae73b3ab07527cd
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_dibiao_5.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f83eabf63050f9549ab018e2ea71f109
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_men_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fac585d5719bb4144b37aa335c57e6ba
+    m_Address: Assets/Models/Materials/Scene/Moscow/D_tiezhalan_1.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: bea8844a77ea89340bdb9e7783214132, type: 2}
+    - {fileID: 11400000, guid: d482024ec2da8fc41a8537ef42aa9261, type: 2}

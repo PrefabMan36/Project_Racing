@@ -22,6 +22,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 223052a299e321045ba88ba9e82423d8
+    m_Address: Assets/Prefabs/Cars/ForPlayer/FSLegend.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 307aeec09abedf14a879e9c3fd58fff7
     m_Address: Assets/Prefabs/Cars/ForPlayer/Muscle.prefab
     m_ReadOnly: 0

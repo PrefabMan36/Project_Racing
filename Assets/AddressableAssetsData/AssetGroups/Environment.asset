@@ -22,13 +22,33 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f6cc2f89262420489a30acbc8657d8e
+    m_Address: Assets/Prefabs/Environment/PathManager.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ca422cae321bdb4b98f56c0f9208ab9
     m_Address: Assets/Prefabs/Environment/TailLamps.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4dca9df325b93df44b0c5f3594bfa19d
+    m_Address: Assets/Prefabs/Environment/CheckPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fee3b4577e72464f931e47042fe01e0
+    m_Address: Assets/Prefabs/Environment/DrivingLine.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bf740571814ec8946883ed3a42a1dbeb
     m_Address: Assets/Prefabs/Environment/Arrow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cee70fd7b880a624bb1098008f7bb9e9
+    m_Address: Assets/Prefabs/Environment/RaceStarter.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

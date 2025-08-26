@@ -47,6 +47,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a107e5f201e3c84449c6df0d2c5a27ba
+    m_Address: Assets/Models/Meshes/Wheel_C.FBX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d912e0a438ca9414aba1212daa7a43c6
     m_Address: Assets/Models/Meshes/Wheel_A.FBX
     m_ReadOnly: 0

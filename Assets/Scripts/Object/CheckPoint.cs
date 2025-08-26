@@ -9,8 +9,6 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private MainGame_Manager mainGameManager;
     [SerializeField] private BoxCollider checkPointCollider;
 
-    [SerializeField] private Pathfinder pathfinder;
-
     [SerializeField] private Transform navigationPoint;
     [SerializeField] private Vector3 navigationPointSize = new Vector3(1f, 1f, 1f);
 
@@ -31,6 +29,12 @@ public class CheckPoint : NetworkBehaviour
     [SerializeField] private CheckPoint nextCheckPoint;
     [Networked, SerializeField] private Vector3 nextCheckPointValue { get; set; } = Vector3.zero;
     [SerializeField] private GameObject[] circles;
+
+    [Header("Ground Snap Settings")]
+    [Tooltip("지면 인식을 위한 트랙의 레이어를 선택해주세요.")]
+    public LayerMask trackLayer;
+
+    [SerializeField] private float defaultYOffset = 0.4f;
 
     public override void Spawned()
     {
@@ -76,7 +80,24 @@ public class CheckPoint : NetworkBehaviour
         {
             circles[i].transform.localScale = circleSizeVector;
         }
-        pathfinder = mainGameManager.pathfinder;
+
+        AlignToTrack();
+    }
+
+    /// <summary>
+    /// 체크포인트의 위치를 도로 표면에 맞춥니다.
+    /// </summary>
+    public void AlignToTrack()
+    {
+        Vector3 rayStartPos = transform.position + Vector3.up * 2f;
+        Vector3 rayDirection = Vector3.down;
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(rayStartPos, rayDirection, out hit, Mathf.Infinity, trackLayer))
+            transform.position = new Vector3(transform.position.x, hit.point.y + defaultYOffset, transform.position.z);
+        else
+            Debug.LogWarning("체크포인트 아래에 도로(TrackSurface)를 찾을 수 없습니다. 체크포인트의 높이가 조정되지 않습니다.", gameObject);
     }
 
     private void InitCheckPointForClient()
@@ -116,8 +137,6 @@ public class CheckPoint : NetworkBehaviour
                     navigationPoint.localScale = navigationPointSize;
                     EnteredPlayer.SetCheckPoint(checkPointIndex + 1);
                     EnteredPlayer.SetNextCheckPointPosition(nextCheckPoint);
-
-                    pathfinder.UpdatePath(transform.position, nextCheckPointValue);
 
                     tempTimer = mainGameManager.CheckPointChecked(EnteredPlayer, fastestCheckPointTime[currentLap], localCheckPointTime, checkPointIndex);
                     fastestCheckPointTime.Set(currentLap, fastestCheckPointTime[currentLap] > tempTimer ? tempTimer : fastestCheckPointTime[currentLap]);

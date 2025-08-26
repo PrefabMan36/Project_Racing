@@ -47,6 +47,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad0745f9f491e174e98c4ff28099510f
+    m_Address: Assets/Models/Materials/CheckPoint.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e3b5410c4f52f444a9980ea07be88bcb
     m_Address: Assets/Prefabs/Environment/Tree/Materials/leaf.mat
     m_ReadOnly: 0

@@ -16,12 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: c3af87ebcf54a1c4e864f51b16b03ad3
-  m_SerializeEntries:
-  - m_GUID: 01931885e6ab3d94e9ac514b0a6a7d05
-    m_Address: Assets/Scenes/Tracks/Akina/Akina.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
   m_SchemaSet:

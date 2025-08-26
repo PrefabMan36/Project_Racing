@@ -29,5 +29,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tracks/Snow_Mountain/Snow_Mountain.unity
     guid: 55357f48a3e2b4643b0983826b854f64
+  - enabled: 1
+    path: Assets/Scenes/Tracks/Moscow/Moscow.unity
+    guid: b972dba858a384740a28f37dd27378d6
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: ecb4dae794b285746bd95f038aa2deab, type: 2}

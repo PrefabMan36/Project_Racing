@@ -1,0 +1,280 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: FSLegend
+  m_EditorClassIdentifier: 
+  m_GroupName: FSLegend
+  m_Data:
+    m_SerializedData: []
+  m_GUID: f72aae207134d7849b5ece96a03b7e6f
+  m_SerializeEntries:
+  - m_GUID: 04e52b5ab3bd4d7478217547653b62f8
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.006.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07f178416ecbd924c84e60691830ed2d
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.003.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 088a17f153f6b1a42ad52c450ad12170
+    m_Address: Assets/Images/Textures/Car/FSLegend/BMWM3GTRE46_KIT00_HEADLIGHT_ON.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19abed130eb4a3943b464a8f99cf1db0
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.009.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a94add524019ff46a59850686b991da
+    m_Address: Assets/Images/Textures/Car/FSLegend/Material.016_Metallic.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1f5aef75c7448284e99e69ccc7d3313b
+    m_Address: Assets/Images/Textures/Car/FSLegend/Material.016_Roughness.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26f5e37c4110a984f94ee1fe3d998540
+    m_Address: Assets/Models/Materials/Cars/FSLegend/tapa lat.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d0e92b4636313540b1fbbffc97a31ab
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.001.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d1bcda854bcc7d4dbf895c14dec9a65
+    m_Address: Assets/Models/Materials/Cars/FSLegend/palanca.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 30561e5f3ec97cd4ba8c1b6fba6ca2fb
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.002.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c974070a1cda3840945abe4cec6653f
+    m_Address: Assets/Images/Textures/Car/FSLegend/normal_interor.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 416fcef4dd2a0524e874974fe00218fb
+    m_Address: Assets/Models/Materials/Cars/FSLegend/DULLPLASTIC_MISC.002.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d2d13f341d399145870af559abbc125
+    m_Address: Assets/Models/Materials/Cars/FSLegend/1 car paint.005.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f1a8ca50ceeb6945980f6b26e7c214b
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.012.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f7493b2b0ccf7f4d803b7335835dc62
+    m_Address: Assets/Models/Materials/Cars/FSLegend/REJA COFRE.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5927db82df382994b9f6fce061795af3
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.005.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a80e2cce72f1e24bb170c535d663998
+    m_Address: Assets/Images/Textures/Car/FSLegend/misc2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 666f6c75895c87549adfa132a7f8edc3
+    m_Address: Assets/Images/Textures/Car/FSLegend/531.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 675d32d070b84214e928509785d8d081
+    m_Address: Assets/Models/Materials/Cars/FSLegend/BRAKELIGHT_BRAKELIGHT_LEFT.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68eef4110545c3c4fa12694039be0ed6
+    m_Address: Assets/Images/Textures/Car/FSLegend/R_(1).png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6dbfc0efb7918174480d8462d7d8eace
+    m_Address: Assets/Models/Materials/Cars/FSLegend/mangueras.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f5fc6f5c2e7a9647a792824fa44ba7e
+    m_Address: Assets/Models/Materials/Cars/FSLegend/CHROME_MISC.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70099609d13bc4a45bf999d4ccea3ef3
+    m_Address: Assets/Images/Textures/Car/FSLegend/Material.016_Base_color.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75893e4b225ece8438efb0477c3fa971
+    m_Address: Assets/Models/Materials/Cars/FSLegend/interior 2.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 770c04d462dfcab41a4d58e1bbafc92a
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.008.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78af1d5b0f473774bb468c82dae53440
+    m_Address: Assets/Models/Materials/Cars/FSLegend/INTERIOR_INTERIOR.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84c4ad1a455d55b4c865226e7899eaf0
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.004.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8807bfcd33efcc4469722923d959b753
+    m_Address: Assets/Models/Materials/Cars/FSLegend/caroceria.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8fce4fd0f6300664db55d577e038277b
+    m_Address: Assets/Models/Materials/Cars/FSLegend/DULLPLASTIC_HEADLIGHT_LEFT.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91b75768cc6e116469580f1eeb504249
+    m_Address: Assets/Models/Materials/Cars/FSLegend/TUBOS LAT.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 95fe7f4332f99314a977f73cd0e65009
+    m_Address: Assets/Models/Materials/Cars/FSLegend/SPOILER.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e65b9db257ebad49b9ac23417849522
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.016.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b38766a4f82350c45853cb43bf2029eb
+    m_Address: Assets/Models/Materials/Cars/FSLegend/1 car paint.004.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4aa995d7c32b2d4295685e1fcdc67e4
+    m_Address: Assets/Models/Materials/Cars/FSLegend/GL_basic_glass.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7d5ca216c8530b479f97eb4eb9df5f7
+    m_Address: Assets/Images/Textures/Car/FSLegend/interior_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be30bbd0528834942b61f06ddabd69e5
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.014.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c916f99facee7674d8f9d186a7451719
+    m_Address: Assets/Models/Materials/Cars/FSLegend/NEGRO.001.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca92837241135bc4f81b380120b5b6a0
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.010.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb1678acbeb16174b9e16401db6911b3
+    m_Address: Assets/Models/Materials/Cars/FSLegend/volante.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6b37e89b2f04d946849856e3dd55830
+    m_Address: Assets/Models/Materials/Cars/FSLegend/DULLPLASTIC_MISC.001.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7353974a48d86540b3921c888018ef2
+    m_Address: Assets/Images/Textures/Car/FSLegend/Material.016_Normal_OpenGL.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d851175ae6220534e87480fc739abd19
+    m_Address: Assets/Models/Materials/Cars/FSLegend/HEADLIGHTREFLECTOR_HEADLIGHT_LEFT.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db4fd860522336c46b2b79103b440288
+    m_Address: Assets/Images/Textures/Car/FSLegend/BMWM3GTRE46_KIT00_BRAKELIGHT_OFF.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ddc84a8f9c9decb42972a2b418c98cc2
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.007.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfb4f7cbe3d5e8e48a6dff4694d0e855
+    m_Address: Assets/Images/Textures/Car/FSLegend/NORMAL_PLACA.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e127ab59407b9ae468366a26cd38102b
+    m_Address: Assets/Models/Materials/Cars/FSLegend/DULLPLASTIC_MISC.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e359461b49af48c4aabd4e3e0d95e769
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.011.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eacfe079f198c254c8a2baf13e0dd8d0
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: edead18225f64e544bbb237c45bdfab9
+    m_Address: Assets/Models/Materials/Cars/FSLegend/frenos.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc5a0224235fb684aa452edae2967f45
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.015.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe009d896258c2d48ae5c639c17ca013
+    m_Address: Assets/Models/Materials/Cars/FSLegend/Material.013.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0dcc23773a5de9d4cb271c4601f9831c, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: c5e027016e4fd77489fa9185c3d55b58, type: 2}
+    - {fileID: 11400000, guid: b0f2075cb33d26a44a37915920019008, type: 2}

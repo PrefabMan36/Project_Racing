@@ -84,6 +84,7 @@ MonoBehaviour:
   _rank:
     _items: []
   isNight: 0
+  pathfinder: {fileID: 0}
   MainCamera_Prefab: {fileID: 7916578112111094242, guid: ead7127616435bd43bcabcaa12a9bcc9, type: 3}
   rpmGauge_Prefab: {fileID: 1899898029282573489, guid: 45faa3b313ff9314fa64ee051a2a8ddd, type: 3}
   navigation_Prefab: {fileID: 2193873919346045794, guid: 3223d1aa424299e46b28a12649a0a5d9, type: 3}
@@ -96,6 +97,8 @@ MonoBehaviour:
   countDown_Prefab:
     RawGuidValue: 4e8daa8e4ba616849bdb5063aab709e3
   parentObjectForUIPanel_Prefab: {fileID: 5753768892760090230, guid: 7cca50b510ca204418ebd47cf3df4178, type: 3}
+  hider_Prefab: {fileID: 9012855813553188690, guid: d0ce3ae4536c2bd42b3dd86cc0dd3a06, type: 3}
+  hider: {fileID: 0}
   MainCanvas: {fileID: 0}
   MainCamera: {fileID: 0}
   NitroBar: {fileID: 0}

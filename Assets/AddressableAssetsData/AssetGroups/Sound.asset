@@ -17,6 +17,16 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: fb6ae54ae4f9245408d8ca14c83517c5
   m_SerializeEntries:
+  - m_GUID: 3d60ba56f88ae1f47bf0414a759412d2
+    m_Address: Assets/Prefabs/Cars/Sound/turboSpoolSound_Prefab.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f92441cdf4444c479975d5d74dacfd2
+    m_Address: Assets/Prefabs/Cars/Sound/superchargerWhineSound_Prefab.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c3ca9e4929219b4fa76784fd3d65fbb
     m_Address: Assets/Prefabs/Cars/Sound/NitroSound.prefab
     m_ReadOnly: 0
@@ -24,6 +34,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 74f751505dada554295d2a6a1ac443a7
     m_Address: Assets/Prefabs/Cars/Sound/NitroStartSound.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b33770047fda8e4a8f39723a3b66a93
+    m_Address: Assets/Prefabs/Cars/Sound/turboBlowOffSound_Prefab.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -28,6 +28,9 @@ public class Driver : Object
     [SerializeField] Animator animator;
 
     [SerializeField] private Player_Car car;
+    [SerializeField] private float targetSteeringAngle;
+    [SerializeField] private float currentSteeringAngle;
+    [SerializeField] private float currentSteeringTime;
     [SerializeField] private bool LHS;
     [SerializeField] private bool stunned = false;
 
@@ -48,11 +51,37 @@ public class Driver : Object
         animator = GetComponent<Animator>();
     }
 
-    public void SetState(int tempState)
+    public void SetState(int tempState, float steering)
     {
         if (currentStateNum == tempState) return;
 
+        if (steering != 0)
+        {
+            if (LHS == true)
+                targetSteeringAngle = steering < 0 ? 1 : -1;
+            else
+                targetSteeringAngle = steering > 0 ? 1 : -1;
+        }
+        else
+            targetSteeringAngle = 0f;
         currentStateNum = tempState;
+    }
+
+    private void Update()
+    {
+        if (!stunned)
+        {
+            if(currentState == ESTATE.LEFT || currentState == ESTATE.RIGHT)
+                currentSteeringAngle = Mathf.Lerp(currentSteeringAngle, targetSteeringAngle, Time.deltaTime * 5f);
+            else
+                currentSteeringTime = 0f;
+                animator.SetFloat("Steering", currentSteeringAngle);
+        }
+        else
+        {
+            animator.SetFloat("Steering", 0f);
+            currentSteeringTime = 0f;
+        }
     }
 
     public void OnStateChanged()
@@ -61,14 +90,6 @@ public class Driver : Object
             currentState = (ESTATE)currentStateNum;
         else
             Debug.LogError($"Invalid state: {currentStateNum} for {gameObject.name}");
-
-        if(LHS == true)
-        {
-            if (currentState == ESTATE.LEFT)
-                currentState = ESTATE.RIGHT;
-            else if (currentState == ESTATE.RIGHT)
-                currentState = ESTATE.LEFT;
-        }
 
         if (!stunned)
         {

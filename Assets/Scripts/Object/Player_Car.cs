@@ -113,6 +113,20 @@ public class Player_Car : Car
         }
     }
 
+    private void Awake()
+    {
+        centerMass = transform.Find("Center_Mass").gameObject;
+        carRB = gameObject.GetComponent<Rigidbody>();
+        headLights = transform.Find("HeadLights").GetComponent<Light_Car>();
+        tailLamps = transform.Find("TailLamps").GetComponent<Light_Car>();
+        slipSound = transform.Find("SlipSound").GetComponent<AudioSource>();
+        engineSound = new AudioSource[] { transform.Find("EngineSound").GetComponent<AudioSource>() };
+        nitroSoundEffect = transform.Find("NitroSound").GetComponent<AudioSource>();
+        nitroStartSoundEffect = transform.Find("NitroStartSound").GetComponent<AudioSource>();
+        nitroEffect = transform.Find("BoostEffect").GetComponent<ParticleSystem>();
+        nitroTrail = gameObject.GetComponent<Trail>();
+    }
+
     public void Init()
     {
         if (HasInputAuthority)
@@ -590,6 +604,6 @@ public class Player_Car : Car
         else
             carState = 0;
 
-        driver.SetState(carState);
+        driver.SetState(carState, steerInput);
     }
 }

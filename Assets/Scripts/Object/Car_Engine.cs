@@ -173,7 +173,7 @@ public partial class Car
         {
             eGEAR nextGear = currentGear + 1;
 
-            float optimalRPM = maxEngineRPM * 0.95f; // 기본값은 레드존 직전
+            float optimalRPM = maxEngineRPM * 0.985f; // 기본값은 레드존 직전
 
             for (float currentRPM = rpmAtPeakTorque; currentRPM <= maxEngineRPM; currentRPM += 20f)
             {
@@ -202,7 +202,7 @@ public partial class Car
                 }
             }
             optimalShiftUpRPMs.Add(currentGear, optimalRPM);
-            float downshiftAggressiveness = 1.6f;
+            float downshiftAggressiveness = 1.125f;
             // 다운시프트 RPM 계산: 다운시프트 시, 엔진이 최대 토크를 내는 RPM 근처에 도달하도록 설정
             Debug.Log($"Calculating Optimal Shift Points for Gear: {currentGear}");
             if (currentGear != eGEAR.eGEAR_FIRST)
@@ -625,7 +625,7 @@ public partial class Car
         //    gearSpeedLimit[eGEAR.eGEAR_FIRST] / 2f :
         //    throttle > 0.9f ?
         //    gearSpeedLimit[currentGear] * 0.8f : gearSpeedLimit[currentGear] * 0.6f;
-        bool isSpeedReadyForUpshift = speed > gearSpeedLimit[currentGear] * 0.9f || speed > perviousMaxSpeed * 1.05f;
+        bool isSpeedReadyForUpshift = speed > gearSpeedLimit[currentGear] * 0.975f || speed > perviousMaxSpeed * 1.05f;
         // Up-Shift 조건: 다음 기어로 변속해도 괜찮은 속도 && 현재 RPM이 마력 기반 Up 시점 도달
         // (속도 조건은 급격한 저속 고 RPM 상태에서 불필요한 변속 방지용으로 추가 가능)
         //if (optimalShiftUpRPMs.ContainsKey(currentGear) && currentEngineRPM > optimalShiftUpRPMs[currentGear] && speed > speedThresholdForUpshift)
@@ -659,10 +659,10 @@ public partial class Car
 
     #region Value Nitro
     [Header("Nitro Value")]
-    [SerializeField] private AudioSource nitroSoundEffect;
-    [SerializeField] private AudioSource nitroStartSoundEffect;
-    [SerializeField] private ParticleSystem nitroEffect;
-    [SerializeField] private Trail nitroTrail;
+    [SerializeField] protected AudioSource nitroSoundEffect;
+    [SerializeField] protected AudioSource nitroStartSoundEffect;
+    [SerializeField] protected ParticleSystem nitroEffect;
+    [SerializeField] protected Trail nitroTrail;
     [SerializeField] private bool isNitroInstalled;
     [SerializeField] private bool powerMode = false;
     [SerializeField] private float maxNitroCapacity = 100f;

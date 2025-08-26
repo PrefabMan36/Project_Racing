@@ -121,8 +121,8 @@ public partial class Car
 
     #region Lights
     [Header("Lights Values")]
-    [SerializeField] private Light_Car headLights;
-    [SerializeField] private Light_Car tailLamps;
+    [SerializeField] protected Light_Car headLights;
+    [SerializeField] protected Light_Car tailLamps;
     [Networked, SerializeField] private NetworkBool headLightSwitch { get; set; } = false;
     [Networked, SerializeField] private NetworkBool tailLampSwitch { get; set; } = false;
     protected void HeadLightSwitch() { headLightSwitch = !headLightSwitch; }

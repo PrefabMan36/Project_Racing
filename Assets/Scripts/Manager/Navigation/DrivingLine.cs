@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,6 +11,10 @@ public class DrivingLine : MonoBehaviour
     public Transform car;     // 플레이어 차량
     public Rigidbody carRigidbody; // 차량의 Rigidbody 컴포넌트
 
+    // RaceManager로부터 트랙 타입을 전달받을 변수
+    [HideInInspector]
+    public eTRACKTYPE currentTrackType;
+
     [Header("Line Settings")]
     public int lineLength = 50; // 라인을 그릴 웨이포인트 개수
     public Color safeColor = Color.green;    // 안전 속도 색상
@@ -16,65 +22,60 @@ public class DrivingLine : MonoBehaviour
     public Color dangerColor = Color.red;    // 위험 속도 색상
 
     [Header("Path Recalculation")]
-    public Pathfinder pathfinder; // 경로 재탐색을 위해 Pathfinder 참조
-    public float offPathThreshold = 5f; // 이 거리(m) 이상 벗어나면 경로 이탈로 간주
-    public float recalculationCooldown = 2.0f; // 경로 재탐색 주기 (초)
-
-    private float timeSinceLastRecalc = 0f;
+    private WaypointManager waypointManager;
+    private int currentDisplayingRouteId = -1;
 
     private LineRenderer lineRenderer;
 
+    private int currentRouteId = -1;
+
     void Start()
     {
-        path = GameObject.FindAnyObjectByType<WaypointPath>();
-        pathfinder = GameObject.FindAnyObjectByType<Pathfinder>();
+        waypointManager = FindObjectOfType<WaypointManager>();
+        path = FindObjectOfType<WaypointPath>();
+
         car = transform.parent;
         carRigidbody = car.GetComponent<Rigidbody>();
         lineRenderer = GetComponent<LineRenderer>();
-        // 라인 렌더러의 월드 공간 좌표 사용 설정
         lineRenderer.useWorldSpace = true;
+
+        if (waypointManager == null) Debug.LogError("씬에 WaypointManager가 없습니다!");
+        if (path == null) Debug.LogError("씬에 WaypointPath가 없습니다!");
+        currentTrackType = waypointManager.GetTracktype();
     }
 
-    void Update()
+    private void Update()
     {
-        timeSinceLastRecalc += Time.deltaTime;
+        if (waypointManager == null || path == null || car == null) return;
 
-        if (path == null || path.waypoints.Count < 2)
+        // 1. 자동차 위치를 기반으로 현재 가장 가까운 경로 ID를 찾습니다.
+        int detectedRouteId = waypointManager.GetClosestRouteID(currentRouteId, car.position);
+
+        // 2. 이전에 그리던 경로와 다른 경로가 감지되면, 경로를 새로 설정합니다.
+        if (detectedRouteId != -1 && detectedRouteId != currentDisplayingRouteId)
+        {
+            Debug.Log($"새로운 경로(ID: {detectedRouteId}) 감지! 주행 라인을 업데이트합니다.");
+            currentDisplayingRouteId = detectedRouteId;
+
+            // WaypointManager로부터 새로운 경로 데이터를 가져옵니다.
+            List<Vector3> routePoints = waypointManager.GetRouteData(currentDisplayingRouteId);
+            if (routePoints != null && routePoints.Count > 0)
+            {
+                // WaypointPath에 새로운 경로를 설정하여 웨이포인트들을 생성하고 라인을 다듬도록 합니다.
+                path.SetAndRefinePath(routePoints, currentTrackType == eTRACKTYPE.eTRACK_TYPE_CIRCUIT);
+            }
+        }
+
+        if (path.waypoints.Count < 2)
         {
             lineRenderer.positionCount = 0;
             return;
         }
 
+        // 3. 가장 가까운 웨이포인트를 찾아 라인을 그리고 색상을 업데이트합니다. (기존 로직 재사용)
         int closestIndex = GetClosestWaypointIndex();
-
-        // 경로 이탈 감지 및 재탐색 로직
-        CheckForOffPathAndRecalculate(closestIndex);
-
         DrawDrivingLine(closestIndex);
         UpdateLineColor(closestIndex);
-    }
-
-    private void CheckForOffPathAndRecalculate(int closestIndex)
-    {
-        // 쿨다운 시간이 아직 안됐거나, pathfinder가 없으면 실행 안함
-        if (timeSinceLastRecalc < recalculationCooldown || pathfinder == null)
-        {
-            return;
-        }
-
-        float distanceToPath = Vector3.Distance(car.position, path.waypoints[closestIndex].position);
-
-        if (distanceToPath > offPathThreshold)
-        {
-            Debug.Log("경로 이탈 감지! 경로를 재탐색합니다.");
-
-            // 현재 위치에서 경로의 최종 목적지까지 가는 길을 다시 탐색
-            Vector3 destination = path.waypoints[path.waypoints.Count - 1].position;
-            pathfinder.UpdatePath(car.position + Vector3.up * 0.4f, destination);
-
-            // 쿨다운 타이머 초기화
-            timeSinceLastRecalc = 0f;
-        }
     }
 
     // 가장 가까운 웨이포인트의 인덱스를 찾는 함수
@@ -98,13 +99,29 @@ public class DrivingLine : MonoBehaviour
     // 주행 라인을 그리는 함수
     private void DrawDrivingLine(int startIndex)
     {
-        lineRenderer.positionCount = Mathf.Max(Mathf.Min(lineLength, path.waypoints.Count - startIndex),0);
+        lineRenderer.positionCount = Mathf.Max(Mathf.Min(lineLength, path.waypoints.Count), 0);
+        if (currentTrackType != eTRACKTYPE.eTRACK_TYPE_CIRCUIT)
+        {
+            lineRenderer.positionCount = Mathf.Max(Mathf.Min(lineLength, path.waypoints.Count - startIndex), 0);
+        }
 
         Vector3[] linePoints = new Vector3[lineRenderer.positionCount];
         for (int i = 0; i < lineRenderer.positionCount; i++)
         {
-            // 경로가 순환하도록 인덱스 계산
-            int waypointIndex = (startIndex + i) % path.waypoints.Count;
+            int waypointIndex;
+            if (currentTrackType == eTRACKTYPE.eTRACK_TYPE_CIRCUIT)
+            {
+                waypointIndex = (startIndex + i) % path.waypoints.Count;
+            }
+            else
+            {
+                waypointIndex = startIndex + i;
+                if (waypointIndex >= path.waypoints.Count)
+                {
+                    lineRenderer.positionCount = i;
+                    break;
+                }
+            }
             linePoints[i] = path.waypoints[waypointIndex].position;
         }
         lineRenderer.SetPositions(linePoints);

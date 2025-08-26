@@ -47,7 +47,7 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private Transform[] spawnPosition = new Transform[4];
     [SerializeField] private float spawnPointSpacing = 2.5f;
     [SerializeField] private float spawnPointVerticalOffset = 1.0f;
-    private string trackName = "eSCENE_CITY_NIGHT";
+    private string trackName = "";
     [SerializeField] private TrackCheckPointData tracksCheckpointData;
     [SerializeField] private TrackStateData tracksStateData;
     [Networked, SerializeField] private int lastCheckPointIndex { get; set; } = 0;
@@ -59,8 +59,6 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private eTRACKTYPE trackType;
     [Networked, SerializeField] private int maxLaps { get; set; }
     [SerializeField] private bool isNight;
-
-    [SerializeField] public Pathfinder pathfinder;
     #endregion
 
     #region UI Prefabs & References
@@ -76,6 +74,8 @@ public class MainGame_Manager : NetworkBehaviour
     [SerializeField] private GameObject resultUI_Prefab;
     [SerializeField] private NetworkPrefabRef countDown_Prefab;
     [SerializeField] private GameObject parentObjectForUIPanel_Prefab;
+    [SerializeField] private GameObject hider_Prefab;
+    [SerializeField] private GameObject hider;
     #endregion
 
     #region Instantiated UI Elements
@@ -156,8 +156,6 @@ public class MainGame_Manager : NetworkBehaviour
     {
         base.Spawned();
         Runner.SetIsSimulated(Object, true);
-
-        pathfinder = transform.GetComponent<Pathfinder>();
 
         StartCoroutine(LoadCarPrefabsCoroutine());
 
@@ -464,6 +462,7 @@ public class MainGame_Manager : NetworkBehaviour
 
     private void LoadAndSetupTrack()
     {
+
         tracksCheckpointData = TrackData_Manager.instance.GetTrackCheckpointDataByName(trackName);
         tracksStateData = TrackData_Manager.instance.GetTrackStateDataByName(trackName);
         maxLaps = tracksStateData.LoopCount;
@@ -505,16 +504,24 @@ public class MainGame_Manager : NetworkBehaviour
             {
                 case eTRACKTYPE.eTRACK_TYPE_CIRCUIT:
                     GenerateSpawnPointsFromCheckpoint(lastCheckPoint);
-                    pathfinder.UpdatePath(lastCheckPoint.transform.position, firstCheckPoint.transform.position);
                     break;
                 case eTRACKTYPE.eTRACK_TYPE_SPRINT:
                 case eTRACKTYPE.eTRACK_TYPE_DRAG:
                     GenerateSpawnPointsFromCheckpoint(firstCheckPoint);
-                    pathfinder.UpdatePath(firstCheckPoint.transform.position, firstCheckPoint.GetNextCheckPoint().transform.position);
                     break;
             }
             lastCheckPointIndex = lastCheckPoint.GetCheckPointIndex();
             lastCheckPoint.SetNextCheckPoint(firstCheckPoint);
+            // WaypointManager의 데이터 로드가 끝났는지 확인 (안전장치)
+            if (!Shared.waypointManager.isLoaded)
+            {
+                Debug.LogError("웨이포인트 데이터가 아직 로드되지 않았습니다!");
+                return;
+            }
+            else
+            {
+                Shared.waypointManager.SetCurrentTrackName(trackName, trackType);
+            }
             LobbyPlayer.localPlayer.RPC_ChangeSyncTrackState(true);
         }
         else
@@ -711,6 +718,9 @@ public class MainGame_Manager : NetworkBehaviour
     {
         Debug.Log($"[{(Object.HasStateAuthority ? "Host" : "Client")}] 씬 전환 및 UI 정리 시작.");
         isRankingStart = false;
+        
+        Shared.waypointManager.ClearWaypoints();
+        hider = Instantiate(hider_Prefab, MainCanvas.transform);
 
         foreach (var handle in loadedCarHandles)
         {
@@ -736,6 +746,8 @@ public class MainGame_Manager : NetworkBehaviour
         }
 
         if (resultUI != null) { Destroy(resultUI); }
+
+        Destroy(hider);
 
         if (Object.HasStateAuthority)
         {
